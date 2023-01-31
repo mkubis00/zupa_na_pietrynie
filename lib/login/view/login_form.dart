@@ -40,6 +40,8 @@ class LoginForm extends StatelessWidget {
               _LoginButton(),
               const SizedBox(height: 8),
               _GoogleLoginButton(),
+              const SizedBox(height: 8),
+              _FacebookLoginButton(),
               const SizedBox(height: 4),
               _SignUpButton(),
             ],
@@ -126,7 +128,7 @@ class _GoogleLoginButton extends StatelessWidget {
     return ElevatedButton.icon(
       key: const Key('loginForm_googleLogin_raisedButton'),
       label: const Text(
-        'SIGN IN WITH GOOGLE',
+        'ZALOGUJ SIĘ PRZEZ GOOGLE',
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
@@ -136,6 +138,28 @@ class _GoogleLoginButton extends StatelessWidget {
         backgroundColor: theme.colorScheme.secondary,
       ),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
+      onPressed: () => context.read<LoginCubit>().logInWithGoogle(),
+    );
+  }
+}
+
+class _FacebookLoginButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return ElevatedButton.icon(
+      key: const Key('loginForm_googleLogin_raisedButton'),
+      label: const Text(
+        'ZALOGUJ SIĘ PRZEZ FACEBOOK',
+        style: TextStyle(color: Colors.white),
+      ),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        backgroundColor: Colors.blueAccent,
+      ),
+      icon: const Icon(FontAwesomeIcons.facebook, color: Colors.white),
       onPressed: () => context.read<LoginCubit>().logInWithGoogle(),
     );
   }

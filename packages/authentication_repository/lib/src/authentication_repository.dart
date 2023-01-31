@@ -7,11 +7,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
-/// {@template sign_up_with_email_and_password_failure}
-/// Thrown if during the sign up process if a failure occurs.
-/// {@endtemplate}
+
 class SignUpWithEmailAndPasswordFailure implements Exception {
-  /// {@macro sign_up_with_email_and_password_failure}
   const SignUpWithEmailAndPasswordFailure([
     this.message = 'An unknown exception occurred.',
   ]);
@@ -46,16 +43,13 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
     }
   }
 
-  /// The associated error message.
   final String message;
 }
 
-/// {@template log_in_with_email_and_password_failure}
+
 /// Thrown during the login process if a failure occurs.
 /// https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth/signInWithEmailAndPassword.html
-/// {@endtemplate}
 class LogInWithEmailAndPasswordFailure implements Exception {
-  /// {@macro log_in_with_email_and_password_failure}
   const LogInWithEmailAndPasswordFailure([
     this.message = 'An unknown exception occurred.',
   ]);
@@ -85,22 +79,18 @@ class LogInWithEmailAndPasswordFailure implements Exception {
     }
   }
 
-  /// The associated error message.
   final String message;
 }
 
-/// {@template log_in_with_google_failure}
+
 /// Thrown during the sign in with google process if a failure occurs.
 /// https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth/signInWithCredential.html
 /// {@endtemplate}
 class LogInWithGoogleFailure implements Exception {
-  /// {@macro log_in_with_google_failure}
   const LogInWithGoogleFailure([
     this.message = 'An unknown exception occurred.',
   ]);
 
-  /// Create an authentication message
-  /// from a firebase authentication exception code.
   factory LogInWithGoogleFailure.fromCode(String code) {
     switch (code) {
       case 'account-exists-with-different-credential':
@@ -140,18 +130,14 @@ class LogInWithGoogleFailure implements Exception {
     }
   }
 
-  /// The associated error message.
   final String message;
 }
 
-/// Thrown during the logout process if a failure occurs.
+
 class LogOutFailure implements Exception {}
 
-/// {@template authentication_repository}
-/// Repository which manages user authentication.
-/// {@endtemplate}
+
 class AuthenticationRepository {
-  /// {@macro authentication_repository}
   AuthenticationRepository({
     CacheClient? cache,
     firebase_auth.FirebaseAuth? firebaseAuth,
@@ -164,14 +150,9 @@ class AuthenticationRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-  /// Whether or not the current environment is web
-  /// Should only be overriden for testing purposes. Otherwise,
-  /// defaults to [kIsWeb]
   @visibleForTesting
   bool isWeb = kIsWeb;
 
-  /// User cache key.
-  /// Should only be used for testing purposes.
   @visibleForTesting
   static const userCacheKey = '__user_cache_key__';
 
