@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "144430888995",
+    "project_id": "zupanapietrynie-75709",
+    "storage_bucket": "zupanapietrynie-75709.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:144430888995:android:cab482dcaa7dc65262d996",
+        "android_client_info": {
+          "package_name": "com.example.zupa_na_pietrynie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "144430888995-8l0ome6gdtj86u513ed5t61clpg0mf9d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxoGMP6pyJEfWhYY3nRpw283UoqNZYJD0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144430888995-8l0ome6gdtj86u513ed5t61clpg0mf9d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
