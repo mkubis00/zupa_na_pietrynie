@@ -10,6 +10,7 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
@@ -23,25 +24,63 @@ class LoginForm extends StatelessWidget {
         }
       },
       child: Align(
-        alignment: const Alignment(0, -1 / 3),
+        alignment: const Alignment(0, -1.8 ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                'assets/bloc_logo_small.png',
-                height: 120,
+              Align(
+                alignment: Alignment.topLeft,
+                  child: Image.asset(
+                  'assets/bloc_logo_small.png',
+                  height: 170,
+                )
               ),
-              const SizedBox(height: 16),
-              _EmailInput(),
+              SizedBox(
+                  width: width*0.85,
+                  child:
+                  Align(
+                    alignment: Alignment.centerLeft,
+                      child: Container(
+                          child: Text(
+                            "Witamy ponownie!",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                fontSize: 30
+                            ),
+                          ),
+                      ),
+                  )
+              ),
               const SizedBox(height: 8),
-              _PasswordInput(),
+              SizedBox(
+                  width: width*0.85,
+                  child:
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                        "Zaloguj się aby kontynuować",
+                        style: TextStyle(
+                            fontSize: 15
+                        ),
+                    ),
+                  ),
+              ),
+              const SizedBox(height: 25),
+              SizedBox(width: width*0.85, child: _EmailInput()),
               const SizedBox(height: 8),
+              SizedBox(width: width*0.85, child: _PasswordInput()),
               _LoginButton(),
               const SizedBox(height: 8),
-              _GoogleLoginButton(),
+              SizedBox(
+                width: width*0.75,
+                child: _GoogleLoginButton()
+              ),
               const SizedBox(height: 8),
-              _FacebookLoginButton(),
+              SizedBox(
+                  width: width*0.75,
+                  child: _FacebookLoginButton()
+              ),
               const SizedBox(height: 4),
               _SignUpButton(),
             ],
@@ -66,6 +105,10 @@ class _EmailInput extends StatelessWidget {
             labelText: 'email',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1),
+              borderRadius: BorderRadius.circular(10)
+            )
           ),
         );
       },
@@ -88,6 +131,10 @@ class _PasswordInput extends StatelessWidget {
             labelText: 'password',
             helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(width: 1),
+                  borderRadius: BorderRadius.circular(10)
+              )
           ),
         );
       },
@@ -133,9 +180,9 @@ class _GoogleLoginButton extends StatelessWidget {
       ),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(10),
         ),
-        backgroundColor: theme.colorScheme.secondary,
+        backgroundColor: Colors.black87
       ),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
       onPressed: () => context.read<LoginCubit>().logInWithGoogle(),
@@ -155,7 +202,7 @@ class _FacebookLoginButton extends StatelessWidget {
       ),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(10),
         ),
         backgroundColor: Colors.blueAccent,
       ),
