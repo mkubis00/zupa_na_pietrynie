@@ -70,19 +70,28 @@ class LoginForm extends StatelessWidget {
               SizedBox(width: width*0.85, child: _EmailInput()),
               const SizedBox(height: 8),
               SizedBox(width: width*0.85, child: _PasswordInput()),
-              _LoginButton(),
+              SizedBox(width: width*0.85, child: _LoginButton()),
               const SizedBox(height: 8),
               SizedBox(
-                width: width*0.75,
+                width: width*0.85,
                 child: _GoogleLoginButton()
               ),
               const SizedBox(height: 8),
               SizedBox(
-                  width: width*0.75,
+                  width: width*0.85,
                   child: _FacebookLoginButton()
               ),
               const SizedBox(height: 4),
-              _SignUpButton(),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center, //Center Row contents horizontally,
+                  crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
+                children: [
+                  _SignUpButton(),
+                  Text(" lub "),
+                  _PasswordResetButton(),
+                ],
+              )
+              ,
             ],
           ),
         ),
@@ -154,7 +163,7 @@ class _LoginButton extends StatelessWidget {
           key: const Key('loginForm_continue_raisedButton'),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(10),
             ),
             backgroundColor: const Color(0xFFFFD600),
           ),
@@ -220,7 +229,22 @@ class _SignUpButton extends StatelessWidget {
       key: const Key('loginForm_createAccount_flatButton'),
       onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
       child: Text(
-        'CREATE ACCOUNT',
+        'Stwórz konto',
+        style: TextStyle(color: theme.primaryColor),
+      ),
+    );
+  }
+}
+
+class _PasswordResetButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return TextButton(
+      key: const Key('loginForm_createAccount_flatButton'),
+      onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
+      child: Text(
+        'zresetuj haslo',
         style: TextStyle(color: theme.primaryColor),
       ),
     );
