@@ -143,7 +143,7 @@ class _PasswordInput extends StatelessWidget {
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(10)
-              )
+              ),
           ),
         );
       },
