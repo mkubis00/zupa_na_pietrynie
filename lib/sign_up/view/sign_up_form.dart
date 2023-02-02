@@ -8,6 +8,7 @@ class SignUpForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state.status.isSubmissionSuccess) {
@@ -25,11 +26,42 @@ class SignUpForm extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _EmailInput(),
+            SizedBox(
+                width: width*0.85,
+                child:
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    child: Text(
+                      "Nie masz jeszcze konta?",
+                      style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 30
+                      ),
+                    ),
+                  ),
+                )
+            ),
             const SizedBox(height: 8),
-            _PasswordInput(),
+            SizedBox(
+              width: width*0.85,
+              child:
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Zarejestruj aby kontynuować",
+                  style: TextStyle(
+                      fontSize: 15
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            SizedBox(width: width*0.85, child: _EmailInput()),
             const SizedBox(height: 8),
-            _ConfirmPasswordInput(),
+            SizedBox(width: width*0.85, child: _PasswordInput()),
+            const SizedBox(height: 8),
+            SizedBox(width: width*0.85, child: _ConfirmPasswordInput()),
             const SizedBox(height: 8),
             _SignUpButton(),
           ],
@@ -50,11 +82,14 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.read<SignUpCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: 'e-mail',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
+            enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 1),
+            borderRadius: BorderRadius.circular(10)
           ),
-        );
+        ));
       },
     );
   }
@@ -72,9 +107,13 @@ class _PasswordInput extends StatelessWidget {
               context.read<SignUpCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: 'haslo',
             helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 1),
+                borderRadius: BorderRadius.circular(10)
+            ),
           ),
         );
       },
@@ -97,11 +136,15 @@ class _ConfirmPasswordInput extends StatelessWidget {
               .confirmedPasswordChanged(confirmPassword),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'confirm password',
+            labelText: 'potwierdź haslo',
             helperText: '',
             errorText: state.confirmedPassword.invalid
                 ? 'passwords do not match'
                 : null,
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 1),
+                borderRadius: BorderRadius.circular(10)
+            ),
           ),
         );
       },
@@ -128,7 +171,7 @@ class _SignUpButton extends StatelessWidget {
           onPressed: state.status.isValidated
               ? () => context.read<SignUpCubit>().signUpFormSubmitted()
               : null,
-          child: const Text('SIGN UP'),
+          child: const Text('Zarejestruj się'),
         );
       },
     );

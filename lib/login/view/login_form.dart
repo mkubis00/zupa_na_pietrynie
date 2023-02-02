@@ -111,9 +111,9 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'email',
+            labelText: 'e-mail',
             helperText: '',
-            errorText: state.email.invalid ? 'invalid email' : null,
+            errorText: state.email.invalid ? 'niepoprawny e-mail' : null,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1),
               borderRadius: BorderRadius.circular(10)
@@ -137,9 +137,9 @@ class _PasswordInput extends StatelessWidget {
               context.read<LoginCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'password',
+            labelText: 'haslo',
             helperText: '',
-            errorText: state.password.invalid ? 'invalid password' : null,
+            errorText: state.password.invalid ? 'niepoprawne haslo' : null,
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(10)
@@ -170,7 +170,7 @@ class _LoginButton extends StatelessWidget {
           onPressed: state.status.isValidated
               ? () => context.read<LoginCubit>().logInWithCredentials()
               : null,
-          child: const Text('LOGIN'),
+                child: const Text('LOGIN'),
         );
       },
     );
