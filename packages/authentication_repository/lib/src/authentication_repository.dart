@@ -4,6 +4,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cache/cache.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
@@ -82,6 +83,80 @@ class LogInWithEmailAndPasswordFailure implements Exception {
   final String message;
 }
 
+class PasswordResetFailure implements Exception {
+  const PasswordResetFailure([
+    this.message = 'An unknown exception occurred.',
+  ]);
+
+  factory PasswordResetFailure.fromCode(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return const PasswordResetFailure(
+          'Email is not valid or badly formatted.',
+        );
+      case 'user-disabled':
+        return const PasswordResetFailure(
+          'This user has been disabled. Please contact support for help.',
+        );
+      case 'user-not-found':
+        return const PasswordResetFailure(
+          'Email is not found, please create an account.',
+        );
+      default:
+        return const PasswordResetFailure();
+    }
+  }
+
+  final String message;
+}
+
+class LogInWithFacebookFailure implements Exception {
+  const LogInWithFacebookFailure([
+    this.message = 'An unknown exception occurred.',
+  ]);
+
+  factory LogInWithFacebookFailure.fromCode(String code) {
+    switch (code) {
+      case 'account-exists-with-different-credential':
+        return const LogInWithFacebookFailure(
+          'Account exists with different credentials.',
+        );
+      case 'invalid-credential':
+        return const LogInWithFacebookFailure(
+          'The credential received is malformed or has expired.',
+        );
+      case 'operation-not-allowed':
+        return const LogInWithFacebookFailure(
+          'Operation is not allowed.  Please contact support.',
+        );
+      case 'user-disabled':
+        return const LogInWithFacebookFailure(
+          'This user has been disabled. Please contact support for help.',
+        );
+      case 'user-not-found':
+        return const LogInWithFacebookFailure(
+          'Email is not found, please create an account.',
+        );
+      case 'wrong-password':
+        return const LogInWithFacebookFailure(
+          'Incorrect password, please try again.',
+        );
+      case 'invalid-verification-code':
+        return const LogInWithFacebookFailure(
+          'The credential verification code received is invalid.',
+        );
+      case 'invalid-verification-id':
+        return const LogInWithFacebookFailure(
+          'The credential verification ID received is invalid.',
+        );
+      default:
+        return const LogInWithFacebookFailure();
+    }
+  }
+
+  final String message;
+}
+
 
 /// Thrown during the sign in with google process if a failure occurs.
 /// https://pub.dev/documentation/firebase_auth/latest/firebase_auth/FirebaseAuth/signInWithCredential.html
@@ -142,13 +217,16 @@ class AuthenticationRepository {
     CacheClient? cache,
     firebase_auth.FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
+    FacebookAuth? facebookAuth,
   })  : _cache = cache ?? CacheClient(),
         _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ?? GoogleSignIn.standard();
+        _googleSignIn = googleSignIn ?? GoogleSignIn.standard(),
+        _facebookAuth = FacebookAuth.instance;
 
   final CacheClient _cache;
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  final FacebookAuth _facebookAuth;
 
   @visibleForTesting
   bool isWeb = kIsWeb;
@@ -219,6 +297,22 @@ class AuthenticationRepository {
     }
   }
 
+  Future<void> logInWithFacebook() async {
+      try {
+        late final firebase_auth.AuthCredential credential;
+        final LoginResult loginResult = await _facebookAuth.login();
+        final test = loginResult.accessToken?.token;
+        if (test != null){
+          credential = firebase_auth.FacebookAuthProvider.credential(test);
+        }
+        await _firebaseAuth.signInWithCredential(credential);
+      } on firebase_auth.FirebaseAuthException catch (e) {
+        throw LogInWithFacebookFailure.fromCode(e.code);
+      }catch (_) {
+        throw const LogInWithFacebookFailure();
+      }
+  }
+
   /// Signs in with the provided [email] and [password].
   ///
   /// Throws a [LogInWithEmailAndPasswordFailure] if an exception occurs.
@@ -238,6 +332,19 @@ class AuthenticationRepository {
     }
   }
 
+  Future<void> passwordReset({
+    required String email,
+  }) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(
+          email: email);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw PasswordResetFailure.fromCode(e.code);
+    } catch (_) {
+      throw const LogInWithEmailAndPasswordFailure();
+    }
+  }
+
   /// Signs out the current user which will emit
   /// [User.empty] from the [user] Stream.
   ///
@@ -247,6 +354,7 @@ class AuthenticationRepository {
       await Future.wait([
         _firebaseAuth.signOut(),
         _googleSignIn.signOut(),
+        _facebookAuth.logOut(),
       ]);
     } catch (_) {
       throw LogOutFailure();

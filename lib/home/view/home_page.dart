@@ -14,11 +14,14 @@ class HomePage extends StatelessWidget {
     final user = context.select((AppBloc bloc) => bloc.state.user);
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
         title: const Text('Home'),
         actions: <Widget>[
           IconButton(
             key: const Key('homePage_logout_iconButton'),
             icon: const Icon(Icons.exit_to_app),
+            color: Colors.black87,
             onPressed: () {
               context.read<AppBloc>().add(const AppLogoutRequested());
             },

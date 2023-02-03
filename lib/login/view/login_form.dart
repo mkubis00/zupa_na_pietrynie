@@ -5,6 +5,8 @@ import 'package:zupa_na_pietrynie/sign_up/sign_up.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:formz/formz.dart';
 
+import '../../password_reset/view/password_reset_page.dart';
+
 class LoginForm extends StatelessWidget {
   const LoginForm({super.key});
 
@@ -170,7 +172,7 @@ class _LoginButton extends StatelessWidget {
           onPressed: state.status.isValidated
               ? () => context.read<LoginCubit>().logInWithCredentials()
               : null,
-                child: const Text('LOGIN'),
+                child: const Text('ZALOGUJ SIĘ'),
         );
       },
     );
@@ -216,7 +218,7 @@ class _FacebookLoginButton extends StatelessWidget {
         backgroundColor: Colors.blueAccent,
       ),
       icon: const Icon(FontAwesomeIcons.facebook, color: Colors.white),
-      onPressed: () => context.read<LoginCubit>().logInWithGoogle(),
+      onPressed: () => context.read<LoginCubit>().logInWithFacebook(),
     );
   }
 }
@@ -230,7 +232,10 @@ class _SignUpButton extends StatelessWidget {
       onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
       child: Text(
         'Stwórz konto',
-        style: TextStyle(color: theme.primaryColor),
+        style: TextStyle(
+          color: Colors.black87,
+          fontWeight: FontWeight.w900,
+        ),
       ),
     );
   }
@@ -242,10 +247,13 @@ class _PasswordResetButton extends StatelessWidget {
     final theme = Theme.of(context);
     return TextButton(
       key: const Key('loginForm_createAccount_flatButton'),
-      onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
+      onPressed: () => Navigator.of(context).push<void>(PasswordResetPage.route()),
       child: Text(
         'zresetuj haslo',
-        style: TextStyle(color: theme.primaryColor),
+        style: TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.w900,
+        ),
       ),
     );
   }
