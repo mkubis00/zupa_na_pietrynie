@@ -35,10 +35,6 @@ class UpdateUserCredentialsForm extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Align(
-                  alignment: Alignment.topCenter,
-                  child: Avatar(photo: user.photo),
-              ),
               SizedBox(
                   width: width*0.85,
                   child:
@@ -46,7 +42,7 @@ class UpdateUserCredentialsForm extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Container(
                       child: Text(
-                        "Chcesz mnienić swoje dane?",
+                        "Chcesz edytować swoje dane?",
                         style: TextStyle(
                             fontWeight: FontWeight.w900,
                             fontSize: 30
@@ -68,6 +64,11 @@ class UpdateUserCredentialsForm extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
+              const SizedBox(height: 35),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Avatar(photo: user.photo),
               ),
               const SizedBox(height: 25),
               SizedBox(
@@ -197,7 +198,6 @@ class _SaveButton extends StatelessWidget {
           onPressed: () {
             if (state.status.isValidated) {
               context.read<UserCredentialsCubit>().updateUserCredentials();
-              Navigator.pop(context);
             }
           },
                 child: const Text('ZMODYFIKUJ DANE'),
