@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
 
+
 class SignUpWithEmailAndPasswordFailure implements Exception {
   const SignUpWithEmailAndPasswordFailure([
     this.message = 'An unknown exception occurred.',
@@ -208,6 +209,53 @@ class LogInWithGoogleFailure implements Exception {
   final String message;
 }
 
+class UpdateUserCredentialsFailure implements Exception {
+  const UpdateUserCredentialsFailure([
+    this.message = 'An unknown exception occurred.',
+  ]);
+
+  factory UpdateUserCredentialsFailure.fromCode(String code) {
+    switch (code) {
+      case 'account-exists-with-different-credential':
+        return const UpdateUserCredentialsFailure(
+          'Account exists with different credentials.',
+        );
+      case 'invalid-credential':
+        return const UpdateUserCredentialsFailure(
+          'The credential received is malformed or has expired.',
+        );
+      case 'operation-not-allowed':
+        return const UpdateUserCredentialsFailure(
+          'Operation is not allowed.  Please contact support.',
+        );
+      case 'user-disabled':
+        return const UpdateUserCredentialsFailure(
+          'This user has been disabled. Please contact support for help.',
+        );
+      case 'user-not-found':
+        return const UpdateUserCredentialsFailure(
+          'Email is not found, please create an account.',
+        );
+      case 'wrong-password':
+        return const UpdateUserCredentialsFailure(
+          'Incorrect password, please try again.',
+        );
+      case 'invalid-verification-code':
+        return const UpdateUserCredentialsFailure(
+          'The credential verification code received is invalid.',
+        );
+      case 'invalid-verification-id':
+        return const UpdateUserCredentialsFailure(
+          'The credential verification ID received is invalid.',
+        );
+      default:
+        return const UpdateUserCredentialsFailure();
+    }
+  }
+
+  final String message;
+}
+
 
 class LogOutFailure implements Exception {}
 
@@ -261,6 +309,8 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
+      _firebaseAuth.currentUser?.sendEmailVerification();
+      logOut();
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {
@@ -342,6 +392,21 @@ class AuthenticationRepository {
       throw PasswordResetFailure.fromCode(e.code);
     } catch (_) {
       throw const LogInWithEmailAndPasswordFailure();
+    }
+  }
+
+  Future<void> updateUserCredentials({
+    required String email,
+    required String name,
+  }) async {
+    try {
+      // await _firebaseAuth.currentUser?.updateEmail(email);
+      print("zaczynam2");
+      await _firebaseAuth.currentUser?.updateDisplayName(name);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw UpdateUserCredentialsFailure.fromCode(e.code);
+    } catch (_) {
+      throw const UpdateUserCredentialsFailure();
     }
   }
 
