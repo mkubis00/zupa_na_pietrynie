@@ -21,7 +21,7 @@ class HomePage extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             key: const Key('homePage_logout_iconButton'),
-            icon: const Icon(Icons.exit_to_app),
+            icon: const Icon(Icons.settings),
             color: Colors.black87,
             onPressed: () => Navigator.of(context).push<void>(UserCredentialsPage.route()),
           )
