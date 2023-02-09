@@ -1,15 +1,17 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zupa_na_pietrynie/user_credentials/cubit/user_credentials_cubit.dart';
-import 'package:zupa_na_pietrynie/user_credentials/view/user_credentials_form.dart';
+import 'package:zupa_na_pietrynie/settings_options/view/settings_optins_form.dart';
+
+import '../cubit/settings_options_cubit.dart';
 
 
-class UserCredentialsPage extends StatelessWidget {
-  const UserCredentialsPage({super.key});
+
+class SettingOptionsPage extends StatelessWidget {
+  const SettingOptionsPage({super.key});
 
   static Route<void> route() {
-    return MaterialPageRoute<void>(builder: (_) => const UserCredentialsPage());
+    return MaterialPageRoute<void>(builder: (_) => const SettingOptionsPage());
   }
 
   @override
@@ -27,8 +29,8 @@ class UserCredentialsPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8),
         child: BlocProvider(
-          create: (_) => UserCredentialsCubit(context.read<AuthenticationRepository>()),
-          child: const UpdateUserCredentialsForm(),
+          create: (_) => SettingOptionsCubit(context.read<AuthenticationRepository>()),
+          child: const SettingOptionsForm(),
         ),
       ),
     );

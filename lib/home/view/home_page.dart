@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/app/app.dart';
 import 'package:zupa_na_pietrynie/home/home.dart';
-import 'package:zupa_na_pietrynie/user_credentials/user_credentials.dart';
+
+import '../../settings_options/view/settings_options_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -23,7 +24,7 @@ class HomePage extends StatelessWidget {
             key: const Key('homePage_logout_iconButton'),
             icon: const Icon(Icons.settings),
             color: Colors.black87,
-            onPressed: () => Navigator.of(context).push<void>(UserCredentialsPage.route()),
+            onPressed: () => Navigator.of(context).push<void>(SettingOptionsPage.route()),
           )
         ],
       ),

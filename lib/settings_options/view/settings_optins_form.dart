@@ -7,17 +7,17 @@ import 'package:zupa_na_pietrynie/login/login.dart';
 
 import '../../app/bloc/app_bloc.dart';
 import '../../home/widgets/avatar.dart';
-import '../cubit/user_credentials_cubit.dart';
+import '../cubit/settings_options_cubit.dart';
 
-class UpdateUserCredentialsForm extends StatelessWidget {
-  const UpdateUserCredentialsForm({super.key});
+class SettingOptionsForm extends StatelessWidget {
+  const SettingOptionsForm({super.key});
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final user = context.select((AppBloc bloc) => bloc.state.user);
     print(user.name);
-    return BlocListener<UserCredentialsCubit, UserCredentialUpdateState>(
+    return BlocListener<SettingOptionsCubit, SettingOptionsState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
           ScaffoldMessenger.of(context)
@@ -117,13 +117,13 @@ class _EmailInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCredentialsCubit, UserCredentialUpdateState>(
+    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextFormField(
           initialValue: this.email,
           key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) => context.read<UserCredentialsCubit>().emailChanged(email),
+          onChanged: (email) => context.read<SettingOptionsCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
               helperText: '',
@@ -148,13 +148,13 @@ class _EmailInput extends StatelessWidget {
 class _NameInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCredentialsCubit, UserCredentialUpdateState>(
+    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextFormField(
           initialValue: this.name,
           key: const Key('nameForm_nameInput_textField'),
-          onChanged: (email) => context.read<UserCredentialsCubit>().nameChanged(email),
+          onChanged: (email) => context.read<SettingOptionsCubit>().nameChanged(email),
           keyboardType: TextInputType.name,
           decoration: InputDecoration(
               helperText: '',
@@ -179,7 +179,7 @@ class _NameInput extends StatelessWidget {
 class _SaveButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCredentialsCubit, UserCredentialUpdateState>(
+    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
@@ -197,7 +197,7 @@ class _SaveButton extends StatelessWidget {
           //     : null,
           onPressed: () {
             if (state.status.isValidated) {
-              context.read<UserCredentialsCubit>().updateUserCredentials();
+              context.read<SettingOptionsCubit>().updateUserCredentials();
             }
           },
                 child: const Text('ZMODYFIKUJ DANE'),
@@ -211,7 +211,7 @@ class _SaveButton extends StatelessWidget {
 class _LogoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserCredentialsCubit, UserCredentialUpdateState>(
+    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress

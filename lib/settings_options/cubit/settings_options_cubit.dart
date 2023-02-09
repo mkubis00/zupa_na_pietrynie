@@ -4,10 +4,10 @@ import 'package:equatable/equatable.dart';
 import 'package:form_inputs/form_inputs.dart';
 import 'package:formz/formz.dart';
 
-part 'user_credentials_state.dart';
+part 'settings_options_state.dart';
 
-class UserCredentialsCubit extends Cubit<UserCredentialUpdateState> {
-  UserCredentialsCubit(this._authenticationRepository) : super(const UserCredentialUpdateState());
+class SettingOptionsCubit extends Cubit<SettingOptionsState> {
+  SettingOptionsCubit(this._authenticationRepository) : super(const SettingOptionsState());
 
   final AuthenticationRepository _authenticationRepository;
 

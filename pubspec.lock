@@ -95,6 +95,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  cloud_firestore:
+    dependency: transitive
+    description:
+      name: cloud_firestore
+      sha256: "428391e4bc9f968799c810ea96abee94a50645d8efdd31b58dde4349bd98f428"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.2"
   cloud_firestore_platform_interface:
     dependency: transitive
     description:
@@ -183,6 +191,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  firebase_analytics:
+    dependency: transitive
+    description:
+      name: firebase_analytics
+      sha256: "86abca5eb671b387c738924f341ec3c91021464e21fdf4132bacfeed1d0ea5fa"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.0.2"
+  firebase_analytics_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_analytics_platform_interface
+      sha256: "9db26ef05cd3fec682b4652ee9ecd40b7c2f6ef97e100a53afe8ae3b03506a45"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.10"
+  firebase_analytics_web:
+    dependency: transitive
+    description:
+      name: firebase_analytics_web
+      sha256: cbc6bdb14b3090f72d15a06f7d856c82444e75fd76a75e1da8cffeae98d066c0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1+1"
   firebase_auth:
     dependency: transitive
     description:

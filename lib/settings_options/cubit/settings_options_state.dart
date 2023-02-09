@@ -1,7 +1,7 @@
-part of 'user_credentials_cubit.dart';
+part of 'settings_options_cubit.dart';
 
-class UserCredentialUpdateState extends Equatable {
-  const UserCredentialUpdateState({
+class SettingOptionsState extends Equatable {
+  const SettingOptionsState({
     this.email = const Email.pure(),
     this.name = const Name.pure(),
     this.status = FormzStatus.pure,
@@ -16,13 +16,13 @@ class UserCredentialUpdateState extends Equatable {
   @override
   List<Object> get props => [email, name];
 
-  UserCredentialUpdateState copyWith({
+  SettingOptionsState copyWith({
     Email? email,
     Name? name,
     FormzStatus? status,
     String? errorMessage,
   }) {
-    return UserCredentialUpdateState(
+    return SettingOptionsState(
       email: email ?? this.email,
       name: name ?? this.name,
       status: status ?? this.status,
