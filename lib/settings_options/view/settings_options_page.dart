@@ -30,7 +30,7 @@ class SettingOptionsPage extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: BlocProvider(
           create: (_) => SettingOptionsCubit(context.read<AuthenticationRepository>()),
-          child: const SettingOptionsForm(),
+          child: SettingsOptionsForm()
         ),
       ),
     );
