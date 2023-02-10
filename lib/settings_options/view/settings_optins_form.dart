@@ -149,7 +149,7 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
               SizedBox(
                   width: width*0.85,
                   child: Text(
-                  "Masz pytania? Znalazleś blędy w aplikacji? \n "
+                  "Masz pytania? Znalazleś/aś bląd w aplikacji? \n "
                       "Wyslij nam e-mail na adres",
                   textAlign: TextAlign.center,
                   style: TextStyle(
