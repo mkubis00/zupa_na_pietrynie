@@ -50,5 +50,16 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
           emit(state.copyWith(status: FormzStatus.submissionFailure));
       }
     }
+
+  Future<void> deleteAccount() async {
+    if (!state.status.isValidated) return;
+    emit(state.copyWith(status: FormzStatus.submissionInProgress));
+    try {
+      await _authenticationRepository.deleteAccount();
+      emit(state.copyWith(status: FormzStatus.submissionSuccess));
+    } catch (_) {
+      emit(state.copyWith(status: FormzStatus.submissionFailure));
+    }
   }
+}
 

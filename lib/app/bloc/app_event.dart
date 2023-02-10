@@ -13,3 +13,7 @@ class _AppUserChanged extends AppEvent {
 
   final User user;
 }
+
+class AppDeleteUserRequested extends AppEvent {
+  const AppDeleteUserRequested();
+}

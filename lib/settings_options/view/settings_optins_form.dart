@@ -71,7 +71,8 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Ustawienia użytkownika'),
+                    Text('Ustawienia użytkownika',
+                    style: TextStyle(color: Colors.black)),
                     // SizedBox(
                     //   width: 20,
                     // ),
@@ -80,10 +81,12 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                       Icon(
                         Icons.add_box_outlined,
                         size: 24.0,
+                        color: Colors.black,
                       ) else
                       Icon(
                         Icons.add_box,
                         size: 24.0,
+                        color: Colors.black,
                       ),
                   ],
                 ),
@@ -95,12 +98,15 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
               ),
               if (this.isUserOptions) const SizedBox(height: 15),
               if (this.isUserOptions) const SizedBox(height: 8),
+              if (this.isUserOptions) SizedBox(width: width*0.85, child: _MailInput("Test@test.com")),
               if (this.isUserOptions) SizedBox(width: width*0.85, child: _MailReset()),
-              if (this.isUserOptions) const SizedBox(height: 8),
-              if (this.isUserOptions) SizedBox(width: width*0.85, child: _PasswordReset()),
               if (this.isUserOptions) const SizedBox(height: 30),
-              if (this.isUserOptions) SizedBox(width: width*0.85, child: _NameInput("")),
+              if (this.isUserOptions) SizedBox(width: width*0.85, child: _NameInput("Test name")),
               if (this.isUserOptions) SizedBox(width: width*0.85, child: _SaveNewName()),
+              // if (this.isUserOptions) const SizedBox(height: 8),
+              // if (this.isUserOptions) SizedBox(width: width*0.85, child: _PasswordReset()),
+              if (this.isUserOptions) const SizedBox(height: 10),
+              if (this.isUserOptions) SizedBox(width: width*0.85, child: _DeleteAccount()),
               if (this.isUserOptions) const SizedBox(height: 8),
               SizedBox(width: width*0.9, child:
               OutlinedButton(
@@ -116,7 +122,8 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Ustawienia aplikacji'),
+                    Text('Ustawienia aplikacji',
+                    style: TextStyle(color: Colors.black)),
                     // SizedBox(
                     //   width: 20,
                     // ),
@@ -125,14 +132,17 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                       Icon(
                         Icons.add_box_outlined,
                         size: 24.0,
+                        color: Colors.black,
                       ) else
                       Icon(
                         Icons.add_box,
                         size: 24.0,
+                        color: Colors.black,
                       ),
                   ],
                 ),
               )),
+              if (this.isAppOptions)  Text("Ustawienia aplikacji zostaną dodane wkrótce"),
               const SizedBox(height: 15),
               SizedBox(width: width*0.85, child: _LogoutButton()),
               const SizedBox(height: 15),
@@ -147,6 +157,7 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                   ),
                   ),
                   ),
+              const SizedBox(height: 2),
               SizedBox(
                 width: width*0.85,
                 child: Text(
@@ -154,6 +165,17 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontWeight: FontWeight.w900,
+                      fontSize: 15
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: width*0.85,
+                child: Text(
+                  "Zupa na Pietrynie @ 2023",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
                       fontSize: 15
                   ),
                 ),
@@ -183,7 +205,7 @@ class _MailReset extends StatelessWidget {
             backgroundColor: const Color(0xFFFFFFFF),
           ),
           onPressed: () {},
-          child: const Text('Zreseruj swój e-mail',
+          child: const Text('Zapisz nowy e-mail',
           style: TextStyle(color: Colors.black),),
         );
       },
@@ -208,7 +230,7 @@ class _PasswordReset extends StatelessWidget {
             backgroundColor: const Color(0xFFFFFFFF),
           ),
           onPressed: () {},
-          child: const Text('Zreseruj swoje haslo',
+          child: const Text('Zmień swoje haslo',
           style: TextStyle(color: Colors.black)),
         );
       },
@@ -230,6 +252,7 @@ class _NameInput extends StatelessWidget {
           keyboardType: TextInputType.name,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
+            prefixText: "Nazwa użytkownika:",
             contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
               helperText: '',
               errorText: state.name.invalid ? 'niepoprawna nazwa użytkownika' : null,
@@ -252,6 +275,44 @@ class _NameInput extends StatelessWidget {
   late final String? name;
 }
 
+class _MailInput extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
+      buildWhen: (previous, current) => previous.name != current.name,
+      builder: (context, state) {
+        return
+          TextFormField(
+            initialValue: this.name,
+            key: const Key('nameForm_nameInput_textField'),
+            onChanged: (email) => context.read<SettingOptionsCubit>().nameChanged(email),
+            keyboardType: TextInputType.name,
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(
+              prefixText: "E-mail:",
+              contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              helperText: '',
+              errorText: state.name.invalid ? 'niepoprawna nazwa użytkownika' : null,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              // enabledBorder: OutlineInputBorder(
+              //     borderRadius: BorderRadius.circular(10)
+              // )
+            ),
+          );
+      },
+    );
+  }
+
+  _MailInput(String? name) {
+    this.name = name;
+  }
+
+  late final String? name;
+}
+
+
 class _SaveNewName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -263,20 +324,80 @@ class _SaveNewName extends StatelessWidget {
             : ElevatedButton(
           key: const Key('loginForm_continue_raisedButton'),
           style: ElevatedButton.styleFrom(
-            elevation: 8,
+            elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             backgroundColor: const Color(0xFFFFFFFF),
           ),
           onPressed: () {},
-          child: const Text('Zapisz nazwe użytkownika',
+          child: const Text('Zapisz nazwę użytkownika',
               style: TextStyle(color: Colors.black)),
         );
       },
     );
   }
 }
+
+class _DeleteAccount extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      key: const Key('loginForm_continue_raisedButton'),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        backgroundColor: const Color(0xFFD21515),
+      ),
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Usunięcie konta'),
+          content: const Text('Czy na pewno chcesz usunąć swoje konto? Przywrócenie konta nie będzie możliwe.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Anuluj'),
+            ),
+            TextButton(
+              onPressed:
+                  () {
+                context.read<AppBloc>().add(const AppDeleteUserRequested());
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              },
+              child: const Text('Usuń'),
+            ),
+          ],
+        ),
+
+      ),
+      child: const Text('Usuń konto',
+          style: TextStyle(color: Colors.white)),
+    );
+  }
+}
+
+class _LogoutButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      key: const Key('loginForm_continue_raisedButton'),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        backgroundColor: const Color(0xFF181313),
+      ),
+      onPressed: () {
+        context.read<AppBloc>().add(const AppLogoutRequested());
+        Navigator.pop(context);
+      },
+      child: const Text('WYLOGUJ SIĘ'),
+    );
+  }
+}
+
 
 // SizedBox(
 // width: width*0.85,
@@ -347,93 +468,3 @@ class _SaveNewName extends StatelessWidget {
 // SizedBox(width: width*0.85, child: _SaveButton()),
 // const SizedBox(height: 8),
 // SizedBox(width: width*0.85, child: _LogoutButton()),
-
-class _EmailInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
-        return TextFormField(
-          initialValue: this.email,
-          key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) => context.read<SettingOptionsCubit>().emailChanged(email),
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-              helperText: '',
-              errorText: state.email.invalid ? 'niepoprawny e-mail' : null,
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1),
-                  borderRadius: BorderRadius.circular(10)
-              )
-          ),
-        );
-      },
-    );
-  }
-
-  _EmailInput(String? email) {
-    this.email = email;
-  }
-
-  late final String? email;
-}
-
-class _SaveButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-          key: const Key('loginForm_continue_raisedButton'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: const Color(0xFF181313),
-          ),
-          // onPressed: state.status.isValidated
-          //     ? () => context.read<UserCredentialsCubit>().updateUserCredentials()
-          //     : null,
-          onPressed: () {
-            if (state.status.isValidated) {
-              context.read<SettingOptionsCubit>().updateUserCredentials();
-            }
-          },
-                child: const Text('ZMODYFIKUJ DANE'),
-        );
-      },
-    );
-  }
-}
-
-
-class _LogoutButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-          key: const Key('loginForm_continue_raisedButton'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: const Color(0xFF181313),
-          ),
-          onPressed: () {
-            context.read<AppBloc>().add(const AppLogoutRequested());
-            Navigator.pop(context);
-          },
-          child: const Text('WYLOGUJ SIĘ'),
-        );
-      },
-    );
-  }
-}

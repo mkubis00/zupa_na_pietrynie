@@ -173,6 +173,12 @@ class AuthenticationRepository {
     }
   }
 
+  Future<void> deleteAccount() async {
+    _firebaseFirestore.collection("deleted_users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+    _firebaseFirestore.collection("users").doc(currentUser.id).delete();
+    await _firebaseAuth.currentUser?.delete();
+  }
+
   Future<void> logOut() async {
     try {
       await Future.wait([

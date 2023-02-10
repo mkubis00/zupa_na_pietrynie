@@ -17,6 +17,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
       ) {
     on<_AppUserChanged>(_onUserChanged);
     on<AppLogoutRequested>(_onLogoutRequested);
+    on<AppDeleteUserRequested>(_onDeleteAccountRequested);
     _userSubscription = _authenticationRepository.user.listen(
           (user) => add(_AppUserChanged(user)),
     );
@@ -35,6 +36,13 @@ class AppBloc extends Bloc<AppEvent, AppState> {
 
   void _onLogoutRequested(AppLogoutRequested event, Emitter<AppState> emit) {
     unawaited(_authenticationRepository.logOut());
+  }
+
+  void _onDeleteAccountRequested(AppDeleteUserRequested event, Emitter<AppState> emit) {
+    unawaited(_authenticationRepository.deleteAccount());
+    emit(
+      AppState.unauthenticated()
+    );
   }
 
   @override
