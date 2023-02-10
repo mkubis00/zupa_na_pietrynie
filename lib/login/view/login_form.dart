@@ -160,14 +160,14 @@ class _LoginButton extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
+            ? const CircularProgressIndicator(color: Colors.black)
             : ElevatedButton(
           key: const Key('loginForm_continue_raisedButton'),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            backgroundColor: const Color(0xFFFFD600),
+            backgroundColor: Colors.indigoAccent,
           ),
           onPressed: state.status.isValidated
               ? () => context.read<LoginCubit>().logInWithCredentials()

@@ -25,7 +25,7 @@ class PasswordResetForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text("Na podany adres e-mail wyślaliśmy link umożliwiający resetowanie hasla."),
+                content: Text("Na podany adres e-mail wyślaliśmy link umożliwiający zresetowanie hasla."),
               ),
             );
           Navigator.of(context).pop();
