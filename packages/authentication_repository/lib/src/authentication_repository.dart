@@ -62,7 +62,6 @@ class AuthenticationRepository {
         password: password,
       );
       _firebaseAuth.currentUser?.sendEmailVerification();
-      // _firebaseFirestore.collection("users").add(currentUser.toJsonUserInit()).then((DocumentReference doc) => print('DocumentSnapshot added with ID: ${doc.id}'));
       _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
       logOut();
     } on firebase_auth.FirebaseAuthException catch (e) {
@@ -90,11 +89,13 @@ class AuthenticationRepository {
         );
       }
       await _firebaseAuth.signInWithCredential(credential);
-      // _firebaseFirestore.collection("users").add(currentUser.toJsonUserInit()).then((DocumentReference doc) =>
-      //     print('DocumentSnapshot added with ID: ${doc.id}'));
-      _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
-      print("tutaj");
-      print(_firebaseFirestore.collection("users").doc(currentUser.id).get());
+      var databaseUser = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+      if(databaseUser.exists){
+        print('Exists');
+      }
+      if(!databaseUser.exists){
+        _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+      }
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithGoogleFailure.fromCode(e.code);
     } catch (_) {
@@ -111,9 +112,13 @@ class AuthenticationRepository {
           credential = firebase_auth.FacebookAuthProvider.credential(test);
         }
         await _firebaseAuth.signInWithCredential(credential);
-        await _firebaseAuth.signInWithCredential(credential);
-        _firebaseFirestore.collection("users").add(currentUser.toJsonUserInit()).then((DocumentReference doc) =>
-            print('DocumentSnapshot added with ID: ${doc.id}'));
+        var databaseUser = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+        if(databaseUser.exists){
+          print('Exists');
+        }
+        if(!databaseUser.exists){
+          _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+        }
       } on firebase_auth.FirebaseAuthException catch (e) {
         throw LogInWithFacebookFailure.fromCode(e.code);
       }catch (_) {
@@ -130,6 +135,7 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
+      var databaseUser = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {
