@@ -20,6 +20,15 @@ class PasswordResetForm extends StatelessWidget {
                 content: Text(state.errorMessage ?? 'Password reset Failure'),
               ),
             );
+        } else if (state.status.isSubmissionSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text("Na podany adres e-mail wyślaliśmy link umożliwiający resetowanie hasla."),
+              ),
+            );
+          Navigator.of(context).pop();
         }
       },
       child: Align(

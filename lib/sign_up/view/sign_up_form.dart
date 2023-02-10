@@ -12,6 +12,13 @@ class SignUpForm extends StatelessWidget {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state.status.isSubmissionSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text("Stworzono konto, aby się zalogować zweryfikuj swój e-mail."),
+              ),
+            );
           Navigator.of(context).pop();
         } else if (state.status.isSubmissionFailure) {
           ScaffoldMessenger.of(context)

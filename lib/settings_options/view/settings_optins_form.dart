@@ -358,7 +358,8 @@ class _DeleteAccount extends StatelessWidget {
           actions: <Widget>[
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Anuluj'),
+              child: const Text('Anuluj',
+              style: TextStyle(color: Colors.black)),
             ),
             TextButton(
               onPressed:
@@ -366,7 +367,8 @@ class _DeleteAccount extends StatelessWidget {
                 context.read<AppBloc>().add(const AppDeleteUserRequested());
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
-              child: const Text('Usuń'),
+              child: const Text('Usuń',
+              style: TextStyle(color: Colors.red)),
             ),
           ],
         ),
