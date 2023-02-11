@@ -14,7 +14,7 @@ class SettingOptionsState extends Equatable {
   final String? errorMessage;
 
   @override
-  List<Object> get props => [email, name];
+  List<Object> get props => [email, name, status];
 
   SettingOptionsState copyWith({
     Email? email,

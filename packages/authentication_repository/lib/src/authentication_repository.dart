@@ -30,6 +30,7 @@ class AuthenticationRepository {
   final GoogleSignIn _googleSignIn;
   final FacebookAuth _facebookAuth;
   final FirebaseFirestore _firebaseFirestore;
+  bool isUserAdmin = false;
 
   @visibleForTesting
   bool isWeb = kIsWeb;
@@ -42,7 +43,7 @@ class AuthenticationRepository {
   ///
   /// Emits [User.empty] if the user is not authenticated.
   Stream<User> get user {
-    return _firebaseAuth.authStateChanges().map((firebaseUser) {
+    return _firebaseAuth.userChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
       _cache.write(key: userCacheKey, value: user);
       return user;
@@ -89,11 +90,12 @@ class AuthenticationRepository {
         );
       }
       await _firebaseAuth.signInWithCredential(credential);
-      var databaseUser = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
-      if(databaseUser.exists){
-        print('Exists');
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+      if(documentSnapshot.exists){
+        verifyDatabeUser(documentSnapshot);
+        this.isUserAdmin = documentSnapshot.get('isAdmin');
       }
-      if(!databaseUser.exists){
+      if(!documentSnapshot.exists){
         _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
@@ -101,6 +103,12 @@ class AuthenticationRepository {
     } catch (_) {
       throw const LogInWithGoogleFailure();
     }
+  }
+
+  void verifyDatabeUser(DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
+    documentSnapshot.get('email') != currentUser.email ? _firebaseFirestore.collection("users").doc(currentUser.id).update({'email' : currentUser.email}) : null;
+    documentSnapshot.get('name') != currentUser.name ? _firebaseFirestore.collection("users").doc(currentUser.id).update({'name' : currentUser.name}) : null;
+    documentSnapshot.get('photo') != currentUser.photo ? _firebaseFirestore.collection("users").doc(currentUser.id).update({'photo' : currentUser.photo}) : null;
   }
 
   Future<void> logInWithFacebook() async {
@@ -112,11 +120,12 @@ class AuthenticationRepository {
           credential = firebase_auth.FacebookAuthProvider.credential(test);
         }
         await _firebaseAuth.signInWithCredential(credential);
-        var databaseUser = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
-        if(databaseUser.exists){
-          print('Exists');
+        DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+        if(documentSnapshot.exists){
+          verifyDatabeUser(documentSnapshot);
+          this.isUserAdmin = documentSnapshot.get('isAdmin');
         }
-        if(!databaseUser.exists){
+        if(!documentSnapshot.exists){
           _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
         }
       } on firebase_auth.FirebaseAuthException catch (e) {
@@ -135,7 +144,8 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
-      var databaseUser = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+      this.isUserAdmin = documentSnapshot.get('isAdmin');
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {
@@ -153,6 +163,28 @@ class AuthenticationRepository {
       throw PasswordResetFailure.fromCode(e.code);
     } catch (_) {
       throw const LogInWithEmailAndPasswordFailure();
+    }
+  }
+
+  Future<void> updateUserName({
+    required String name
+  }) async {
+    try {
+      await _firebaseAuth.currentUser?.updateDisplayName(name);
+      await _firebaseFirestore.collection("users").doc(currentUser.id).update({'name' : name});
+    } catch (_) {
+      throw const UpdateUserCredentialsFailure();
+    }
+  }
+
+  Future<void> updateUserEmail({
+    required String email
+  }) async {
+    try {
+      await _firebaseAuth.currentUser?.updateEmail(email);
+      await _firebaseFirestore.collection("users").doc(currentUser.id).update({'email' : email});
+    } catch (_) {
+      throw const UpdateUserCredentialsFailure();
     }
   }
 
@@ -192,6 +224,7 @@ class AuthenticationRepository {
         _googleSignIn.signOut(),
         _facebookAuth.logOut(),
       ]);
+      this.isUserAdmin = false;
     } catch (_) {
       throw LogOutFailure();
     }

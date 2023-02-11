@@ -41,7 +41,7 @@ class AppBloc extends Bloc<AppEvent, AppState> {
   void _onDeleteAccountRequested(AppDeleteUserRequested event, Emitter<AppState> emit) {
     unawaited(_authenticationRepository.deleteAccount());
     emit(
-      AppState.unauthenticated()
+        AppState.unauthenticated()
     );
   }
 

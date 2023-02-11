@@ -32,6 +32,14 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                 content: Text(state.errorMessage ?? 'User credential failure'),
               ),
             );
+        } else if (state.status.isSubmissionSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text("Zaktualizowano wybrane dane użytkownika"),
+              ),
+            );
         }
       },
       child: Align(
@@ -94,13 +102,12 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                 ),
               if (this.isUserOptions) const SizedBox(height: 23),
               if (this.isUserOptions)
-                SizedBox(
-                    width: width * 0.85, child: _MailInput("Test@test.com")),
+                SizedBox(width: width * 0.85, child: _MailInput(user.email)),
               if (this.isUserOptions)
                 SizedBox(width: width * 0.85, child: _MailReset()),
               if (this.isUserOptions) const SizedBox(height: 30),
               if (this.isUserOptions)
-                SizedBox(width: width * 0.85, child: _NameInput("Test name")),
+                SizedBox(width: width * 0.85, child: _NameInput(user.name)),
               if (this.isUserOptions)
                 SizedBox(width: width * 0.85, child: _SaveNewName()),
               // if (this.isUserOptions) const SizedBox(height: 8),
@@ -192,7 +199,7 @@ class _MailReset extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
+            ? const CircularProgressIndicator(color: Colors.black)
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
                 style: ElevatedButton.styleFrom(
@@ -201,7 +208,10 @@ class _MailReset extends StatelessWidget {
                   ),
                   backgroundColor: const Color(0xFFFFFFFF),
                 ),
-                onPressed: () {},
+                onPressed: state.status.isValidated
+                    ? () =>
+                        context.read<SettingOptionsCubit>().updateUserEmail()
+                    : null,
                 child: const Text(
                   'Zapisz nowy e-mail',
                   style: TextStyle(color: Colors.black),
@@ -246,8 +256,8 @@ class _NameInput extends StatelessWidget {
         return TextFormField(
           initialValue: this.name,
           key: const Key('nameForm_nameInput_textField'),
-          onChanged: (email) =>
-              context.read<SettingOptionsCubit>().nameChanged(email),
+          onChanged: (name) =>
+              context.read<SettingOptionsCubit>().nameChanged(name),
           keyboardType: TextInputType.name,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
@@ -277,13 +287,13 @@ class _MailInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.name != current.name,
+      buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextFormField(
           initialValue: this.name,
           key: const Key('nameForm_nameInput_textField'),
           onChanged: (email) =>
-              context.read<SettingOptionsCubit>().nameChanged(email),
+              context.read<SettingOptionsCubit>().emailChanged(email),
           keyboardType: TextInputType.name,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
@@ -316,7 +326,7 @@ class _SaveNewName extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
+            ? const CircularProgressIndicator(color: Colors.black)
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
                 style: ElevatedButton.styleFrom(
@@ -326,7 +336,9 @@ class _SaveNewName extends StatelessWidget {
                   ),
                   backgroundColor: const Color(0xFFFFFFFF),
                 ),
-                onPressed: () {},
+                onPressed: state.status.isValidated
+                    ? () => context.read<SettingOptionsCubit>().updateUserName()
+                    : null,
                 child: const Text('Zapisz nazwę użytkownika',
                     style: TextStyle(color: Colors.black)),
               );
@@ -361,7 +373,8 @@ class _DeleteAccount extends StatelessWidget {
             TextButton(
               onPressed: () {
                 context.read<AppBloc>().add(const AppDeleteUserRequested());
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                    '/', (Route<dynamic> route) => false);
               },
               child: const Text('Usuń', style: TextStyle(color: Colors.red)),
             ),
@@ -392,73 +405,3 @@ class _LogoutButton extends StatelessWidget {
     );
   }
 }
-
-// SizedBox(
-// width: width*0.85,
-// child:
-// Align(
-// alignment: Alignment.centerLeft,
-// child: Container(
-// child: Text(
-// "Chcesz edytować swoje dane?",
-// style: TextStyle(
-// fontWeight: FontWeight.w900,
-// fontSize: 30
-// ),
-// ),
-// ),
-// )
-// ),
-// const SizedBox(height: 8),
-// SizedBox(
-// width: width*0.85,
-// child:
-// Align(
-// alignment: Alignment.centerLeft,
-// child: Text(
-// "Zmodyfikuj je tutaj",
-// style: TextStyle(
-// fontSize: 15
-// ),
-// ),
-// ),
-// ),
-// const SizedBox(height: 35),
-// Align(
-// alignment: Alignment.topCenter,
-// child: Avatar(photo: user.photo),
-// ),
-// const SizedBox(height: 25),
-// SizedBox(
-// width: width*0.85,
-// child:
-// Align(
-// alignment: Alignment.centerLeft,
-// child: Text(
-// "E-mail",
-// style: TextStyle(
-// fontSize: 15
-// ),
-// ),
-// ),
-// ),
-// SizedBox(width: width*0.85, child: _EmailInput(user.email)),
-// const SizedBox(height: 8),
-// SizedBox(
-// width: width*0.85,
-// child:
-// Align(
-// alignment: Alignment.centerLeft,
-// child: Text(
-// "Nazwa użytkownika",
-// style: TextStyle(
-// fontSize: 15
-// ),
-// ),
-// ),
-// ),
-// SizedBox(width: width*0.85, child: _NameInput(user.name)),
-// const SizedBox(height: 8),
-// SizedBox(width: width*0.85, child: _SaveButton()),
-// const SizedBox(height: 8),
-// SizedBox(width: width*0.85, child: _LogoutButton()),
