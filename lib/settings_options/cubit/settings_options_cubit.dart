@@ -17,7 +17,8 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
     emit(
       state.copyWith(
         email: email,
-        status: Formz.validate([email]),
+        emailStatus: Formz.validate([email]),
+        nameStatus: Formz.validate([state.name]),
       ),
     );
   }
@@ -27,74 +28,53 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
     emit(
       state.copyWith(
         name: name,
-        status: Formz.validate([name]),
+        nameStatus: Formz.validate([name]),
+        emailStatus: Formz.validate([state.email]),
       ),
     );
   }
 
   Future<void> updateUserName() async {
-    if (!state.status.isValidated) return;
-    emit(state.copyWith(status: FormzStatus.submissionInProgress));
+    if (!state.nameStatus.isValidated) return;
+    emit(state.copyWith(
+        nameStatus: FormzStatus.submissionInProgress,
+        emailStatus: Formz.validate([state.email]),
+    ));
     try {
       await _authenticationRepository.updateUserName(name: state.name.value);
-      emit(state.copyWith(status: FormzStatus.submissionSuccess));
+      emit(state.copyWith(nameStatus: FormzStatus.submissionSuccess));
+      emit(state.copyWith(nameStatus: FormzStatus.invalid));
     } on UpdateUserCredentialsFailure catch (e) {
       emit(
         state.copyWith(
           errorMessage: e.message,
-          status: FormzStatus.submissionFailure,
+          nameStatus: FormzStatus.submissionFailure,
         ),
       );
     } catch (_) {
-      emit(state.copyWith(status: FormzStatus.submissionFailure));
+      emit(state.copyWith(nameStatus: FormzStatus.submissionFailure));
     }
   }
 
   Future<void> updateUserEmail() async {
-    if (!state.status.isValidated) return;
-    emit(state.copyWith(status: FormzStatus.submissionInProgress));
+    if (!state.emailStatus.isValidated) return;
+    emit(state.copyWith(
+        emailStatus: FormzStatus.submissionInProgress,
+        nameStatus: Formz.validate([state.name]),
+    ));
     try {
       await _authenticationRepository.updateUserEmail(email: state.email.value);
-      emit(state.copyWith(status: FormzStatus.submissionSuccess));
+      emit(state.copyWith(emailStatus: FormzStatus.submissionSuccess));
+      emit(state.copyWith(emailStatus: FormzStatus.invalid));
     } on UpdateUserCredentialsFailure catch (e) {
       emit(
         state.copyWith(
           errorMessage: e.message,
-          status: FormzStatus.submissionFailure,
+          emailStatus: FormzStatus.submissionFailure,
         ),
       );
     } catch (_) {
-      emit(state.copyWith(status: FormzStatus.submissionFailure));
+      emit(state.copyWith(emailStatus: FormzStatus.submissionFailure));
     }
   }
-
-  // Future<void> updateUserCredentials() async {
-  //   if (!state.status.isValidated) return;
-  //   emit(state.copyWith(status: FormzStatus.submissionInProgress));
-  //   try {
-  //     await _authenticationRepository.updateUserCredentials(
-  //         email: state.email.value, name: state.name.value);
-  //     emit(state.copyWith(status: FormzStatus.submissionSuccess));
-  //   } on UpdateUserCredentialsFailure catch (e) {
-  //     emit(
-  //       state.copyWith(
-  //         errorMessage: e.message,
-  //         status: FormzStatus.submissionFailure,
-  //       ),
-  //     );
-  //   } catch (_) {
-  //     emit(state.copyWith(status: FormzStatus.submissionFailure));
-  //   }
-  // }
-
-// Future<void> deleteAccount() async {
-//   if (!state.status.isValidated) return;
-//   emit(state.copyWith(status: FormzStatus.submissionInProgress));
-//   try {
-//     await _authenticationRepository.deleteAccount();
-//     emit(state.copyWith(status: FormzStatus.submissionSuccess));
-//   } catch (_) {
-//     emit(state.copyWith(status: FormzStatus.submissionFailure));
-//   }
-// }
 }

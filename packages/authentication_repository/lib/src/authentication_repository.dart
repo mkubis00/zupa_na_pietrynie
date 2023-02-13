@@ -181,8 +181,13 @@ class AuthenticationRepository {
     required String email
   }) async {
     try {
+      print("dadada");
       await _firebaseAuth.currentUser?.updateEmail(email);
+      print("tatat");
       await _firebaseFirestore.collection("users").doc(currentUser.id).update({'email' : email});
+    } on firebase_auth.FirebaseException catch (e){
+      print(e.code);
+      throw UpdateUserCredentialsFailure.fromCode(e.code);
     } catch (_) {
       throw const UpdateUserCredentialsFailure();
     }
@@ -212,8 +217,8 @@ class AuthenticationRepository {
   }
 
   Future<void> deleteAccount() async {
-    _firebaseFirestore.collection("deleted_users").doc(currentUser.id).set(currentUser.toJsonUserInit());
-    _firebaseFirestore.collection("users").doc(currentUser.id).delete();
+    await _firebaseFirestore.collection("deleted_users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+    await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
     await _firebaseAuth.currentUser?.delete();
   }
 

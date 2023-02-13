@@ -24,7 +24,7 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
     final user = context.select((AppBloc bloc) => bloc.state.user);
     return BlocListener<SettingOptionsCubit, SettingOptionsState>(
       listener: (context, state) {
-        if (state.status.isSubmissionFailure) {
+        if (state.emailStatus.isSubmissionFailure) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -32,12 +32,20 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                 content: Text(state.errorMessage ?? 'User credential failure'),
               ),
             );
-        } else if (state.status.isSubmissionSuccess) {
+        } else if (state.emailStatus.isSubmissionSuccess) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text("Zaktualizowano wybrane dane użytkownika"),
+                content: Text("Zaktualizowano email użytkownika"),
+              ),
+            );
+        }  else if (state.nameStatus.isSubmissionSuccess) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text("Zaktualizowano nazwę użytkownika"),
               ),
             );
         }
@@ -196,9 +204,9 @@ class _MailReset extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) => previous.emailStatus != current.emailStatus,
       builder: (context, state) {
-        return state.status.isSubmissionInProgress
+        return state.emailStatus.isSubmissionInProgress
             ? const CircularProgressIndicator(color: Colors.black)
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
@@ -208,7 +216,7 @@ class _MailReset extends StatelessWidget {
                   ),
                   backgroundColor: const Color(0xFFFFFFFF),
                 ),
-                onPressed: state.status.isValidated
+                onPressed: state.emailStatus.isValidated
                     ? () =>
                         context.read<SettingOptionsCubit>().updateUserEmail()
                     : null,
@@ -222,30 +230,30 @@ class _MailReset extends StatelessWidget {
   }
 }
 
-class _PasswordReset extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: const Color(0xFFFFFFFF),
-                ),
-                onPressed: () {},
-                child: const Text('Zmień swoje haslo',
-                    style: TextStyle(color: Colors.black)),
-              );
-      },
-    );
-  }
-}
+// class _PasswordReset extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
+//       buildWhen: (previous, current) => previous.status != current.status,
+//       builder: (context, state) {
+//         return state.status.isSubmissionInProgress
+//             ? const CircularProgressIndicator()
+//             : ElevatedButton(
+//                 key: const Key('loginForm_continue_raisedButton'),
+//                 style: ElevatedButton.styleFrom(
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(10),
+//                   ),
+//                   backgroundColor: const Color(0xFFFFFFFF),
+//                 ),
+//                 onPressed: () {},
+//                 child: const Text('Zmień swoje haslo',
+//                     style: TextStyle(color: Colors.black)),
+//               );
+//       },
+//     );
+//   }
+// }
 
 class _NameInput extends StatelessWidget {
   @override
@@ -323,9 +331,9 @@ class _SaveNewName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) => previous.nameStatus != current.nameStatus,
       builder: (context, state) {
-        return state.status.isSubmissionInProgress
+        return state.nameStatus.isSubmissionInProgress
             ? const CircularProgressIndicator(color: Colors.black)
             : ElevatedButton(
                 key: const Key('loginForm_continue_raisedButton'),
@@ -336,7 +344,7 @@ class _SaveNewName extends StatelessWidget {
                   ),
                   backgroundColor: const Color(0xFFFFFFFF),
                 ),
-                onPressed: state.status.isValidated
+                onPressed: state.nameStatus.isValidated
                     ? () => context.read<SettingOptionsCubit>().updateUserName()
                     : null,
                 child: const Text('Zapisz nazwę użytkownika',
