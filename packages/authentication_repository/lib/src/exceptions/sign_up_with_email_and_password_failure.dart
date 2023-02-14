@@ -12,10 +12,6 @@ class SignUpWithEmailAndPasswordFailure implements Exception {
         return const SignUpWithEmailAndPasswordFailure(
           'Niepoprawny e-mail. Sprawdź poprawność maila.',
         );
-      case 'user-disabled':
-        return const SignUpWithEmailAndPasswordFailure(
-          'Uźytkownik zostal wylączony. Skontaktuj się z supportem aby uzyskać pomoc',
-        );
       case 'email-already-in-use':
         return const SignUpWithEmailAndPasswordFailure(
           'Konto z tym adresem e-mail już istnije.',

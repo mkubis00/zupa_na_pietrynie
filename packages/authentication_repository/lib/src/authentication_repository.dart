@@ -1,16 +1,18 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cache/cache.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
 import 'exceptions/exceptions.dart';
-
 
 class AuthenticationRepository {
   AuthenticationRepository({
@@ -18,11 +20,13 @@ class AuthenticationRepository {
     firebase_auth.FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
     FacebookAuth? facebookAuth,
+    FirebaseStorage? firebaseStorage,
     FirebaseFirestore? firebaseFirestore,
   })  : _cache = cache ?? CacheClient(),
         _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn.standard(),
         _facebookAuth = FacebookAuth.instance,
+        _firebaseStorage = FirebaseStorage.instance,
         _firebaseFirestore = FirebaseFirestore.instance;
 
   final CacheClient _cache;
@@ -30,6 +34,7 @@ class AuthenticationRepository {
   final GoogleSignIn _googleSignIn;
   final FacebookAuth _facebookAuth;
   final FirebaseFirestore _firebaseFirestore;
+  final FirebaseStorage _firebaseStorage;
   bool isUserAdmin = false;
 
   @visibleForTesting
@@ -63,7 +68,10 @@ class AuthenticationRepository {
         password: password,
       );
       _firebaseAuth.currentUser?.sendEmailVerification();
-      _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+      _firebaseFirestore
+          .collection("users")
+          .doc(currentUser.id)
+          .set(currentUser.toJsonUserInit());
       logOut();
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
@@ -90,13 +98,20 @@ class AuthenticationRepository {
         );
       }
       await _firebaseAuth.signInWithCredential(credential);
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
-      if(documentSnapshot.exists){
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          await _firebaseFirestore
+              .collection('users')
+              .doc(currentUser.id)
+              .get();
+      if (documentSnapshot.exists) {
         verifyDatabeUser(documentSnapshot);
         this.isUserAdmin = documentSnapshot.get('isAdmin');
       }
-      if(!documentSnapshot.exists){
-        _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+      if (!documentSnapshot.exists) {
+        _firebaseFirestore
+            .collection("users")
+            .doc(currentUser.id)
+            .set(currentUser.toJsonUserInit());
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithGoogleFailure.fromCode(e.code);
@@ -105,34 +120,57 @@ class AuthenticationRepository {
     }
   }
 
-  void verifyDatabeUser(DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
-    documentSnapshot.get('email') != currentUser.email ? _firebaseFirestore.collection("users").doc(currentUser.id).update({'email' : currentUser.email}) : null;
-    documentSnapshot.get('name') != currentUser.name ? _firebaseFirestore.collection("users").doc(currentUser.id).update({'name' : currentUser.name}) : null;
-    documentSnapshot.get('photo') != currentUser.photo ? _firebaseFirestore.collection("users").doc(currentUser.id).update({'photo' : currentUser.photo}) : null;
+  void verifyDatabeUser(
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
+    documentSnapshot.get('email') != currentUser.email
+        ? _firebaseFirestore
+            .collection("users")
+            .doc(currentUser.id)
+            .update({'email': currentUser.email})
+        : null;
+    documentSnapshot.get('name') != currentUser.name
+        ? _firebaseFirestore
+            .collection("users")
+            .doc(currentUser.id)
+            .update({'name': currentUser.name})
+        : null;
+    documentSnapshot.get('photo') != currentUser.photo
+        ? _firebaseFirestore
+            .collection("users")
+            .doc(currentUser.id)
+            .update({'photo': currentUser.photo})
+        : null;
   }
 
   Future<void> logInWithFacebook() async {
-      try {
-        late final firebase_auth.AuthCredential credential;
-        final LoginResult loginResult = await _facebookAuth.login();
-        final test = loginResult.accessToken?.token;
-        if (test != null){
-          credential = firebase_auth.FacebookAuthProvider.credential(test);
-        }
-        await _firebaseAuth.signInWithCredential(credential);
-        DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
-        if(documentSnapshot.exists){
-          verifyDatabeUser(documentSnapshot);
-          this.isUserAdmin = documentSnapshot.get('isAdmin');
-        }
-        if(!documentSnapshot.exists){
-          _firebaseFirestore.collection("users").doc(currentUser.id).set(currentUser.toJsonUserInit());
-        }
-      } on firebase_auth.FirebaseAuthException catch (e) {
-        throw LogInWithFacebookFailure.fromCode(e.code);
-      }catch (_) {
-        throw const LogInWithFacebookFailure();
+    try {
+      late final firebase_auth.AuthCredential credential;
+      final LoginResult loginResult = await _facebookAuth.login();
+      final test = loginResult.accessToken?.token;
+      if (test != null) {
+        credential = firebase_auth.FacebookAuthProvider.credential(test);
       }
+      await _firebaseAuth.signInWithCredential(credential);
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          await _firebaseFirestore
+              .collection('users')
+              .doc(currentUser.id)
+              .get();
+      if (documentSnapshot.exists) {
+        verifyDatabeUser(documentSnapshot);
+        this.isUserAdmin = documentSnapshot.get('isAdmin');
+      }
+      if (!documentSnapshot.exists) {
+        _firebaseFirestore
+            .collection("users")
+            .doc(currentUser.id)
+            .set(currentUser.toJsonUserInit());
+      }
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw LogInWithFacebookFailure.fromCode(e.code);
+    } catch (_) {
+      throw const LogInWithFacebookFailure();
+    }
   }
 
   Future<void> logInWithEmailAndPassword({
@@ -144,7 +182,11 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot = await _firebaseFirestore.collection('users').doc(currentUser.id).get();
+      DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+          await _firebaseFirestore
+              .collection('users')
+              .doc(currentUser.id)
+              .get();
       this.isUserAdmin = documentSnapshot.get('isAdmin');
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
@@ -157,8 +199,7 @@ class AuthenticationRepository {
     required String email,
   }) async {
     try {
-      await _firebaseAuth.sendPasswordResetEmail(
-          email: email);
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw PasswordResetFailure.fromCode(e.code);
     } catch (_) {
@@ -166,27 +207,28 @@ class AuthenticationRepository {
     }
   }
 
-  Future<void> updateUserName({
-    required String name
-  }) async {
+  Future<void> updateUserName({required String name}) async {
     try {
       await _firebaseAuth.currentUser?.updateDisplayName(name);
-      await _firebaseFirestore.collection("users").doc(currentUser.id).update({'name' : name});
+      await _firebaseFirestore
+          .collection("users")
+          .doc(currentUser.id)
+          .update({'name': name});
     } catch (_) {
       throw const UpdateUserCredentialsFailure();
     }
   }
 
-  Future<void> updateUserEmail({
-    required String email
-  }) async {
+  Future<void> updateUserEmail({required String email}) async {
     try {
       print("dadada");
       await _firebaseAuth.currentUser?.updateEmail(email);
       print("tatat");
-      await _firebaseFirestore.collection("users").doc(currentUser.id).update({'email' : email});
-    } on firebase_auth.FirebaseException catch (e){
-      print(e.code);
+      await _firebaseFirestore
+          .collection("users")
+          .doc(currentUser.id)
+          .update({'email': email});
+    } on firebase_auth.FirebaseException catch (e) {
       throw UpdateUserCredentialsFailure.fromCode(e.code);
     } catch (_) {
       throw const UpdateUserCredentialsFailure();
@@ -209,17 +251,38 @@ class AuthenticationRepository {
         "photourl": currentUser.photo
       };
       // Allow read/write access on all documents to any user signed in to the application
-      _firebaseFirestore.collection("users").add(user).then((DocumentReference doc) =>
-          print('DocumentSnapshot added with ID: ${doc.id}'));
+      _firebaseFirestore.collection("users").add(user).then(
+          (DocumentReference doc) =>
+              print('DocumentSnapshot added with ID: ${doc.id}'));
     } catch (_) {
       throw const UpdateUserCredentialsFailure();
     }
   }
 
   Future<void> deleteAccount() async {
-    await _firebaseFirestore.collection("deleted_users").doc(currentUser.id).set(currentUser.toJsonUserInit());
+    await _firebaseFirestore
+        .collection("deleted_users")
+        .doc(currentUser.id)
+        .set(currentUser.toJsonUserInit());
     await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
     await _firebaseAuth.currentUser?.delete();
+  }
+
+  Future<void> updateUserPhoto() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    try {
+      if (result != null) {
+        final file = File(result.files.first!.path!);
+        final id = currentUser.id;
+        final path = "usersProfilePhoto/$id.jpeg";
+        await _firebaseStorage.ref().child(path).putFile(file);
+        final String dataStorageUrl = "gs://zupanapietrynie-75709.appspot.com/usersProfilePhoto";
+        final fileRef =  await _firebaseStorage.ref(path).getDownloadURL();
+        await _firebaseAuth.currentUser?.updatePhotoURL(fileRef);
+      }
+    } catch (_) {
+      throw const UpdateUserCredentialsFailure();
+    }
   }
 
   Future<void> logOut() async {

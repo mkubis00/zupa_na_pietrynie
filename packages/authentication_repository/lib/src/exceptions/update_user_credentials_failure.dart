@@ -9,21 +9,13 @@ class UpdateUserCredentialsFailure implements Exception {
         return const UpdateUserCredentialsFailure(
           'Niepoprawny e-mail. Sprawdź poprawność maila.',
         );
-      case 'user-disabled':
+      case 'user-email-already-in-use':
         return const UpdateUserCredentialsFailure(
-          'Uźytkownik zostal wylączony. Skontaktuj się z supportem aby uzyskać pomoc',
+          'Ten mail jest już używany przrz innego użytkownika.',
         );
-      case 'email-already-in-use':
+      case 'requires-recent-login':
         return const UpdateUserCredentialsFailure(
-          'Konto z tym adresem e-mail już istnije.',
-        );
-      case 'operation-not-allowed':
-        return const UpdateUserCredentialsFailure(
-          'Operacja nie jest dozwolona. Proszę, skontaktuj się z supportem',
-        );
-      case 'weak-password':
-        return const UpdateUserCredentialsFailure(
-          'Za slabe haslo, pomyśl nad bardziej skomplikowanym haslem',
+          'W celu zresetowania e-maila ponownie zaloguj się do aplikacji.',
         );
       default:
         return const UpdateUserCredentialsFailure();

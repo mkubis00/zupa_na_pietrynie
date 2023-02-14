@@ -191,6 +191,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.4"
+  file_picker:
+    dependency: transitive
+    description:
+      name: file_picker
+      sha256: d090ae03df98b0247b82e5928f44d1b959867049d18d73635e2e0bc3f49542b9
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.2.5"
   firebase_analytics:
     dependency: transitive
     description:
@@ -263,6 +271,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  firebase_storage:
+    dependency: transitive
+    description:
+      name: firebase_storage
+      sha256: "86a2cb0664fd15bd3a68de61dd4535279ece90ff7b121e0766cb336481e303cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.0.2"
+  firebase_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_storage_platform_interface
+      sha256: bbe9a485c1637e89f55b5008610ed402a98c300196946381d342644d81732768
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.21"
+  firebase_storage_web:
+    dependency: transitive
+    description:
+      name: firebase_storage_web
+      sha256: "1807b0df1b24ab0ddaab195e66af26fa83f68c2394cd2674377ff117b4871577"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.3.12"
   flow_builder:
     dependency: "direct main"
     description:
@@ -308,6 +340,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.0+2"
+  flutter_plugin_android_lifecycle:
+    dependency: transitive
+    description:
+      name: flutter_plugin_android_lifecycle
+      sha256: "60fc7b78455b94e6de2333d2f95196d32cf5c22f4b0b0520a628804cb463503b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.7"
   flutter_test:
     dependency: "direct dev"
     description: flutter

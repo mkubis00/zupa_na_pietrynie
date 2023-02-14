@@ -1,11 +1,19 @@
 part of 'settings_options_cubit.dart';
 
+enum PhotoStatus {
+  defaultStatus,
+  photoUpdateInProgress,
+  photoUpdateFailure,
+  photoUpdateSuccessed,
+}
+
 class SettingOptionsState extends Equatable {
   const SettingOptionsState({
     this.email = const Email.pure(),
     this.name = const Name.pure(),
     this.nameStatus = FormzStatus.pure,
     this.emailStatus = FormzStatus.pure,
+    this.photoStatus = PhotoStatus.defaultStatus,
     this.errorMessage,
   });
 
@@ -14,15 +22,17 @@ class SettingOptionsState extends Equatable {
   final FormzStatus nameStatus;
   final FormzStatus emailStatus;
   final String? errorMessage;
+  final PhotoStatus photoStatus;
 
   @override
-  List<Object> get props => [email, name, nameStatus, emailStatus];
+  List<Object> get props => [email, name, nameStatus, emailStatus, photoStatus];
 
   SettingOptionsState copyWith({
     Email? email,
     Name? name,
     FormzStatus? nameStatus,
     FormzStatus? emailStatus,
+    PhotoStatus? photoStatus,
     String? errorMessage,
   }) {
     return SettingOptionsState(
@@ -30,6 +40,7 @@ class SettingOptionsState extends Equatable {
       name: name ?? this.name,
       nameStatus: nameStatus ?? this.nameStatus,
       emailStatus: emailStatus ?? this.emailStatus,
+      photoStatus: photoStatus ?? this.photoStatus,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

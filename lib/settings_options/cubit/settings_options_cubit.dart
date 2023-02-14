@@ -18,7 +18,6 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
       state.copyWith(
         email: email,
         emailStatus: Formz.validate([email]),
-        nameStatus: Formz.validate([state.name]),
       ),
     );
   }
@@ -29,7 +28,6 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
       state.copyWith(
         name: name,
         nameStatus: Formz.validate([name]),
-        emailStatus: Formz.validate([state.email]),
       ),
     );
   }
@@ -75,6 +73,23 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
       );
     } catch (_) {
       emit(state.copyWith(emailStatus: FormzStatus.submissionFailure));
+    }
+  }
+
+  Future<void> updateUserPhoto() async {
+    emit(state.copyWith(photoStatus: PhotoStatus.photoUpdateInProgress));
+    try {
+      await _authenticationRepository.updateUserPhoto();
+      emit(state.copyWith(photoStatus: PhotoStatus.photoUpdateSuccessed));
+    } on UpdateUserCredentialsFailure catch (e) {
+      emit(
+        state.copyWith(
+          errorMessage: e.message,
+          photoStatus: PhotoStatus.photoUpdateFailure,
+        ),
+      );
+    } catch (_) {
+      emit(state.copyWith(photoStatus: PhotoStatus.photoUpdateFailure));
     }
   }
 }

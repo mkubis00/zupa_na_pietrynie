@@ -1,3 +1,4 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
@@ -21,7 +22,7 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
-    final user = context.select((AppBloc bloc) => bloc.state.user);
+    final User user = context.select((AppBloc bloc) => bloc.state.user);
     return BlocListener<SettingOptionsCubit, SettingOptionsState>(
       listener: (context, state) {
         if (state.emailStatus.isSubmissionFailure) {
@@ -40,7 +41,7 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                 content: Text("Zaktualizowano email użytkownika"),
               ),
             );
-        }  else if (state.nameStatus.isSubmissionSuccess) {
+        } else if (state.nameStatus.isSubmissionSuccess) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -104,20 +105,21 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                   )),
               if (this.isUserOptions) const SizedBox(height: 30),
               if (this.isUserOptions)
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Avatar(photo: user.photo),
-                ),
+                // Align(
+                //   alignment: Alignment.topCenter,
+                //   child: Avatar(photo: user.photo),
+                // ),
+                _AvatarButton(user),
               if (this.isUserOptions) const SizedBox(height: 23),
               if (this.isUserOptions)
                 SizedBox(width: width * 0.85, child: _MailInput(user.email)),
               if (this.isUserOptions)
-                SizedBox(width: width * 0.85, child: _MailReset()),
+                // SizedBox(width: width * 0.2, child: _MailReset()),
+                _MailReset(width),
               if (this.isUserOptions) const SizedBox(height: 30),
               if (this.isUserOptions)
                 SizedBox(width: width * 0.85, child: _NameInput(user.name)),
-              if (this.isUserOptions)
-                SizedBox(width: width * 0.85, child: _SaveNewName()),
+              if (this.isUserOptions) _SaveNewName(width),
               // if (this.isUserOptions) const SizedBox(height: 8),
               // if (this.isUserOptions) SizedBox(width: width*0.85, child: _PasswordReset()),
               if (this.isUserOptions) const SizedBox(height: 10),
@@ -200,34 +202,73 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
   }
 }
 
+class _AvatarButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
+        buildWhen: (previous, current) =>
+            previous.photoStatus != current.photoStatus,
+        builder: (context, state) {
+          return state.photoStatus.name == "photoUpdateInProgress"
+              ? SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(color: Colors.black))
+              : MaterialButton(
+                  onPressed: () =>
+                      context.read<SettingOptionsCubit>().updateUserPhoto(),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Avatar(photo: user.photo),
+                  ),
+                );
+        });
+  }
+
+  _AvatarButton(this.user);
+
+  final User user;
+}
+
 class _MailReset extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.emailStatus != current.emailStatus,
+      buildWhen: (previous, current) =>
+          previous.emailStatus != current.emailStatus,
       builder: (context, state) {
         return state.emailStatus.isSubmissionInProgress
-            ? const CircularProgressIndicator(color: Colors.black)
-            : ElevatedButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  backgroundColor: const Color(0xFFFFFFFF),
-                ),
-                onPressed: state.emailStatus.isValidated
-                    ? () =>
-                        context.read<SettingOptionsCubit>().updateUserEmail()
-                    : null,
-                child: const Text(
-                  'Zapisz nowy e-mail',
-                  style: TextStyle(color: Colors.black),
-                ),
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(color: Colors.black))
+            : SizedBox(
+                width: width * 0.85,
+                child: ElevatedButton(
+                    key: const Key('loginForm_continue_raisedButton'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      backgroundColor: const Color(0xFFFFFFFF),
+                    ),
+                    onPressed: state.emailStatus.isValidated
+                        ? () => context
+                            .read<SettingOptionsCubit>()
+                            .updateUserEmail()
+                        : null,
+                    child: const Text(
+                      'Zapisz nowy e-mail',
+                      style: TextStyle(color: Colors.black),
+                    )),
               );
       },
     );
   }
+
+  _MailReset(this.width);
+
+  final double width;
 }
 
 // class _PasswordReset extends StatelessWidget {
@@ -331,28 +372,39 @@ class _SaveNewName extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SettingOptionsCubit, SettingOptionsState>(
-      buildWhen: (previous, current) => previous.nameStatus != current.nameStatus,
+      buildWhen: (previous, current) =>
+          previous.nameStatus != current.nameStatus,
       builder: (context, state) {
         return state.nameStatus.isSubmissionInProgress
-            ? const CircularProgressIndicator(color: Colors.black)
-            : ElevatedButton(
-                key: const Key('loginForm_continue_raisedButton'),
-                style: ElevatedButton.styleFrom(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(color: Colors.black))
+            : SizedBox(
+                width: width * 0.85,
+                child: ElevatedButton(
+                  key: const Key('loginForm_continue_raisedButton'),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: const Color(0xFFFFFFFF),
                   ),
-                  backgroundColor: const Color(0xFFFFFFFF),
-                ),
-                onPressed: state.nameStatus.isValidated
-                    ? () => context.read<SettingOptionsCubit>().updateUserName()
-                    : null,
-                child: const Text('Zapisz nazwę użytkownika',
-                    style: TextStyle(color: Colors.black)),
-              );
+                  onPressed: state.nameStatus.isValidated
+                      ? () =>
+                          context.read<SettingOptionsCubit>().updateUserName()
+                      : null,
+                  child: const Text('Zapisz nazwę użytkownika',
+                      style: TextStyle(color: Colors.black)),
+                ));
       },
     );
   }
+
+  _SaveNewName(this.width);
+
+  final double width;
 }
 
 class _DeleteAccount extends StatelessWidget {
