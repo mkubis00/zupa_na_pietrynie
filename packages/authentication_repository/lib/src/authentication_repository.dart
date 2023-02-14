@@ -222,8 +222,8 @@ class AuthenticationRepository {
   Future<void> updateUserEmail({required String email}) async {
     try {
       print("dadada");
+      await _firebaseAuth.currentUser?.reload();
       await _firebaseAuth.currentUser?.updateEmail(email);
-      print("tatat");
       await _firebaseFirestore
           .collection("users")
           .doc(currentUser.id)
@@ -276,7 +276,6 @@ class AuthenticationRepository {
         final id = currentUser.id;
         final path = "usersProfilePhoto/$id.jpeg";
         await _firebaseStorage.ref().child(path).putFile(file);
-        final String dataStorageUrl = "gs://zupanapietrynie-75709.appspot.com/usersProfilePhoto";
         final fileRef =  await _firebaseStorage.ref(path).getDownloadURL();
         await _firebaseAuth.currentUser?.updatePhotoURL(fileRef);
       }

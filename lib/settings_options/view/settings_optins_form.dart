@@ -215,8 +215,9 @@ class _AvatarButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(color: Colors.black))
               : MaterialButton(
-                  onPressed: () =>
+                  onLongPress: () =>
                       context.read<SettingOptionsCubit>().updateUserPhoto(),
+                  onPressed: () {},
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Avatar(photo: user.photo),
