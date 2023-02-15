@@ -265,7 +265,9 @@ class AuthenticationRepository {
         .doc(currentUser.id)
         .set(currentUser.toJsonUserInit());
     await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
+    await _firebaseStorage.refFromURL(currentUser.photo!).delete();
     await _firebaseAuth.currentUser?.delete();
+    //obsga wyjatku
   }
 
   Future<void> updateUserPhoto() async {
@@ -274,7 +276,7 @@ class AuthenticationRepository {
       if (result != null) {
         final file = File(result.files.first!.path!);
         final id = currentUser.id;
-        final path = "usersProfilePhoto/$id.jpeg";
+        final path = "usersProfilePhoto/$id";
         await _firebaseStorage.ref().child(path).putFile(file);
         final fileRef =  await _firebaseStorage.ref(path).getDownloadURL();
         await _firebaseAuth.currentUser?.updatePhotoURL(fileRef);
