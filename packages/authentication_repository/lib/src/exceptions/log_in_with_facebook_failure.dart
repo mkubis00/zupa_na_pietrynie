@@ -19,7 +19,7 @@ class LogInWithFacebookFailure implements Exception {
         );
       case 'user-disabled':
         return const LogInWithFacebookFailure(
-          'This user has been disabled. Please contact support for help.',
+          'Uzytkownik wylączony.',
         );
       case 'user-not-found':
         return const LogInWithFacebookFailure(

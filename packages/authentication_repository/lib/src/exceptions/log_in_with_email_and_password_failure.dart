@@ -9,19 +9,19 @@ class LogInWithEmailAndPasswordFailure implements Exception {
     switch (code) {
       case 'invalid-email':
         return const LogInWithEmailAndPasswordFailure(
-          'Email is not valid or badly formatted.',
+          'Niepoprawny e-mail',
         );
       case 'user-disabled':
         return const LogInWithEmailAndPasswordFailure(
-          'This user has been disabled. Please contact support for help.',
+          'Uzytkownik zostal wylączony.',
         );
       case 'user-not-found':
         return const LogInWithEmailAndPasswordFailure(
-          'Email is not found, please create an account.',
+          'Nie znaleziono użytkownika z podanym adresem e-mail.',
         );
       case 'wrong-password':
         return const LogInWithEmailAndPasswordFailure(
-          'Incorrect password, please try again.',
+          'Nieporawne haslo.',
         );
       default:
         return const LogInWithEmailAndPasswordFailure();

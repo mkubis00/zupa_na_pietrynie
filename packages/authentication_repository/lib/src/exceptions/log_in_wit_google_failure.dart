@@ -11,31 +11,31 @@ class LogInWithGoogleFailure implements Exception {
         );
       case 'invalid-credential':
         return const LogInWithGoogleFailure(
-          'The credential received is malformed or has expired.',
+          'Blędne dane logowania.',
         );
       case 'operation-not-allowed':
         return const LogInWithGoogleFailure(
-          'Operation is not allowed.  Please contact support.',
+          'Operacja niedozwolona.',
         );
       case 'user-disabled':
         return const LogInWithGoogleFailure(
-          'This user has been disabled. Please contact support for help.',
+          'Użytkownik zostal wylączony.',
         );
       case 'user-not-found':
         return const LogInWithGoogleFailure(
-          'Email is not found, please create an account.',
+          'Nie znaleziono użytkownika z podanym adresem e-mail.',
         );
       case 'wrong-password':
         return const LogInWithGoogleFailure(
-          'Incorrect password, please try again.',
+          'Niepoprawne haslo.',
         );
       case 'invalid-verification-code':
         return const LogInWithGoogleFailure(
-          'The credential verification code received is invalid.',
+          'Niepoprawny kod weryfikacyjny.',
         );
       case 'invalid-verification-id':
         return const LogInWithGoogleFailure(
-          'The credential verification ID received is invalid.',
+          'Niepoprawne ID weryfickacji.',
         );
       default:
         return const LogInWithGoogleFailure();

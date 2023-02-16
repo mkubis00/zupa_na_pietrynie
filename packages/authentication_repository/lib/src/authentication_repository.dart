@@ -278,7 +278,7 @@ class AuthenticationRepository {
         final id = currentUser.id;
         final path = "usersProfilePhoto/$id";
         await _firebaseStorage.ref().child(path).putFile(file);
-        final fileRef =  await _firebaseStorage.ref(path).getDownloadURL();
+        final fileRef = await _firebaseStorage.ref(path).getDownloadURL();
         await _firebaseAuth.currentUser?.updatePhotoURL(fileRef);
       }
     } catch (_) {
