@@ -11,11 +11,11 @@ class LogInWithFacebookFailure implements Exception {
         );
       case 'invalid-credential':
         return const LogInWithFacebookFailure(
-          'The credential received is malformed or has expired.',
+          'Niepoprawne dane logowania',
         );
       case 'operation-not-allowed':
         return const LogInWithFacebookFailure(
-          'Operation is not allowed.  Please contact support.',
+          'Operacja niedozwolona. Proszę skontaktoawć się z supportem',
         );
       case 'user-disabled':
         return const LogInWithFacebookFailure(
@@ -23,19 +23,19 @@ class LogInWithFacebookFailure implements Exception {
         );
       case 'user-not-found':
         return const LogInWithFacebookFailure(
-          'Email is not found, please create an account.',
+          'Użytkownika nie znaleziony.',
         );
       case 'wrong-password':
         return const LogInWithFacebookFailure(
-          'Incorrect password, please try again.',
+          'Nieporawne haslo. Spróbuj jeszcze raz.',
         );
       case 'invalid-verification-code':
         return const LogInWithFacebookFailure(
-          'The credential verification code received is invalid.',
+          'Niepoprawny kod weryfikacji. Skontaktuj się z supportem.',
         );
       case 'invalid-verification-id':
         return const LogInWithFacebookFailure(
-          'The credential verification ID received is invalid.',
+          'Niepoprawne id weryfikacji. Skontaktuj się z supportem.',
         );
       default:
         return const LogInWithFacebookFailure();

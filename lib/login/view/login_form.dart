@@ -26,74 +26,61 @@ class LoginForm extends StatelessWidget {
         }
       },
       child: Align(
-        alignment: const Alignment(0, -1.8 ),
+        alignment: const Alignment(0, -1.8),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Align(
-                alignment: Alignment.topLeft,
+                  alignment: Alignment.topLeft,
                   child: Image.asset(
-                  'assets/bloc_logo_small.png',
-                  height: 170,
-                )
-              ),
+                    'assets/bloc_logo_small.png',
+                    height: 170,
+                  )),
               SizedBox(
-                  width: width*0.85,
-                  child:
-                  Align(
+                  width: width * 0.85,
+                  child: Align(
                     alignment: Alignment.centerLeft,
-                      child: Container(
-                          child: Text(
-                            "Witamy ponownie!",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 30
-                            ),
-                          ),
+                    child: Container(
+                      child: Text(
+                        "Witamy ponownie!",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w900, fontSize: 30),
                       ),
-                  )
-              ),
+                    ),
+                  )),
               const SizedBox(height: 8),
               SizedBox(
-                  width: width*0.85,
-                  child:
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                        "Zaloguj się aby kontynuować",
-                        style: TextStyle(
-                            fontSize: 15
-                        ),
-                    ),
+                width: width * 0.85,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Zaloguj się aby kontynuować",
+                    style: TextStyle(fontSize: 15),
                   ),
+                ),
               ),
               const SizedBox(height: 25),
-              SizedBox(width: width*0.85, child: _EmailInput()),
+              SizedBox(width: width * 0.85, child: _EmailInput()),
               const SizedBox(height: 8),
-              SizedBox(width: width*0.85, child: _PasswordInput()),
-              SizedBox(width: width*0.85, child: _LoginButton()),
+              SizedBox(width: width * 0.85, child: _PasswordInput()),
+              _LoginButton(width),
               const SizedBox(height: 8),
-              SizedBox(
-                width: width*0.85,
-                child: _GoogleLoginButton()
-              ),
+              SizedBox(width: width * 0.85, child: _GoogleLoginButton()),
               const SizedBox(height: 8),
-              SizedBox(
-                  width: width*0.85,
-                  child: _FacebookLoginButton()
-              ),
+              SizedBox(width: width * 0.85, child: _FacebookLoginButton()),
               const SizedBox(height: 4),
               Row(
-                  mainAxisAlignment: MainAxisAlignment.center, //Center Row contents horizontally,
-                  crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically,
+                mainAxisAlignment: MainAxisAlignment.center,
+                //Center Row contents horizontally,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                //Center Row contents vertically,
                 children: [
                   _SignUpButton(),
                   Text(" lub "),
                   _PasswordResetButton(),
                 ],
-              )
-              ,
+              ),
             ],
           ),
         ),
@@ -113,14 +100,12 @@ class _EmailInput extends StatelessWidget {
           onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            labelText: 'e-mail',
-            helperText: '',
-            errorText: state.email.invalid ? 'niepoprawny e-mail' : null,
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1),
-              borderRadius: BorderRadius.circular(10)
-            )
-          ),
+              labelText: 'e-mail',
+              helperText: '',
+              errorText: state.email.invalid ? 'niepoprawny e-mail' : null,
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(width: 1),
+                  borderRadius: BorderRadius.circular(10))),
         );
       },
     );
@@ -142,10 +127,9 @@ class _PasswordInput extends StatelessWidget {
             labelText: 'haslo',
             helperText: '',
             errorText: state.password.invalid ? 'niepoprawne haslo' : null,
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1),
-                  borderRadius: BorderRadius.circular(10)
-              ),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 1),
+                borderRadius: BorderRadius.circular(10)),
           ),
         );
       },
@@ -160,23 +144,32 @@ class _LoginButton extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator(color: Colors.black)
-            : ElevatedButton(
-          key: const Key('loginForm_continue_raisedButton'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: Colors.indigoAccent,
-          ),
-          onPressed: state.status.isValidated
-              ? () => context.read<LoginCubit>().logInWithCredentials()
-              : null,
-                child: const Text('ZALOGUJ SIĘ'),
-        );
+            ? SizedBox(
+                width: 30,
+                height: 30,
+                child: CircularProgressIndicator(color: Colors.indigoAccent))
+            : SizedBox(
+                width: width * 0.85,
+                child: ElevatedButton(
+                  key: const Key('loginForm_continue_raisedButton'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: Colors.indigoAccent,
+                  ),
+                  onPressed: state.status.isValidated
+                      ? () => context.read<LoginCubit>().logInWithCredentials()
+                      : null,
+                  child: const Text('ZALOGUJ SIĘ'),
+                ));
       },
     );
   }
+
+  _LoginButton(this.width);
+
+  final double width;
 }
 
 class _GoogleLoginButton extends StatelessWidget {
@@ -190,11 +183,10 @@ class _GoogleLoginButton extends StatelessWidget {
         style: TextStyle(color: Colors.white),
       ),
       style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        backgroundColor: Colors.black87
-      ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          backgroundColor: Colors.black87),
       icon: const Icon(FontAwesomeIcons.google, color: Colors.white),
       onPressed: () => context.read<LoginCubit>().logInWithGoogle(),
     );
@@ -247,12 +239,13 @@ class _PasswordResetButton extends StatelessWidget {
     final theme = Theme.of(context);
     return TextButton(
       key: const Key('loginForm_createAccount_flatButton'),
-      onPressed: () => Navigator.of(context).push<void>(PasswordResetPage.route()),
+      onPressed: () =>
+          Navigator.of(context).push<void>(PasswordResetPage.route()),
       child: Text(
         'zresetuj haslo',
         style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.w900,
+          color: Colors.black87,
+          fontWeight: FontWeight.w900,
         ),
       ),
     );

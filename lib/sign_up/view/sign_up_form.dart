@@ -11,12 +11,14 @@ class SignUpForm extends StatelessWidget {
     double width = MediaQuery.of(context).size.width;
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
+        final String email = state.email.value;
         if (state.status.isSubmissionSuccess) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text("Stworzono konto, aby się zalogować zweryfikuj swój e-mail."),
+                content: Text(
+                    "Stworzono konto, aby się zalogować zweryfikuj swój e-mail wyslany na adres $email"),
               ),
             );
           Navigator.of(context).pop();
@@ -34,43 +36,36 @@ class SignUpForm extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
-                width: width*0.85,
-                child:
-                Align(
+                width: width * 0.85,
+                child: Align(
                   alignment: Alignment.centerLeft,
                   child: Container(
                     child: Text(
                       "Nie masz jeszcze konta?",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 30
-                      ),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w900, fontSize: 30),
                     ),
                   ),
-                )
-            ),
+                )),
             const SizedBox(height: 8),
             SizedBox(
-              width: width*0.85,
-              child:
-              Align(
+              width: width * 0.85,
+              child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Zarejestruj aby kontynuować",
-                  style: TextStyle(
-                      fontSize: 15
-                  ),
+                  style: TextStyle(fontSize: 15),
                 ),
               ),
             ),
             const SizedBox(height: 25),
-            SizedBox(width: width*0.85, child: _EmailInput()),
+            SizedBox(width: width * 0.85, child: _EmailInput()),
             const SizedBox(height: 8),
-            SizedBox(width: width*0.85, child: _PasswordInput()),
+            SizedBox(width: width * 0.85, child: _PasswordInput()),
             const SizedBox(height: 8),
-            SizedBox(width: width*0.85, child: _ConfirmPasswordInput()),
+            SizedBox(width: width * 0.85, child: _ConfirmPasswordInput()),
             const SizedBox(height: 8),
-            _SignUpButton(),
+            _SignUpButton(width),
           ],
         ),
       ),
@@ -85,18 +80,18 @@ class _EmailInput extends StatelessWidget {
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
         return TextField(
-          key: const Key('signUpForm_emailInput_textField'),
-          onChanged: (email) => context.read<SignUpCubit>().emailChanged(email),
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-            labelText: 'e-mail',
-            helperText: '',
-            errorText: state.email.invalid ? 'invalid email' : null,
-            enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(width: 1),
-            borderRadius: BorderRadius.circular(10)
-          ),
-        ));
+            key: const Key('signUpForm_emailInput_textField'),
+            onChanged: (email) =>
+                context.read<SignUpCubit>().emailChanged(email),
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              labelText: 'e-mail',
+              helperText: '',
+              errorText: state.email.invalid ? 'invalid email' : null,
+              enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(width: 1),
+                  borderRadius: BorderRadius.circular(10)),
+            ));
       },
     );
   }
@@ -119,8 +114,7 @@ class _PasswordInput extends StatelessWidget {
             errorText: state.password.invalid ? 'invalid password' : null,
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(width: 1),
-                borderRadius: BorderRadius.circular(10)
-            ),
+                borderRadius: BorderRadius.circular(10)),
           ),
         );
       },
@@ -133,7 +127,7 @@ class _ConfirmPasswordInput extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SignUpCubit, SignUpState>(
       buildWhen: (previous, current) =>
-      previous.password != current.password ||
+          previous.password != current.password ||
           previous.confirmedPassword != current.confirmedPassword,
       builder: (context, state) {
         return TextField(
@@ -150,8 +144,7 @@ class _ConfirmPasswordInput extends StatelessWidget {
                 : null,
             enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(width: 1),
-                borderRadius: BorderRadius.circular(10)
-            ),
+                borderRadius: BorderRadius.circular(10)),
           ),
         );
       },
@@ -166,21 +159,28 @@ class _SignUpButton extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
-          key: const Key('signUpForm_continue_raisedButton'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            backgroundColor: Colors.orangeAccent,
-          ),
-          onPressed: state.status.isValidated
-              ? () => context.read<SignUpCubit>().signUpFormSubmitted()
-              : null,
-          child: const Text('Zarejestruj się'),
-        );
+            ? SizedBox(
+                width: 30, height: 30, child: const CircularProgressIndicator())
+            : SizedBox(
+                width: width * 0.85,
+                child: ElevatedButton(
+                  key: const Key('signUpForm_continue_raisedButton'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    backgroundColor: Colors.indigoAccent,
+                  ),
+                  onPressed: state.status.isValidated
+                      ? () => context.read<SignUpCubit>().signUpFormSubmitted()
+                      : null,
+                  child: const Text('Zarejestruj się'),
+                ));
       },
     );
   }
+
+  _SignUpButton(this.width);
+
+  final double width;
 }

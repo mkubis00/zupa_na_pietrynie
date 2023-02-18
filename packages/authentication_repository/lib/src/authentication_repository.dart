@@ -7,7 +7,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
@@ -67,6 +68,7 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
+      print("test");
       _firebaseAuth.currentUser?.sendEmailVerification();
       _firebaseFirestore
           .collection("users")
@@ -182,6 +184,11 @@ class AuthenticationRepository {
         email: email,
         password: password,
       );
+      if (await !_firebaseAuth.currentUser!.emailVerified) {
+        logOut();
+        throw firebase_auth.FirebaseAuthException(code: 'user-email-not-verified');
+
+      }
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
           await _firebaseFirestore
               .collection('users')
@@ -221,7 +228,6 @@ class AuthenticationRepository {
 
   Future<void> updateUserEmail({required String email}) async {
     try {
-      print("dadada");
       await _firebaseAuth.currentUser?.reload();
       await _firebaseAuth.currentUser?.updateEmail(email);
       await _firebaseFirestore

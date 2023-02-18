@@ -23,6 +23,10 @@ class LogInWithEmailAndPasswordFailure implements Exception {
         return const LogInWithEmailAndPasswordFailure(
           'Nieporawne haslo.',
         );
+      case 'user-email-not-verified':
+        return const LogInWithEmailAndPasswordFailure(
+          'Nie zweryfikowano adresu e-mail użytkownika'
+        );
       default:
         return const LogInWithEmailAndPasswordFailure();
     }
