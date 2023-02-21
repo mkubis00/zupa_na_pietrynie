@@ -1,6 +1,6 @@
 class LogInWithFacebookFailure implements Exception {
   const LogInWithFacebookFailure([
-    this.message = 'An unknown exception occurred.',
+    this.message = 'Wystąpil nieznany bląd.',
   ]);
 
   factory LogInWithFacebookFailure.fromCode(String code) {

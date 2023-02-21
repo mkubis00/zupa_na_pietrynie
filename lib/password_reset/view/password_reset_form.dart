@@ -77,7 +77,7 @@ class PasswordResetForm extends StatelessWidget {
               const SizedBox(height: 25),
               SizedBox(width: width*0.85, child: _EmailInput()),
               const SizedBox(height: 8),
-              SizedBox(width: width*0.85, child: _ResetButton()),
+              _ResetButton(width),
             ],
           ),
         ),
@@ -118,21 +118,30 @@ class _ResetButton extends StatelessWidget {
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : ElevatedButton(
+            ? SizedBox(
+            width: 30, height: 30, child: const CircularProgressIndicator())
+            : SizedBox(
+            width: width * 0.85,
+          child:
+        ElevatedButton(
           key: const Key('loginForm_continue_raisedButton'),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
-            backgroundColor: const Color(0xFFFFD600),
+            backgroundColor: Colors.indigoAccent,
           ),
           onPressed: state.status.isValidated
               ? () => context.read<PasswordResetCubit>().passwordReset()
               : null,
           child: const Text('ZRESETUJ HASLO'),
-        );
+        ));
       },
     );
   }
+
+
+  _ResetButton(this.width);
+
+  final double width;
 }
