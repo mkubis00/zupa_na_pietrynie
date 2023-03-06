@@ -12,7 +12,15 @@ class PostFetched extends MainPageEvent {
 }
 
 class PostAdd extends MainPageEvent {
-  final Post post;
+  final Post newPost;
 
-  PostAdd(this.post);
+  PostAdd(this.newPost);
+}
+
+class PostAddPhotoChanged extends PostAdd {
+  PostAddPhotoChanged(super.newPost);
+}
+
+class PostAddContentChanged extends PostAdd {
+  PostAddContentChanged(super.newPost);
 }

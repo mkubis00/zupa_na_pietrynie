@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:flow_builder/flow_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posts_repository/posts_repository.dart';
@@ -19,15 +20,17 @@ class MainPage extends StatelessWidget {
     return Padding(
           padding: const EdgeInsets.all(8),
           child:
-              RepositoryProvider.value(
-                value: _postsRepository,
-                child: BlocProvider(
+              // RepositoryProvider.value(
+              //   value: _postsRepository,
+              //   child:
+                BlocProvider(
                   create: (_) => MainPageBloc(
-                    postsRepository: _postsRepository
+                      PostsRepository(
+                          authenticationRepository: context.read<AuthenticationRepository>())
                   ),
                   child: const MainPageForm(),
                 ),
-              )
+              // )
     );
   }
 }

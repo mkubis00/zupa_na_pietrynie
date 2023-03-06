@@ -6,6 +6,8 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../posts_repository.dart';
+
 class PostsRepository {
   PostsRepository({
     FirebaseStorage? firebaseStorage,
@@ -20,6 +22,7 @@ class PostsRepository {
   final AuthenticationRepository _authenticationRepository;
 
   Future<int> getNumberOfPosts() async {
+    const Post post = Post(ownerId: "dfdfd", creationDate: "dffd", postContent: "fddfd");
     await _firebaseFirestore.collection("posts").orderBy("creationDate").startAt([10]);
       return 1;
   }

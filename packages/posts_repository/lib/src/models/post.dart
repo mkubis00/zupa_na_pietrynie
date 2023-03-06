@@ -14,11 +14,13 @@ class Post extends Equatable {
 
   final String ownerId;
 
-  final DateTime creationDate;
+  final String creationDate;
 
   final String postContent;
 
   final List<String>? postPhotos;
+
+  static const empty = Post(ownerId: '', creationDate: '', postContent: '');
 
   @override
   List<Object?> get props => [id, ownerId, creationDate, postContent, postPhotos];
