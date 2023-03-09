@@ -12,15 +12,25 @@ class PostFetched extends MainPageEvent {
 }
 
 class PostAdd extends MainPageEvent {
-  final Post newPost;
-
-  PostAdd(this.newPost);
+  PostAdd();
 }
 
-class PostAddPhotoChanged extends PostAdd {
-  PostAddPhotoChanged(super.newPost);
+class PostAddPhotosChanged extends MainPageEvent {
+
+  final List<File?> photos;
+
+  PostAddPhotosChanged(this.photos);
 }
 
-class PostAddContentChanged extends PostAdd {
-  PostAddContentChanged(super.newPost);
+class PostAddContentChanged extends MainPageEvent {
+
+  final String content;
+
+  PostAddContentChanged(this.content);
+}
+
+class PostAddPhotoDeleted extends MainPageEvent {
+  final int index;
+
+  PostAddPhotoDeleted(this.index);
 }

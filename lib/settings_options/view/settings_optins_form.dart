@@ -90,13 +90,13 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                         Spacer(),
                         if (this.isUserOptions == false)
                           Icon(
-                            Icons.add_box_outlined,
+                            IconData(0xf82b, fontFamily: 'MaterialIcons'),
                             size: 24.0,
                             color: Colors.black,
                           )
                         else
                           Icon(
-                            Icons.add_box,
+                            IconData(0xf82e, fontFamily: 'MaterialIcons'),
                             size: 24.0,
                             color: Colors.black,
                           ),
@@ -149,13 +149,13 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
                         Spacer(),
                         if (this.isAppOptions == false)
                           Icon(
-                            Icons.add_box_outlined,
+                            IconData(0xf82b, fontFamily: 'MaterialIcons'),
                             size: 24.0,
                             color: Colors.black,
                           )
                         else
                           Icon(
-                            Icons.add_box,
+                            IconData(0xf82e, fontFamily: 'MaterialIcons'),
                             size: 24.0,
                             color: Colors.black,
                           ),

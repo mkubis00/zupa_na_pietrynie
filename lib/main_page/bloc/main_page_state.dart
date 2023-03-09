@@ -6,22 +6,26 @@ class MainPageState extends Equatable {
   const MainPageState({
     this.status = PostStatus.initial,
     this.posts = const <Post>[],
-    this.newPost = Post.empty
+    this.newPostContent = "",
+    this.newPostPhotos = const <File>[]
   });
 
   final PostStatus status;
   final List<Post> posts;
-  final Post newPost;
+  final String newPostContent;
+  final List<File?> newPostPhotos;
 
   MainPageState copyWith({
     PostStatus? status,
     List<Post>? posts,
-    Post? newPost,
+    String? newPostContent,
+    List<File?>? newPostPhotos
   }) {
     return MainPageState(
       status: status ?? this.status,
       posts: posts ?? this.posts,
-      newPost: newPost ?? this.newPost
+      newPostContent: newPostContent ?? this.newPostContent,
+      newPostPhotos: newPostPhotos ?? this.newPostPhotos
     );
   }
 
@@ -31,5 +35,5 @@ class MainPageState extends Equatable {
   }
 
   @override
-  List<Object> get props => [status, posts, newPost];
+  List<Object> get props => [status, posts, newPostContent, newPostPhotos];
 }

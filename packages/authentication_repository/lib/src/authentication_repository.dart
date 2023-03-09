@@ -186,8 +186,8 @@ class AuthenticationRepository {
       );
       if (await !_firebaseAuth.currentUser!.emailVerified) {
         logOut();
-        throw firebase_auth.FirebaseAuthException(code: 'user-email-not-verified');
-
+        throw firebase_auth.FirebaseAuthException(
+            code: 'user-email-not-verified');
       }
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
           await _firebaseFirestore
@@ -271,7 +271,9 @@ class AuthenticationRepository {
         .doc(currentUser.id)
         .set(currentUser.toJsonUserInit());
     await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
-    await _firebaseStorage.refFromURL(currentUser.photo!).delete();
+    try {
+      await _firebaseStorage.refFromURL(currentUser.photo!).delete();
+    } catch (_) {}
     await _firebaseAuth.currentUser?.delete();
     //obsga wyjatku
   }

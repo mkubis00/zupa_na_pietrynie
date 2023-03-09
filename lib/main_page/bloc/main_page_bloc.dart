@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:posts_repository/posts_repository.dart';
@@ -12,32 +13,47 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
   MainPageBloc(this._postsRepository)
       :
         super(const MainPageState()) {
-    on<PostFetched>(_onPostFetched);
+    on<PostFetched>(_test);
     on<PostAddContentChanged>(_postContentChanged);
-    on<PostAddPhotoChanged>(_newPostPhotosChanged);
+    on<PostAddPhotosChanged>(_newPostPhotosChanged);
+    on<PostAddPhotoDeleted>(_newPostPhotoDeleted);
+    on<PostAdd>(_newPostAdd);
   }
 
   final PostsRepository _postsRepository;
 
-  void _postContentChanged(PostAdd event, Emitter<MainPageState> emit) {
-    print(event.newPost.postContent);
+  void _postContentChanged(PostAddContentChanged event, Emitter<MainPageState> emit) {
     emit(
       state.copyWith(
-        newPost: event.newPost
+        newPostContent: event.content
       ),
     );
   }
 
-  void _newPostPhotosChanged(PostAddPhotoChanged event, Emitter<MainPageState> emit) {
+  void _newPostPhotosChanged(PostAddPhotosChanged event, Emitter<MainPageState> emit) {
     emit(
       state.copyWith(
-        newPost: event.newPost
+        newPostPhotos: event.photos
       ),
     );
   }
 
+  void _test(PostFetched event, Emitter<MainPageState> emit) {
+    print("TEST TUTAJ");
+  }
 
+  void _newPostPhotoDeleted(PostAddPhotoDeleted event, Emitter<MainPageState> emit) {
+    state.newPostPhotos.removeAt(event.index);
+    emit(
+      state.copyWith(
+        newPostPhotos: state.newPostPhotos
+      )
+    );
+  }
 
+  void _newPostAdd(PostAdd event, Emitter<MainPageState> emit) {
+
+  }
 
   Future<void> _onPostFetched(
     PostFetched event,
@@ -47,12 +63,5 @@ class MainPageBloc extends Bloc<MainPageEvent, MainPageState> {
       int test = await _postsRepository.getNumberOfPosts();
       print("dasd");
       print(test);
-  }
-
-  Future<void> _test (
-      PostFetched event,
-      Emitter<MainPageState> emit,
-      ) async {
-
   }
 }
