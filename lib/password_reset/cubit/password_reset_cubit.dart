@@ -7,7 +7,8 @@ import 'package:formz/formz.dart';
 part 'password_reset_state.dart';
 
 class PasswordResetCubit extends Cubit<PasswordResetState> {
-  PasswordResetCubit(this._authenticationRepository) : super(const PasswordResetState());
+  PasswordResetCubit(this._authenticationRepository)
+      : super(const PasswordResetState());
 
   final AuthenticationRepository _authenticationRepository;
 

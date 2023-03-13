@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/app/app.dart';
-import 'package:zupa_na_pietrynie/main_page/main_page.dart';
+import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 
 import '../../settings_options/view/settings_options_page.dart';
 
@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    MainPage(),
+    MainScreenPage(),
     Text(
       'Index 1: Business',
       style: optionStyle,

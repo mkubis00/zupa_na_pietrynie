@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/sign_up/sign_up.dart';
+import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 
 class SignUpPage extends StatelessWidget {
   const SignUpPage({super.key});
@@ -14,11 +15,10 @@ class SignUpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Sign Up'),
-          backgroundColor: Colors.white,
-          elevation: 0,
+        backgroundColor: AppColors.WHITE,
+        elevation: 0,
         leading: BackButton(
-          color: Colors.black87,
+          color: AppColors.BLACK,
         ),
       ),
       body: Padding(

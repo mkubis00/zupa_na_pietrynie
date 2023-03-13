@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 
-import '../cubit/password_reset_cubit.dart';
+import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
+import 'package:zupa_na_pietrynie/password_reset/password_reset.dart';
 
 class PasswordResetForm extends StatelessWidget {
   const PasswordResetForm({super.key});
@@ -17,7 +18,8 @@ class PasswordResetForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Password reset Failure'),
+                content: Text(state.errorMessage ??
+                    PasswordResetString.SNACK_BAR_PASSWORD_RESET_FAILURE),
               ),
             );
         } else if (state.status.isSubmissionSuccess) {
@@ -25,14 +27,15 @@ class PasswordResetForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text("Na podany adres e-mail wyślaliśmy link umożliwiający zresetowanie hasla."),
+                content: const Text(
+                    PasswordResetString.SNACK_BAR_RESET_EMAIL_SENDED),
               ),
             );
           Navigator.of(context).pop();
         }
       },
       child: Align(
-        alignment: const Alignment(0, -1 ),
+        alignment: const Alignment(0, -1),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -42,106 +45,38 @@ class PasswordResetForm extends StatelessWidget {
                   child: Image.asset(
                     'assets/bloc_logo_small.png',
                     height: 170,
-                  )
-              ),
+                  )),
               SizedBox(
-                  width: width*0.85,
-                  child:
-                  Align(
+                  width: width * 0.85,
+                  child: Align(
                     alignment: Alignment.centerLeft,
                     child: Container(
-                      child: Text(
-                        "Nie pamiętasz hasla?",
+                      child: const Text(
+                        PasswordResetString.MAIN_INSCRIPTION,
                         style: TextStyle(
-                            fontWeight: FontWeight.w900,
-                            fontSize: 30
-                        ),
+                            fontWeight: FontWeight.w900, fontSize: 30),
                       ),
                     ),
-                  )
-              ),
+                  )),
               const SizedBox(height: 8),
               SizedBox(
-                width: width*0.85,
-                child:
-                Align(
+                width: width * 0.85,
+                child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Zresetuj je",
-                    style: TextStyle(
-                        fontSize: 15
-                    ),
+                  child: const Text(
+                    PasswordResetString.SECOND_INSCRIPTION,
+                    style: const TextStyle(fontSize: 15),
                   ),
                 ),
               ),
               const SizedBox(height: 25),
-              SizedBox(width: width*0.85, child: _EmailInput()),
+              SizedBox(width: width * 0.85, child: EmailInput()),
               const SizedBox(height: 8),
-              _ResetButton(width),
+              ResetButton(width),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-class _EmailInput extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<PasswordResetCubit, PasswordResetState>(
-      buildWhen: (previous, current) => previous.email != current.email,
-      builder: (context, state) {
-        return TextField(
-          key: const Key('loginForm_emailInput_textField'),
-          onChanged: (email) => context.read<PasswordResetCubit>().emailChanged(email),
-          keyboardType: TextInputType.emailAddress,
-          decoration: InputDecoration(
-              labelText: 'e-mail',
-              helperText: '',
-              errorText: state.email.invalid ? 'niepoprawny e-mail' : null,
-              enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 1),
-                  borderRadius: BorderRadius.circular(10)
-              )
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ResetButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<PasswordResetCubit, PasswordResetState>(
-      buildWhen: (previous, current) => previous.status != current.status,
-      builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? SizedBox(
-            width: 30, height: 30, child: const CircularProgressIndicator())
-            : SizedBox(
-            width: width * 0.85,
-          child:
-        ElevatedButton(
-          key: const Key('loginForm_continue_raisedButton'),
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: Colors.indigoAccent,
-          ),
-          onPressed: state.status.isValidated
-              ? () => context.read<PasswordResetCubit>().passwordReset()
-              : null,
-          child: const Text('ZRESETUJ HASLO'),
-        ));
-      },
-    );
-  }
-
-
-  _ResetButton(this.width);
-
-  final double width;
 }
