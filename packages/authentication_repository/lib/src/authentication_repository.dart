@@ -106,7 +106,7 @@ class AuthenticationRepository {
               .doc(currentUser.id)
               .get();
       if (documentSnapshot.exists) {
-        verifyDatabeUser(documentSnapshot);
+        verifyDatabaseUser(documentSnapshot);
         this.isUserAdmin = documentSnapshot.get('isAdmin');
       }
       if (!documentSnapshot.exists) {
@@ -122,7 +122,7 @@ class AuthenticationRepository {
     }
   }
 
-  void verifyDatabeUser(
+  void verifyDatabaseUser(
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot) {
     documentSnapshot.get('email') != currentUser.email
         ? _firebaseFirestore
@@ -159,7 +159,7 @@ class AuthenticationRepository {
               .doc(currentUser.id)
               .get();
       if (documentSnapshot.exists) {
-        verifyDatabeUser(documentSnapshot);
+        verifyDatabaseUser(documentSnapshot);
         this.isUserAdmin = documentSnapshot.get('isAdmin');
       }
       if (!documentSnapshot.exists) {
@@ -241,29 +241,25 @@ class AuthenticationRepository {
     }
   }
 
-  Future<void> updateUserCredentials({
-    required String email,
-    required String name,
-  }) async {
-    try {
-      // await _firebaseAuth.currentUser?.updateEmail(email);
-      print("zaczynam2");
-      print("zaczynam2");
-      await _firebaseAuth.currentUser?.updateDisplayName(name);
-      final user = <String, dynamic>{
-        "userId": currentUser.id,
-        "name": currentUser.name,
-        "mail": currentUser.email,
-        "photourl": currentUser.photo
-      };
-      // Allow read/write access on all documents to any user signed in to the application
-      _firebaseFirestore.collection("users").add(user).then(
-          (DocumentReference doc) =>
-              print('DocumentSnapshot added with ID: ${doc.id}'));
-    } catch (_) {
-      throw const UpdateUserCredentialsFailure();
-    }
-  }
+  // Future<void> updateUserCredentials({
+  //   required String email,
+  //   required String name,
+  // }) async {
+  //   try {
+  //     await _firebaseAuth.currentUser?.updateDisplayName(name);
+  //     final user = <String, dynamic>{
+  //       "userId": currentUser.id,
+  //       "name": currentUser.name,
+  //       "mail": currentUser.email,
+  //       "photourl": currentUser.photo
+  //     };
+  //     _firebaseFirestore.collection("users").add(user).then(
+  //         (DocumentReference doc) =>
+  //             print('DocumentSnapshot added with ID: ${doc.id}'));
+  //   } catch (_) {
+  //     throw const UpdateUserCredentialsFailure();
+  //   }
+  // }
 
   Future<void> deleteAccount() async {
     await _firebaseFirestore

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/app/app.dart';
 import 'package:zupa_na_pietrynie/theme.dart';
-import 'package:posts_repository/posts_repository.dart';
-
 
 class App extends StatelessWidget {
   const App({

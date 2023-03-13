@@ -15,10 +15,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     MainScreenPage(),
     Text(
@@ -51,7 +50,8 @@ class _HomePageState extends State<HomePage> {
             key: const Key('homePage_logout_iconButton'),
             icon: const Icon(Icons.settings),
             color: Colors.black87,
-            onPressed: () => Navigator.of(context).push<void>(SettingOptionsPage.route()),
+            onPressed: () =>
+                Navigator.of(context).push<void>(SettingOptionsPage.route()),
           )
         ],
       ),
@@ -80,7 +80,6 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.black87,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-
       ),
     );
   }
