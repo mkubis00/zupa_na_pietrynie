@@ -1,11 +1,9 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zupa_na_pietrynie/settings_options/view/settings_optins_form.dart';
 
-import '../cubit/settings_options_cubit.dart';
-
-
+import 'package:zupa_na_pietrynie/settings_options/settings_options.dart';
+import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 
 class SettingOptionsPage extends StatelessWidget {
   const SettingOptionsPage({super.key});
@@ -18,12 +16,11 @@ class SettingOptionsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User credential'),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.white,
+        backgroundColor: AppColors.WHITE,
+        shadowColor: AppColors.WHITE,
         elevation: 0,
         leading: BackButton(
-          color: Colors.black87,
+          color: AppColors.BLACK,
         ),
       ),
       body: Padding(

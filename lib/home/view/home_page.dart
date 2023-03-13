@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/app/app.dart';
+import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 
 import '../../settings_options/view/settings_options_page.dart';
+import 'package:zupa_na_pietrynie/settings_options/settings_options.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -43,13 +45,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        title: const Text('Home'),
+        backgroundColor: AppColors.WHITE,
         actions: <Widget>[
           IconButton(
             key: const Key('homePage_logout_iconButton'),
             icon: const Icon(Icons.settings),
-            color: Colors.black87,
+            color: AppColors.BLACK,
             onPressed: () =>
                 Navigator.of(context).push<void>(SettingOptionsPage.route()),
           )
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.WHITE,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -77,8 +78,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black87,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.BLACK,
+        unselectedItemColor: AppColors.GREY,
         onTap: _onItemTapped,
       ),
     );

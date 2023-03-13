@@ -6,4 +6,5 @@ class AppColors {
   static const Color INDIGO = Colors.indigoAccent;
   static const Color FACEBOOK_BLUE = Colors.blueAccent;
   static const Color RED = Colors.red;
+  static const Color GREY = Colors.grey;
 }

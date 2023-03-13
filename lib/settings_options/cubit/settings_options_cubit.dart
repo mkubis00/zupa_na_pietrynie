@@ -35,8 +35,8 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
   Future<void> updateUserName() async {
     if (!state.nameStatus.isValidated) return;
     emit(state.copyWith(
-        nameStatus: FormzStatus.submissionInProgress,
-        emailStatus: Formz.validate([state.email]),
+      nameStatus: FormzStatus.submissionInProgress,
+      emailStatus: Formz.validate([state.email]),
     ));
     try {
       await _authenticationRepository.updateUserName(name: state.name.value);
@@ -57,8 +57,8 @@ class SettingOptionsCubit extends Cubit<SettingOptionsState> {
   Future<void> updateUserEmail() async {
     if (!state.emailStatus.isValidated) return;
     emit(state.copyWith(
-        emailStatus: FormzStatus.submissionInProgress,
-        nameStatus: Formz.validate([state.name]),
+      emailStatus: FormzStatus.submissionInProgress,
+      nameStatus: Formz.validate([state.name]),
     ));
     try {
       await _authenticationRepository.updateUserEmail(email: state.email.value);
