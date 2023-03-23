@@ -8,7 +8,9 @@ abstract class MainScreenEvent extends Equatable {
 }
 
 class PostFetched extends MainScreenEvent {
-  const PostFetched();
+  final bool fromBeginning;
+
+  const PostFetched(this.fromBeginning);
 }
 
 class PostAdd extends MainScreenEvent {
@@ -31,4 +33,8 @@ class PostAddPhotoDeleted extends MainScreenEvent {
   final int index;
 
   PostAddPhotoDeleted(this.index);
+}
+
+class EventsCounterFetch extends MainScreenEvent {
+  EventsCounterFetch();
 }

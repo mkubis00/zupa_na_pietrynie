@@ -43,6 +43,8 @@ class NewPostFormState extends State<NewPostForm> {
           SizedBox(
               width: width * 0.87,
               child: TextFormField(
+                initialValue:
+                    context.read<MainScreenBloc>().state.newPostContent,
                 onChanged: (content) => context
                     .read<MainScreenBloc>()
                     .add(PostAddContentChanged(content)),

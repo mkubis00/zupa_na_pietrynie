@@ -16,13 +16,7 @@ class MainScreenPage extends StatelessWidget {
     return Padding(
           padding: const EdgeInsets.all(8),
           child:
-                BlocProvider(
-                  create: (_) => MainScreenBloc(
-                      PostsRepository(
-                          authenticationRepository: context.read<AuthenticationRepository>())
-                  ),
-                  child: const MainScreenForm(),
-                ),
+                 const MainScreenForm(),
     );
   }
 }

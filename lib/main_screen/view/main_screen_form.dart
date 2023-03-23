@@ -16,6 +16,32 @@ class MainScreenForm extends StatefulWidget {
 
 class _MainScreenFormState extends State<MainScreenForm> {
   bool isActionButtonPressed = false;
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  bool get _isBottom {
+    if (!_scrollController.hasClients) return false;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.offset;
+    return currentScroll >= (maxScroll * 0.9);
+  }
+
+  void _onScroll() {
+    if (_isBottom) context.read<MainScreenBloc>().add(PostFetched(false));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +58,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                       const Text(MainScreenStrings.SNACK_BAR_NEW_POST_ADDED),
                 ),
               );
+
           } else if (state.newPostStatus.isSubmissionFailure) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
@@ -39,6 +66,14 @@ class _MainScreenFormState extends State<MainScreenForm> {
                 SnackBar(
                   content: Text(MainScreenStrings.SNACK_BAR_NEW_POST_FAILED +
                       state.errorMessage!),
+                ),
+              );
+          } else if (state.newPostStatus.isSubmissionInProgress) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(MainScreenStrings.SNACK_BAR_NEW_POST_ADDING),
                 ),
               );
           }
@@ -62,11 +97,78 @@ class _MainScreenFormState extends State<MainScreenForm> {
                 AbsorbPointer(
                     absorbing: isActionButtonPressed,
                     child: Container(
-                        // width: width,
-                        // height: height,
                         child: Align(
-                      alignment: AlignmentDirectional.center,
-                      child: Text("Duppaa"),
+
+                      alignment: AlignmentDirectional.topCenter,
+                      child: RefreshIndicator(
+                      onRefresh: () async{
+                        context.read<MainScreenBloc>().add(PostFetched(true));
+                        },
+                      child:
+                      SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 15),
+                             EventsCounterForm(),
+
+
+                            /////////////////////////////////////////////////////////////////////////////////
+                            const SizedBox(height: 20),
+                            // ElevatedButton(onPressed: () {
+                            //   context.read<MainScreenBloc>().add(PostFetched(true));
+                            // }, child: Text("Gbhg")),
+                            // const SizedBox(height: 20),
+                            // Container(
+                            //     height: 320,
+                            //     width: width * 0.93,
+                            //     decoration: BoxDecoration(
+                            //       color: AppColors.GREY,
+                            //       borderRadius: BorderRadius.circular(20),
+                            //       boxShadow: [
+                            //         BoxShadow(
+                            //             color: AppColors.GREY,
+                            //             blurRadius: 5,
+                            //             spreadRadius: 1)
+                            //       ],
+                            //     ),
+                            //     child: Align(
+                            //       alignment: Alignment.center,
+                            //       child: SizedBox(
+                            //         width: 30,
+                            //         height: 30,
+                            //         child: CircularProgressIndicator(color: AppColors.BLACK),
+                            //       ),
+                            //     )),
+                            // const SizedBox(height: 15),
+                            // Container(
+                            //     height: 320,
+                            //     width: width * 0.93,
+                            //     decoration: BoxDecoration(
+                            //       color: AppColors.GREY,
+                            //       borderRadius: BorderRadius.circular(20),
+                            //       boxShadow: [
+                            //         BoxShadow(
+                            //             color: AppColors.GREY,
+                            //             blurRadius: 5,
+                            //             spreadRadius: 1)
+                            //       ],
+                            //     ),
+                            //     child: Align(
+                            //       alignment: Alignment.center,
+                            //       child: SizedBox(
+                            //         width: 30,
+                            //         height: 30,
+                            //         child: CircularProgressIndicator(color: AppColors.BLACK),
+                            //       ),
+                            //     )),
+
+                            PostsList(),
+                            const SizedBox(height: 10),
+                            /////////////////////////////////////////////////////////////////////////////////
+                          ],
+                        ),
+                      )),
                     ))),
                 Align(
                   alignment: AlignmentDirectional.topCenter,

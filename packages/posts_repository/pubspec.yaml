@@ -16,6 +16,7 @@ dependencies:
     path: ../authentication_repository
   cloud_firestore: ^4.0.2
   uuid: ^3.0.6
+  firebase_database: ^10.0.2
 
 dev_dependencies:
   flutter_test:

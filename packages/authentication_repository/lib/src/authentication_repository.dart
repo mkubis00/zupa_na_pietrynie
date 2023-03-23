@@ -13,7 +13,6 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
-import 'exceptions/exceptions.dart';
 
 class AuthenticationRepository {
   AuthenticationRepository({
@@ -43,6 +42,8 @@ class AuthenticationRepository {
 
   @visibleForTesting
   static const userCacheKey = '__user_cache_key__';
+  static const IsAdminCacheKey = '__isAdmin_cach_key';
+
 
   /// Stream of [User] which will emit the current user when
   /// the authentication state changes.
@@ -51,6 +52,7 @@ class AuthenticationRepository {
   Stream<User> get user {
     return _firebaseAuth.userChanges().map((firebaseUser) {
       final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
+
       _cache.write(key: userCacheKey, value: user);
       return user;
     });
@@ -82,6 +84,18 @@ class AuthenticationRepository {
     }
   }
 
+  Future<void> isAdmin() async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+    await _firebaseFirestore
+        .collection('users')
+        .doc(currentUser.id)
+        .get();
+    if (documentSnapshot.exists) {
+      verifyDatabaseUser(documentSnapshot);
+      this.isUserAdmin = documentSnapshot.get('isAdmin');
+    }
+  }
+
   Future<void> logInWithGoogle() async {
     try {
       late final firebase_auth.AuthCredential credential;
@@ -108,6 +122,7 @@ class AuthenticationRepository {
       if (documentSnapshot.exists) {
         verifyDatabaseUser(documentSnapshot);
         this.isUserAdmin = documentSnapshot.get('isAdmin');
+
       }
       if (!documentSnapshot.exists) {
         _firebaseFirestore

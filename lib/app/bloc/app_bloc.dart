@@ -5,21 +5,23 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 part 'app_event.dart';
+
 part 'app_state.dart';
 
 class AppBloc extends Bloc<AppEvent, AppState> {
   AppBloc({required AuthenticationRepository authenticationRepository})
       : _authenticationRepository = authenticationRepository,
         super(
-        authenticationRepository.currentUser.isNotEmpty
-            ? AppState.authenticated(authenticationRepository.currentUser)
-            : const AppState.unauthenticated(),
-      ) {
+          authenticationRepository.currentUser.isNotEmpty
+              ? AppState.authenticated(authenticationRepository.currentUser)
+              : const AppState.unauthenticated(),
+        ) {
+    _authenticationRepository.isAdmin();
     on<_AppUserChanged>(_onUserChanged);
     on<AppLogoutRequested>(_onLogoutRequested);
     on<AppDeleteUserRequested>(_onDeleteAccountRequested);
     _userSubscription = _authenticationRepository.user.listen(
-          (user) => add(_AppUserChanged(user)),
+      (user) => add(_AppUserChanged(user)),
     );
   }
 
@@ -38,11 +40,10 @@ class AppBloc extends Bloc<AppEvent, AppState> {
     unawaited(_authenticationRepository.logOut());
   }
 
-  void _onDeleteAccountRequested(AppDeleteUserRequested event, Emitter<AppState> emit) {
+  void _onDeleteAccountRequested(
+      AppDeleteUserRequested event, Emitter<AppState> emit) {
     unawaited(_authenticationRepository.deleteAccount());
-    emit(
-        AppState.unauthenticated()
-    );
+    emit(AppState.unauthenticated());
   }
 
   @override

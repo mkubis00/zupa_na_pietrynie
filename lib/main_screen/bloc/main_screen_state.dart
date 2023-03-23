@@ -6,6 +6,12 @@ enum PostStatus {
   failure,
 }
 
+enum EventsCounterState {
+  initial,
+  success,
+  failure,
+}
+
 class MainScreenState extends Equatable {
   const MainScreenState({
     this.status = PostStatus.initial,
@@ -14,6 +20,9 @@ class MainScreenState extends Equatable {
     this.newPostPhotos = const <File>[],
     this.newPostStatus = FormzStatus.pure,
     this.errorMessage,
+    this.eventsCounter = 0,
+    this.eventsCounterState = EventsCounterState.initial,
+    this.usersToPosts = const {},
   });
 
   final PostStatus status;
@@ -22,6 +31,9 @@ class MainScreenState extends Equatable {
   final List<File?> newPostPhotos;
   final FormzStatus newPostStatus;
   final String? errorMessage;
+  final int eventsCounter;
+  final EventsCounterState eventsCounterState;
+  final Set<UserToPost> usersToPosts;
 
   MainScreenState copyWith(
       {PostStatus? status,
@@ -29,7 +41,11 @@ class MainScreenState extends Equatable {
       String? newPostContent,
       List<File?>? newPostPhotos,
       FormzStatus? newPostStatus,
-      String? errorMessage}) {
+      String? errorMessage,
+      int? eventsCounter,
+      EventsCounterState? eventsCounterState,
+        Set<UserToPost>? usersToPosts
+      }) {
     return MainScreenState(
       status: status ?? this.status,
       posts: posts ?? this.posts,
@@ -37,6 +53,9 @@ class MainScreenState extends Equatable {
       newPostPhotos: newPostPhotos ?? this.newPostPhotos,
       newPostStatus: newPostStatus ?? this.newPostStatus,
       errorMessage: errorMessage ?? this.errorMessage,
+      eventsCounter: eventsCounter ?? this.eventsCounter,
+      eventsCounterState: eventsCounterState ?? this.eventsCounterState,
+      usersToPosts: usersToPosts ?? this.usersToPosts,
     );
   }
 
@@ -46,6 +65,14 @@ class MainScreenState extends Equatable {
   }
 
   @override
-  List<Object> get props =>
-      [status, posts, newPostContent, newPostPhotos, newPostStatus];
+  List<Object> get props => [
+        status,
+        posts,
+        newPostContent,
+        newPostPhotos,
+        newPostStatus,
+        eventsCounter,
+        eventsCounterState,
+        usersToPosts,
+      ];
 }

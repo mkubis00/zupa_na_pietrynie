@@ -1,11 +1,9 @@
+import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zupa_na_pietrynie/app/app.dart';
-import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
-import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
-
-import '../../settings_options/view/settings_options_page.dart';
-import 'package:zupa_na_pietrynie/settings_options/settings_options.dart';
+import 'package:posts_repository/posts_repository.dart';
+import 'package:zupa_na_pietrynie/main_screen/bloc/main_screen_bloc.dart';
+import 'package:zupa_na_pietrynie/home/home.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,71 +15,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  static const List<Widget> _widgetOptions = <Widget>[
-    MainScreenPage(),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final user = context.select((AppBloc bloc) => bloc.state.user);
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColors.WHITE,
-        actions: <Widget>[
-          IconButton(
-            key: const Key('homePage_logout_iconButton'),
-            icon: const Icon(Icons.settings),
-            color: AppColors.BLACK,
-            onPressed: () =>
-                Navigator.of(context).push<void>(SettingOptionsPage.route()),
-          )
-        ],
-      ),
-      body: Align(
-        alignment: const Alignment(0, -1 / 3),
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 0,
-        backgroundColor: AppColors.WHITE,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xe78e, fontFamily: 'MaterialIcons')),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xe054, fontFamily: 'MaterialIcons')),
-            label: '',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.BLACK,
-        unselectedItemColor: AppColors.GREY,
-        onTap: _onItemTapped,
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MainScreenBloc>(
+            create: (BuildContext context) => MainScreenBloc(PostsRepository(
+                authenticationRepository:
+                    context.read<AuthenticationRepository>()))..add(EventsCounterFetch())..add(PostFetched(true))),
+      ],
+      child: MainScreenForm(),
     );
   }
 }
