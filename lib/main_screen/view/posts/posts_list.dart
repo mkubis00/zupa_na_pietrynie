@@ -43,21 +43,22 @@ class _PostsListState extends State<PostsList> {
   }
 
   String? chooseAvatar(String ownerId, Set<UserToPost> usersToPosts) {
-    for(UserToPost user in usersToPosts) {
-      if(ownerId == user.id) {
+    for (UserToPost user in usersToPosts) {
+      if (ownerId == user.id) {
         return user.photo;
       }
     }
     return null;
   }
 
-  String? chooseNameAndDate(String ownerId, Set<UserToPost> usersToPosts, String date) {
-    for(UserToPost user in usersToPosts) {
-      if(ownerId == user.id) {
-        return user.name + "\n" + date.substring(0,16);
+  static String? chooseNameAndDate(
+      String ownerId, Set<UserToPost> usersToPosts, String date) {
+    for (UserToPost user in usersToPosts) {
+      if (ownerId == user.id) {
+        return user.name + "\n" + date.substring(0, 16);
       }
     }
-    return null;
+    return "Usunięty użytkownik" + "\n" + date.substring(0, 16);
   }
 
   @override
@@ -65,115 +66,135 @@ class _PostsListState extends State<PostsList> {
     double width = MediaQuery.of(context).size.width;
     final User user = context.select((AppBloc bloc) => bloc.state.user);
     return BlocBuilder<MainScreenBloc, MainScreenState>(
+      buildWhen: (previous, current) => previous.posts != current.posts,
       builder: (context, state) {
         switch (state.status) {
           case PostStatus.failure:
             return const Center(child: Text('failed to fetch posts'));
           case PostStatus.success:
-            return
-              Container(
-                width: width *0.94,
-              child:
-              ListView.separated(
-                separatorBuilder: (context, index) => SizedBox(
-                  height: 20,
-                ),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: state.posts.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return index >= state.posts.length
-                      ? const BottomLoader()
-                      :
-                   Container(
-                    // height: 300,
-                      decoration: BoxDecoration(
-                      color: AppColors.WHITE,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                  BoxShadow(
-                  color: AppColors.GREY,
-                  blurRadius: 10,
-                  spreadRadius: 1)
-                  ],
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          const SizedBox(width: 15),
-                          SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: Avatar(photo: chooseAvatar(state.posts[index].ownerId, state.usersToPosts)),
-                          ),
-                          const SizedBox(width: 10),
-                          Text(chooseNameAndDate(state.posts[index].ownerId, state.usersToPosts, state.posts[index].creationDate)!),
-                          Spacer(),
-                          if (user.isAdmin == true|| user.id == state.posts[index].ownerId)
-                          IconButton(onPressed: (){}, icon: Icon(IconData(0xf6fb, fontFamily: 'MaterialIcons'))),
-
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          const SizedBox(width: 15),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(state.posts[index].postContent),
-                          )
-                        ],
-                      ),
-                      if (state.posts[index]!.postPhotos?.length != 0) SizedBox(height: 30,),
-                        // SizedBox(width: width * 0.87,
-                        //     height: 30,
-                        //     child:Divider(
-                        //       color: Colors.black,
-                        //     ),
-                        // ),
-                      if (state.posts[index]!.postPhotos?.length != 0) SizedBox(height: 10,),
-                      if (state.posts[index]!.postPhotos?.length != 0)
-                        Container(
-                  height: 300,
-                  child:
-                        ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                              // physics: const NeverScrollableScrollPhysics(),
-                                separatorBuilder: (context, ind) => SizedBox(
-                                  width: 20,
-                                ),
+                  return
+                    BlocBuilder<AppBloc, AppState>(
+                        builder: (context, appState) {
+                          return
+                    Container(
+                      width: width * 0.95,
+                      child: ListView.separated(
+                          separatorBuilder: (context, index) => SizedBox(
+                                height: 20,
+                              ),
+                          scrollDirection: Axis.vertical,
                           shrinkWrap: true,
-                              itemCount: state.posts[index].postPhotos!.length,
-                              itemBuilder: (BuildContext context, int indexex) {
-                              return Container(
-                                // height: 60,
-                                child: Image( image:
-                                NetworkImage(state.posts[index].postPhotos![indexex])),
-                              );
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: state.posts.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return index >= state.posts.length
+                                ? const BottomLoader()
+                                : Container(
+                                    // height: 300,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.WHITE,
+                                      borderRadius: BorderRadius.circular(20),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            color: AppColors.GREY,
+                                            blurRadius: 10,
+                                            spreadRadius: 1)
+                                      ],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 15),
+                                            SizedBox(
+                                              width: 40,
+                                              height: 40,
+                                              child: Avatar(
+                                                  photo: chooseAvatar(
+                                                      state
+                                                          .posts[index].ownerId,
+                                                      state.usersToPosts)),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Text(chooseNameAndDate(
+                                                state.posts[index].ownerId,
+                                                state.usersToPosts,
+                                                state.posts[index]
+                                                    .creationDate)!),
+                                            Spacer(),
+                                            if (appState.isAdmin == true ||
+                                                user.id ==
+                                                    state.posts[index].ownerId)
+                                              EditButton(post: state.posts[index]),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          children: [
+                                            const SizedBox(width: 15),
+                                            Align(
+                                              alignment: Alignment.topLeft,
+                                              child: SizedBox(
+                                                  width: width * 0.86,
+                                                  child: Text(state.posts[index]
+                                                      .postContent)),
+                                            )
+                                          ],
+                                        ),
+                                        if (state.posts[index]!.postPhotos
+                                                ?.length !=
+                                            0)
+                                          SizedBox(height: 15),
+                                        if (state.posts[index]!.postPhotos
+                                                ?.length !=
+                                            0)
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                        if (state.posts[index]!.postPhotos
+                                                ?.length !=
+                                            0)
+                                          Container(
+                                              height: 300,
+                                              child: ListView.separated(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  // physics: const NeverScrollableScrollPhysics(),
+                                                  separatorBuilder:
+                                                      (context, ind) =>
+                                                          SizedBox(
+                                                            width: 20,
+                                                          ),
+                                                  shrinkWrap: true,
+                                                  itemCount: state.posts[index]
+                                                      .postPhotos!.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int indexex) {
+                                                    return Container(
+                                                      // height: 60,
+                                                      child: Image(
+                                                          image: NetworkImage(state
+                                                                  .posts[index]
+                                                                  .postPhotos![
+                                                              indexex])),
+                                                    );
+                                                  })),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          children: [
+                                            Spacer(),
+                                            Text("Komentarze: 2"),
+                                            const SizedBox(width: 15),
+                                          ],
+                                        ),
 
-                              }
-
-
-                        )),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            const SizedBox(width: 15),
-                            Text("Lubię to "),
-                            Icon(IconData(0xf43e, fontFamily: 'MaterialIcons')),
-                            Spacer(),
-                            Text("Komentarze"),
-                            const SizedBox(width: 15),
-                          ],
-                        ),
-
-                        const SizedBox(height: 20),
-                    ],
-                  ));
-                }));
+                                        const SizedBox(height: 20),
+                                      ],
+                                    ));
+                          }));
+                });
           case PostStatus.initial:
             return const Center(child: CircularProgressIndicator());
         }

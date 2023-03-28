@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:uuid/uuid.dart';
 import 'package:posts_repository/posts_repository.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 class PostsRepository {
   PostsRepository({
@@ -15,15 +14,13 @@ class PostsRepository {
     FirebaseFirestore? firebaseFirestore,
   })  : _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
         _authenticationRepository = authenticationRepository,
-        _firebaseFirestore = FirebaseFirestore.instance,
-        _firebaseDatabase = FirebaseDatabase.instance;
+        _firebaseFirestore = FirebaseFirestore.instance;
 
   final FirebaseStorage _firebaseStorage;
   final FirebaseFirestore _firebaseFirestore;
   final AuthenticationRepository _authenticationRepository;
-  final FirebaseDatabase _firebaseDatabase;
 
-  late QueryDocumentSnapshot<Object?>  postSnapshot;
+  late QueryDocumentSnapshot<Object?> postSnapshot;
 
   Future<void> createNewPost(List<File?> photos, String content) async {
     String uuid = const Uuid().v1();
@@ -78,10 +75,9 @@ class PostsRepository {
           .get()
           .then((QuerySnapshot querySnapshot) {
         querySnapshot.docs.forEach((doc) {
-          fetchedPosts.add(
-              Post(
+          fetchedPosts.add(Post(
               ownerId: doc['ownerId'],
-              creationDate:doc['creationDate'],
+              creationDate: doc['creationDate'],
               postContent: doc['postContent'],
               id: doc['id'],
               postPhotos: List<String>.from(doc['postPhotos'] as List)));
@@ -95,36 +91,85 @@ class PostsRepository {
           .limit(10)
           .get()
           .then((QuerySnapshot querySnapshot) {
-              querySnapshot.docs.forEach((doc) {
-          fetchedPosts.add(
-              Post(
-                  ownerId: doc['ownerId'],
-                  creationDate:doc['creationDate'],
-                  postContent: doc['postContent'],
-                  id: doc['id'],
-                  postPhotos: List<String>.from(doc['postPhotos'] as List)
-              ));
-              }
-              );
-              postSnapshot = querySnapshot.docs.last;
+        querySnapshot.docs.forEach((doc) {
+          fetchedPosts.add(Post(
+              ownerId: doc['ownerId'],
+              creationDate: doc['creationDate'],
+              postContent: doc['postContent'],
+              id: doc['id'],
+              postPhotos: List<String>.from(doc['postPhotos'] as List)));
+        });
+        postSnapshot = querySnapshot.docs.last;
       });
     }
     return fetchedPosts;
   }
 
   Future<Set<UserToPost>> getUserstoPosts(List<Post> posts) async {
-      Set<String> ids = {};
-      posts.forEach((element) { 
-        ids.add(element.ownerId); 
-      });
-      Set<UserToPost> usersToPosts = {};
+    Set<String> ids = {};
+    posts.forEach((element) {
+      ids.add(element.ownerId);
+    });
+    Set<UserToPost> usersToPosts = {};
+    try {
       for (String id in ids) {
-        DocumentSnapshot<Map<String,dynamic>> userToPost =
-        await _firebaseFirestore.collection('users').doc(id).get();
-        usersToPosts.add(UserToPost(id: userToPost.get('id'),
-            name: userToPost.get('name'),
-            photo: userToPost.get('photo')));
+        await _firebaseFirestore
+            .collection('users')
+            .doc(id)
+            .get()
+            .then((document) {
+          usersToPosts.add(UserToPost(
+              id: document.get('id'),
+              name: document.get('name'),
+              photo: document.get('photo')));
+        }).catchError((error) {
+        });
       }
       return usersToPosts;
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
+
+  Future<void> deletePost(String postId, String ownerId) async {
+    try {
+      bool isAdmin = await _authenticationRepository.isAdmin();
+      if (isAdmin == true ||
+          _authenticationRepository.currentUser.id == ownerId) {
+        await _firebaseFirestore.collection('posts').doc(postId).delete();
+      } else {
+        throw const FireStoreException();
+      }
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
+
+  Future<void> updatePost(Post post) async {
+    try {
+      bool isAdmin = await _authenticationRepository.isAdmin();
+      if (isAdmin == true ||
+          _authenticationRepository.currentUser.id == post.ownerId) {
+        final updatePost = <String, dynamic>{
+          "id": post.id,
+          "ownerId": post.ownerId,
+          "creationDate": post.creationDate,
+          "postContent": post.postContent,
+          "postPhotos": post.postPhotos,
+        };
+        await _firebaseFirestore
+            .collection('posts')
+            .doc(post.id)
+            .set(updatePost);
+      }
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
   }
 }

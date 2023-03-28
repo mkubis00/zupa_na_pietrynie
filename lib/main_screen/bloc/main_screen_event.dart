@@ -38,3 +38,15 @@ class PostAddPhotoDeleted extends MainScreenEvent {
 class EventsCounterFetch extends MainScreenEvent {
   EventsCounterFetch();
 }
+
+class DeletePost extends MainScreenEvent {
+  final Post postToDelete;
+
+  DeletePost(this.postToDelete);
+}
+
+class UpdatePost extends MainScreenEvent {
+  final Post postToUpdate;
+
+  UpdatePost(this.postToUpdate);
+}

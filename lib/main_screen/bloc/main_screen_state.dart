@@ -22,7 +22,7 @@ class MainScreenState extends Equatable {
     this.errorMessage,
     this.eventsCounter = 0,
     this.eventsCounterState = EventsCounterState.initial,
-    this.usersToPosts = const {},
+    this.usersToPosts = const {}
   });
 
   final PostStatus status;

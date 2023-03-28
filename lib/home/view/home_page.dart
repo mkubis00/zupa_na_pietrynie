@@ -17,14 +17,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<MainScreenBloc>(
-            create: (BuildContext context) => MainScreenBloc(PostsRepository(
-                authenticationRepository:
-                    context.read<AuthenticationRepository>()))..add(EventsCounterFetch())..add(PostFetched(true))),
-      ],
-      child: MainScreenForm(),
-    );
+    return
+      // MultiBlocProvider(
+      // providers: [
+      //   BlocProvider<MainScreenBloc>(
+      //       create: (BuildContext context) => MainScreenBloc(PostsRepository(
+      //           authenticationRepository:
+      //               context.read<AuthenticationRepository>()))..add(EventsCounterFetch())..add(PostFetched(true))),
+      // ],
+      // child:
+    MainScreenForm()
+      ;
+    // );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 
-const _avatarSize = 10.0;
+const _avatarSize = 30.0;
 
 class Avatar extends StatelessWidget {
   const Avatar({super.key, this.photo});

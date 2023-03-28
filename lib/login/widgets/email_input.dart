@@ -21,7 +21,7 @@ class EmailInput extends StatelessWidget {
               labelText: LoginStrings.EMAIL_INPUT_LABEL,
               labelStyle: const TextStyle(color: AppColors.BLACK),
               errorText:
-                  state.email.invalid ? LoginStrings.EMAIL_INPUT_INVALID : null,
+              state.email.invalid ? LoginStrings.EMAIL_INPUT_INVALID : null,
               enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(10))),

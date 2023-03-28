@@ -13,7 +13,7 @@ part 'main_screen_state.dart';
 
 part 'main_screen_event.dart';
 
-const throttleDuration = Duration(milliseconds: 500);
+const throttleDuration = Duration(milliseconds: 1000);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {
@@ -30,6 +30,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     on<PostAddPhotoDeleted>(_newPostPhotoDeleted);
     on<PostAdd>(_newPostAdd);
     on<EventsCounterFetch>(_eventsCounterFetch);
+    on<DeletePost>(_postDelete);
   }
 
   final PostsRepository _postsRepository;
@@ -54,6 +55,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       Set<UserToPost> usersToPosts = {} ;
       usersToPosts.addAll(state.usersToPosts);
       usersToPosts.addAll(await _postsRepository.getUserstoPosts(posts));
+      usersToPosts.add(UserToPost(id: "unknown", name: "Usunięty użytkownik", photo: ""));
       emit(
         state.copyWith(posts: posts,
             usersToPosts: usersToPosts,
@@ -114,5 +116,13 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
             }
           : null;
     }
+  }
+
+  Future<void> _postDelete(DeletePost event, Emitter<MainScreenState> emit) async {
+    await _postsRepository.deletePost(event.postToDelete.id!, event.postToDelete.ownerId);
+    List<Post> posts = [];
+    posts.addAll(state.posts);
+    posts.remove(event.postToDelete);
+    emit(state.copyWith(posts: posts));
   }
 }

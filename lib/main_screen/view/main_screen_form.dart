@@ -45,6 +45,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
 
   @override
   Widget build(BuildContext context) {
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return BlocListener<MainScreenBloc, MainScreenState>(
@@ -101,6 +102,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
 
                       alignment: AlignmentDirectional.topCenter,
                       child: RefreshIndicator(
+                        color: AppColors.BLACK,
                       onRefresh: () async{
                         context.read<MainScreenBloc>().add(PostFetched(true));
                         },
@@ -115,54 +117,6 @@ class _MainScreenFormState extends State<MainScreenForm> {
 
                             /////////////////////////////////////////////////////////////////////////////////
                             const SizedBox(height: 20),
-                            // ElevatedButton(onPressed: () {
-                            //   context.read<MainScreenBloc>().add(PostFetched(true));
-                            // }, child: Text("Gbhg")),
-                            // const SizedBox(height: 20),
-                            // Container(
-                            //     height: 320,
-                            //     width: width * 0.93,
-                            //     decoration: BoxDecoration(
-                            //       color: AppColors.GREY,
-                            //       borderRadius: BorderRadius.circular(20),
-                            //       boxShadow: [
-                            //         BoxShadow(
-                            //             color: AppColors.GREY,
-                            //             blurRadius: 5,
-                            //             spreadRadius: 1)
-                            //       ],
-                            //     ),
-                            //     child: Align(
-                            //       alignment: Alignment.center,
-                            //       child: SizedBox(
-                            //         width: 30,
-                            //         height: 30,
-                            //         child: CircularProgressIndicator(color: AppColors.BLACK),
-                            //       ),
-                            //     )),
-                            // const SizedBox(height: 15),
-                            // Container(
-                            //     height: 320,
-                            //     width: width * 0.93,
-                            //     decoration: BoxDecoration(
-                            //       color: AppColors.GREY,
-                            //       borderRadius: BorderRadius.circular(20),
-                            //       boxShadow: [
-                            //         BoxShadow(
-                            //             color: AppColors.GREY,
-                            //             blurRadius: 5,
-                            //             spreadRadius: 1)
-                            //       ],
-                            //     ),
-                            //     child: Align(
-                            //       alignment: Alignment.center,
-                            //       child: SizedBox(
-                            //         width: 30,
-                            //         height: 30,
-                            //         child: CircularProgressIndicator(color: AppColors.BLACK),
-                            //       ),
-                            //     )),
-
                             PostsList(),
                             const SizedBox(height: 10),
                             /////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +129,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                   child: Visibility(
                     visible: isActionButtonPressed,
                     child: Container(
-                      width: width * 0.95,
+                      width: width * 0.98,
                       height: height,
                       decoration: BoxDecoration(
                           boxShadow: [
