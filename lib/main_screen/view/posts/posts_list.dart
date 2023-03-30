@@ -185,7 +185,7 @@ class _PostsListState extends State<PostsList> {
                                         Row(
                                           children: [
                                             Spacer(),
-                                            Text("Komentarze: 2"),
+                                            Text("Komentarze: " + state.posts[index].numberOfComments.toString()),
                                             const SizedBox(width: 15),
                                           ],
                                         ),

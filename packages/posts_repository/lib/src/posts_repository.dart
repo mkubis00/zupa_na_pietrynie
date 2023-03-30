@@ -41,6 +41,7 @@ class PostsRepository {
         "creationDate": postCreationDate.toString(),
         "postContent": content,
         "postPhotos": photosPaths,
+        "numberOfComments": 0
       };
       await _firebaseFirestore.collection("posts").doc(uuid).set(newPost);
     } on FirebaseException catch (e) {
@@ -80,7 +81,9 @@ class PostsRepository {
               creationDate: doc['creationDate'],
               postContent: doc['postContent'],
               id: doc['id'],
-              postPhotos: List<String>.from(doc['postPhotos'] as List)));
+              postPhotos: List<String>.from(doc['postPhotos'] as List),
+              numberOfComments: doc['numberOfComments']
+          ));
         });
         querySnapshot.size > 0 ? postSnapshot = querySnapshot.docs.last : null;
       });
@@ -97,7 +100,9 @@ class PostsRepository {
               creationDate: doc['creationDate'],
               postContent: doc['postContent'],
               id: doc['id'],
-              postPhotos: List<String>.from(doc['postPhotos'] as List)));
+              postPhotos: List<String>.from(doc['postPhotos'] as List),
+              numberOfComments: doc['numberOfComments']
+          ));
         });
         postSnapshot = querySnapshot.docs.last;
       });
