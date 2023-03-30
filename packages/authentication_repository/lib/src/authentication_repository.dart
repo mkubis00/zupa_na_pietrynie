@@ -13,7 +13,6 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 
-
 class AuthenticationRepository {
   AuthenticationRepository({
     CacheClient? cache,
@@ -208,11 +207,11 @@ class AuthenticationRepository {
         throw firebase_auth.FirebaseAuthException(
             code: 'user-email-not-verified');
       }
-      DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-          await _firebaseFirestore
-              .collection('users')
-              .doc(currentUser.id)
-              .get();
+      // DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+      //     await _firebaseFirestore
+      //         .collection('users')
+      //         .doc(currentUser.id)
+      //         .get();
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {
@@ -260,12 +259,16 @@ class AuthenticationRepository {
   }
 
   Future<void> deleteAccount() async {
-    await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
+
     try {
+      await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
       await _firebaseStorage.refFromURL(currentUser.photo!).delete();
-    } catch (_) {}
-    await _firebaseAuth.currentUser?.delete();
-    //obsga wyjatku
+      await _firebaseAuth.currentUser?.delete();
+    } catch (_) {
+      //obsga wyjatku
+    }
+
+
   }
 
   Future<void> updateUserPhoto() async {
