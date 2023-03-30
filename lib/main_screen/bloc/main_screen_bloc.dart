@@ -52,7 +52,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   Future<void> _postsFetch(PostFetched event, Emitter<MainScreenState> emit) async {
     if (event.fromBeginning) {
       List<Post> posts = await _postsRepository.postFetch(true);
-      Set<UserToPost> usersToPosts = {} ;
+      Set<UserToPost> usersToPosts = {};
       usersToPosts.addAll(state.usersToPosts);
       usersToPosts.addAll(await _postsRepository.getUserstoPosts(posts));
       usersToPosts.add(UserToPost(id: "unknown", name: "Usunięty użytkownik", photo: ""));
@@ -63,7 +63,10 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       );
     } else {
       List<Post> posts = await _postsRepository.postFetch(false);
-      emit(state.copyWith(posts: state.posts + posts, status: PostStatus.success));
+      Set<UserToPost> usersToPosts = {};
+      usersToPosts.addAll(state.usersToPosts);
+      usersToPosts.addAll(await _postsRepository.getUserstoPosts(posts));
+      emit(state.copyWith(posts: state.posts + posts, usersToPosts: usersToPosts, status: PostStatus.success));
     }
 
   }

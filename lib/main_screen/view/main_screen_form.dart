@@ -134,7 +134,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey.withOpacity(0.8),
                               spreadRadius: 25,
                               blurRadius: 7,
                               offset:

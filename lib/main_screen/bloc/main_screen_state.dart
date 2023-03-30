@@ -22,7 +22,8 @@ class MainScreenState extends Equatable {
     this.errorMessage,
     this.eventsCounter = 0,
     this.eventsCounterState = EventsCounterState.initial,
-    this.usersToPosts = const {}
+    this.usersToPosts = const {},
+    this.comments = const <Comment>[],
   });
 
   final PostStatus status;
@@ -34,6 +35,7 @@ class MainScreenState extends Equatable {
   final int eventsCounter;
   final EventsCounterState eventsCounterState;
   final Set<UserToPost> usersToPosts;
+  final List<Comment> comments;
 
   MainScreenState copyWith(
       {PostStatus? status,
@@ -44,7 +46,8 @@ class MainScreenState extends Equatable {
       String? errorMessage,
       int? eventsCounter,
       EventsCounterState? eventsCounterState,
-        Set<UserToPost>? usersToPosts
+        Set<UserToPost>? usersToPosts,
+        List<Comment>? comments,
       }) {
     return MainScreenState(
       status: status ?? this.status,
@@ -56,6 +59,7 @@ class MainScreenState extends Equatable {
       eventsCounter: eventsCounter ?? this.eventsCounter,
       eventsCounterState: eventsCounterState ?? this.eventsCounterState,
       usersToPosts: usersToPosts ?? this.usersToPosts,
+      comments: comments ?? this.comments,
     );
   }
 
@@ -74,5 +78,6 @@ class MainScreenState extends Equatable {
         eventsCounter,
         eventsCounterState,
         usersToPosts,
+        comments
       ];
 }
