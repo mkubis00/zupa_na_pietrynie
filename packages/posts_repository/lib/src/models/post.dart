@@ -7,8 +7,9 @@ class Post extends Equatable {
       required this.creationDate,
       required this.postContent, required this.numberOfComments,
       this.postPhotos
-
       });
+
+
 
   final String? id;
   final String ownerId;
@@ -21,5 +22,5 @@ class Post extends Equatable {
 
   @override
   List<Object?> get props =>
-      [id, ownerId, creationDate, postContent, postPhotos];
+      [id, ownerId, creationDate, postContent, postPhotos, numberOfComments];
 }

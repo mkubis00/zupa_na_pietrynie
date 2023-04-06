@@ -32,6 +32,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     on<EventsCounterFetch>(_eventsCounterFetch);
     on<DeletePost>(_postDelete);
     on<FetchComments>(_fetchComments);
+    on<CommentAdd>(_addNewComment);
   }
 
   final PostsRepository _postsRepository;
@@ -49,6 +50,11 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       state.copyWith(newPostPhotos: event.photos),
     );
   }
+
+  Future<void> _addNewComment(CommentAdd event, Emitter<MainScreenState> emit) async {
+      await _postsRepository.createComment(event.commentContent, event.postId);
+  }
+
 
   Future<void> _postsFetch(PostFetched event, Emitter<MainScreenState> emit) async {
     if (event.fromBeginning) {
@@ -80,10 +86,17 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   Future<void> _fetchComments(FetchComments event, Emitter<MainScreenState> emit ) async {
     try {
       emit(state.copyWith(commentsStatus: CommentsStatus.empty));
+      print("DDDDD");
       List<Comment> comments = await _postsRepository.fetchComments(
           event.postId);
+      print("DDDDD");
+      Set<UserToPost> usersToPosts = {};
+      usersToPosts.addAll(state.usersToPosts);
+      usersToPosts.addAll(await _postsRepository.getUserstoPosts(comments));
+      print("DDDDD");
       emit(state.copyWith(
-          commentsStatus: CommentsStatus.success, comments: comments));
+          commentsStatus: CommentsStatus.success, comments: comments, usersToPosts: usersToPosts));
+      print("DDDDD");
     } on FireStoreException catch (e) {
       emit(state.copyWith(
         errorMessage: e.message, commentsStatus: CommentsStatus.failure

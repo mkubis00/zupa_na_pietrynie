@@ -25,6 +25,7 @@ class _SinglePostState extends State<SinglePost> {
   final Set<UserToPost> usersToPosts;
   final bool isAdmin;
   bool isCommentsShowed = false;
+  TextEditingController msgController = TextEditingController();
 
   _SinglePostState(this.post, this.usersToPosts, this.isAdmin);
 
@@ -86,7 +87,7 @@ class _SinglePostState extends State<SinglePost> {
                 if (isAdmin == true ||
                     user.id ==
                         post.ownerId)
-                  EditButton(post: post),
+                  EditButton(post: post)
               ],
             ),
             const SizedBox(height: 20),
@@ -153,13 +154,55 @@ class _SinglePostState extends State<SinglePost> {
                     isCommentsShowed = false
                   },
                   setState(() {})
-                }, child: Text("Komentarze: " + post.numberOfComments.toString())),
+                }, child: Text("Komentarze: " + post.numberOfComments.toString(),
+                style: TextStyle(color: AppColors.BLACK),
+                )),
                 if (post.numberOfComments == 0) const SizedBox(width: 18),
                 if (post.numberOfComments != 0) const SizedBox(width: 8),
               ],
             ),
-            if(isCommentsShowed) Container(color: AppColors.BLACK, height: 400,),
-            if (post.numberOfComments == 0) const SizedBox(height: 20),
+            if(isCommentsShowed) Comments(),
+            const SizedBox(height: 20,),
+            Row(
+              children: [
+                const SizedBox(width: 15,),
+                SizedBox(
+                  width: width * 0.7,
+                  // height: 40,
+                  child:
+                  TextField(
+                    controller: msgController,
+                    cursorColor: AppColors.BLACK,
+                    style: TextStyle(fontSize: 15),
+                    decoration: InputDecoration(
+    contentPadding: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+                      border: OutlineInputBorder(
+    borderSide: BorderSide(color: AppColors.BLACK),
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        gapPadding: 1
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide(color: AppColors.BLACK)),
+                      hintText: 'Dodaj komentarz',
+                    ),
+                  ),
+                ),
+                Spacer(),
+                  IconButton(
+                    icon: const Icon(IconData(0xe571, fontFamily: 'MaterialIcons', matchTextDirection: true)),
+                    tooltip: 'Increase volume by 10',
+                    onPressed: () {
+                      if (3 <= msgController.value.text.length) {
+                        context.read<MainScreenBloc>().add(CommentAdd(msgController.value.text, post.id!));
+                        msgController.clear();
+                      }
+                    },
+                  ),
+                const SizedBox(width: 20),
+              ],
+            ),
+            const SizedBox(height: 20),
           ],
         ));
   }

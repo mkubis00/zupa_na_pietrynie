@@ -1,4 +1,3 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:posts_repository/posts_repository.dart';
@@ -40,10 +39,17 @@ class _PostsListState extends State<PostsList> {
     return currentScroll >= (maxScroll * 0.9);
   }
 
+  void test() async {
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    return BlocBuilder<MainScreenBloc, MainScreenState>(
+    final bool isAdmin = context.read<AppBloc>().state.isAdmin;
+     return BlocBuilder<MainScreenBloc, MainScreenState>(
       buildWhen: (previous, current) => previous.posts != current.posts,
       builder: (context, state) {
         switch (state.postsStatus) {
@@ -51,9 +57,6 @@ class _PostsListState extends State<PostsList> {
             return const Center(child: Text('failed to fetch posts'));
           case PostStatus.success:
                   return
-                    BlocBuilder<AppBloc, AppState>(
-                        builder: (context, appState) {
-                          return
                     Container(
                       width: width * 0.95,
                       child: ListView.separated(
@@ -65,18 +68,18 @@ class _PostsListState extends State<PostsList> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount: state.posts.length,
                           itemBuilder: (BuildContext context, int index) {
+                            Post post = state.posts[index];
                             return index >= state.posts.length
                                 ? const BottomLoader()
-                                : SinglePost(post: state.posts[index], usersToPosts: state.usersToPosts, isAdmin: appState.isAdmin);
+                                : SinglePost(post: post, usersToPosts: state.usersToPosts, isAdmin: isAdmin, key: UniqueKey(),);
                           }));
-                });
           case PostStatus.initial:
             return const Center(child: CircularProgressIndicator());
         }
       },
     );
-  }
-}
+
+}}
 
 class BottomLoader extends StatelessWidget {
   const BottomLoader({super.key});

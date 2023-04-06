@@ -61,7 +61,7 @@ class PostsRepository {
         "ownerId": _authenticationRepository.currentUser.id,
         "postId": postId,
         "commentContent": commentContent,
-        "creationDate": commentCreationDate
+        "creationDate": commentCreationDate.toString()
       };
       await _firebaseFirestore.collection("comments").doc(uuid).set(newComment);
       await _firebaseFirestore.collection("posts").doc(postId).update(
@@ -94,19 +94,21 @@ class PostsRepository {
   Future<List<Comment>> fetchComments(String postId) async {
     try {
       List<Comment> fetchedComments = [];
-      await _firebaseFirestore.collection('comments').where('postId', isEqualTo: postId).orderBy(
-          'creationDate', descending: true).get().then((
+      await _firebaseFirestore.collection('comments').where('postId', isEqualTo: postId)
+          // .orderBy('creationDate', descending: true)
+          .get().then((
           QuerySnapshot querySnapshot) {
-        querySnapshot.docs.forEach((doc) {
+            for (var doc in querySnapshot.docs) {
           fetchedComments.add(Comment(
             ownerId: doc['ownerId'],
             creationDate: doc['creationDate'],
-            commentContent: doc['postContent'],
+            commentContent: doc['commentContent'],
             id: doc['id'],
             postId: doc['postId'],
               ));
-        });
+        }
       });
+      print(fetchedComments.length);
       return fetchedComments;
           } on FirebaseException catch (e)
       {
@@ -175,9 +177,9 @@ class PostsRepository {
     return fetchedPosts;
   }
 
-  Future<Set<UserToPost>> getUserstoPosts(List<Post> posts) async {
+  Future<Set<UserToPost>> getUserstoPosts(List<dynamic> postsOrComments) async {
     Set<String> ids = {};
-    posts.forEach((element) {
+    postsOrComments.forEach((element) {
       ids.add(element.ownerId);
     });
     Set<UserToPost> usersToPosts = {};

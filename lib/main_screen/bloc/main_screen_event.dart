@@ -56,3 +56,10 @@ class FetchComments extends MainScreenEvent {
 
   FetchComments(this.postId);
 }
+
+class CommentAdd extends MainScreenEvent {
+  final String commentContent;
+  final String postId;
+
+  CommentAdd(this.commentContent, this.postId);
+}
