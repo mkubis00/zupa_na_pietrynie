@@ -50,3 +50,9 @@ class UpdatePost extends MainScreenEvent {
 
   UpdatePost(this.postToUpdate);
 }
+
+class FetchComments extends MainScreenEvent {
+  final String postId;
+
+  FetchComments(this.postId);
+}

@@ -12,7 +12,8 @@ class PostsRepository {
     FirebaseStorage? firebaseStorage,
     required AuthenticationRepository authenticationRepository,
     FirebaseFirestore? firebaseFirestore,
-  })  : _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
+  })
+      : _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
         _authenticationRepository = authenticationRepository,
         _firebaseFirestore = FirebaseFirestore.instance;
 
@@ -32,7 +33,7 @@ class PostsRepository {
         String? name = photo?.path.substring(index! + 1);
         await _firebaseStorage.ref().child("posts/$uuid/$name").putFile(photo!);
         final String path =
-            await _firebaseStorage.ref("posts/$uuid/$name").getDownloadURL();
+        await _firebaseStorage.ref("posts/$uuid/$name").getDownloadURL();
         photosPaths.add(path);
       }
       final newPost = <String, dynamic>{
@@ -51,12 +52,76 @@ class PostsRepository {
     }
   }
 
+  Future<void> createComment(String commentContent, String postId) async {
+    try {
+      String uuid = const Uuid().v1();
+      DateTime commentCreationDate = DateTime.now();
+      final newComment = <String, dynamic>{
+        "id": uuid,
+        "ownerId": _authenticationRepository.currentUser.id,
+        "postId": postId,
+        "commentContent": commentContent,
+        "creationDate": commentCreationDate
+      };
+      await _firebaseFirestore.collection("comments").doc(uuid).set(newComment);
+      await _firebaseFirestore.collection("posts").doc(postId).update(
+          {'numberOfComments': FieldValue.increment(1)});
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
+
+  Future<void> deleteComment(String id, String ownerId, String postId) async {
+    try {
+      bool isAdmin = await _authenticationRepository.isAdmin();
+      if (isAdmin == true ||
+          _authenticationRepository.currentUser.id == ownerId) {
+        await _firebaseFirestore.collection("comments").doc(id).delete();
+        await _firebaseFirestore.collection("posts").doc(postId).update(
+            {'numberOfComments': FieldValue.increment(-1)});
+      } else {
+        throw const FireStoreException();
+      }
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
+
+  Future<List<Comment>> fetchComments(String postId) async {
+    try {
+      List<Comment> fetchedComments = [];
+      await _firebaseFirestore.collection('comments').where('postId', isEqualTo: postId).orderBy(
+          'creationDate', descending: true).get().then((
+          QuerySnapshot querySnapshot) {
+        querySnapshot.docs.forEach((doc) {
+          fetchedComments.add(Comment(
+            ownerId: doc['ownerId'],
+            creationDate: doc['creationDate'],
+            commentContent: doc['postContent'],
+            id: doc['id'],
+            postId: doc['postId'],
+              ));
+        });
+      });
+      return fetchedComments;
+          } on FirebaseException catch (e)
+      {
+        throw FireStoreException.fromCode(e.code);
+      } catch (_) {
+      throw const FireStoreException();
+    }
+  }
+
   Future<int> eventsCounterFetch() async {
     try {
       QuerySnapshot<Map<String, dynamic>> test =
-          await _firebaseFirestore.collection("events_counter").limit(1).get();
+      await _firebaseFirestore.collection("events_counter").limit(1).get();
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-          test.docs.elementAt(0);
+      test.docs.elementAt(0);
       return documentSnapshot.get('count');
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
@@ -127,8 +192,7 @@ class PostsRepository {
               id: document.get('id'),
               name: document.get('name'),
               photo: document.get('photo')));
-        }).catchError((error) {
-        });
+        }).catchError((error) {});
       }
       return usersToPosts;
     } on FirebaseException catch (e) {

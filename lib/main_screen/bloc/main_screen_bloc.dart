@@ -31,6 +31,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     on<PostAdd>(_newPostAdd);
     on<EventsCounterFetch>(_eventsCounterFetch);
     on<DeletePost>(_postDelete);
+    on<FetchComments>(_fetchComments);
   }
 
   final PostsRepository _postsRepository;
@@ -71,10 +72,25 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
 
   }
 
-  void _newPostPhotoDeleted(
-      PostAddPhotoDeleted event, Emitter<MainScreenState> emit) {
+  void _newPostPhotoDeleted(PostAddPhotoDeleted event, Emitter<MainScreenState> emit) {
     state.newPostPhotos.removeAt(event.index);
     emit(state.copyWith(newPostPhotos: state.newPostPhotos));
+  }
+
+  Future<void> _fetchComments(FetchComments event, Emitter<MainScreenState> emit ) async {
+    try {
+      emit(state.copyWith(commentsStatus: CommentsStatus.empty));
+      List<Comment> comments = await _postsRepository.fetchComments(
+          event.postId);
+      emit(state.copyWith(
+          commentsStatus: CommentsStatus.success, comments: comments));
+    } on FireStoreException catch (e) {
+      emit(state.copyWith(
+        errorMessage: e.message, commentsStatus: CommentsStatus.failure
+      ));
+    } catch (_) {
+      emit(state.copyWith(commentsStatus: CommentsStatus.failure));
+    }
   }
 
   Future<void> _newPostAdd(PostAdd event, Emitter<MainScreenState> emit) async {
@@ -105,12 +121,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         int eventsCounter = await _postsRepository.eventsCounterFetch();
         emit(state.copyWith(
             eventsCounter: eventsCounter,
-            eventsCounterState: EventsCounterState.success));
+            eventsCounterState: EventsCounterStatus.success));
       }
     } on FirebaseException catch (e) {
-      emit(state.copyWith(eventsCounterState: EventsCounterState.failure));
+      emit(state.copyWith(eventsCounterState: EventsCounterStatus.failure));
     } catch (_) {
-      emit(state.copyWith(eventsCounterState: EventsCounterState.failure));
+      emit(state.copyWith(eventsCounterState: EventsCounterStatus.failure));
     } finally {
       this.state.eventsCounterState.name == 'failure'
           ? {
