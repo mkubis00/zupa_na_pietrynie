@@ -45,12 +45,12 @@ class _MainScreenFormState extends State<MainScreenForm> {
 
   @override
   Widget build(BuildContext context) {
-
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return BlocListener<MainScreenBloc, MainScreenState>(
         listener: (context, state) {
           if (state.newPostStatus.isSubmissionSuccess) {
+            setState(() {});
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -77,18 +77,32 @@ class _MainScreenFormState extends State<MainScreenForm> {
                   content: Text(MainScreenStrings.SNACK_BAR_NEW_POST_ADDING),
                 ),
               );
+          } else if (state.postUpdateStatus.name == "updated") {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text("Zaktualizowano post"),
+                ),
+              );
           }
         },
-        child: Scaffold(
+        child:
+
+        Scaffold(
             floatingActionButton: !isActionButtonPressed!
                 ? FloatingActionButton(
                     foregroundColor: AppColors.WHITE,
                     backgroundColor: AppColors.BLACK,
                     onPressed: () {
-                      isActionButtonPressed
-                          ? isActionButtonPressed = false
-                          : isActionButtonPressed = true;
-                      setState(() {});
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreatePostRoute()),
+                      );
+                      // isActionButtonPressed
+                      //     ? isActionButtonPressed = false
+                      //     : isActionButtonPressed = true;
+                      // setState(() {});
                     },
                     child: const Icon(Icons.add),
                   )
@@ -128,13 +142,16 @@ class _MainScreenFormState extends State<MainScreenForm> {
                   alignment: AlignmentDirectional.topCenter,
                   child: Visibility(
                     visible: isActionButtonPressed,
-                    child: Container(
+                    child: SingleChildScrollView(
+                      child:
+
+                    Container(
                       width: width * 0.98,
                       height: height,
                       decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.8),
+                              color: Colors.grey.withOpacity(1),
                               spreadRadius: 25,
                               blurRadius: 7,
                               offset:
@@ -146,6 +163,8 @@ class _MainScreenFormState extends State<MainScreenForm> {
                             Radius.circular(15.0),
                           )),
                       child: Stack(children: [
+                      SingleChildScrollView(
+                      child:
                         Column(
                           children: [
                             const SizedBox(height: 8),
@@ -200,7 +219,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                                                         .newPostContent.length >
                                                     10
                                                 ? () {
-                                                    context
+                                                        context
                                                         .read<MainScreenBloc>()
                                                         .add(PostAdd());
                                                     isActionButtonPressed
@@ -220,8 +239,9 @@ class _MainScreenFormState extends State<MainScreenForm> {
                             Expanded(child: NewPostPhotos()),
                             const SizedBox(height: 40),
                           ],
-                        ),
-                        Align(
+                        )),
+
+                      Align(
                           alignment: Alignment.bottomCenter,
                           child: Container(
                               decoration: BoxDecoration(
@@ -275,7 +295,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                       ]),
                     ),
                   ),
-                )
+                ))
               ],
             )));
   }

@@ -67,12 +67,16 @@ class AuthenticationRepository {
         password: password,
       );
       await _firebaseAuth.currentUser?.sendEmailVerification();
+      String defaultPhoto = "https://firebasestorage.googleapis.com/v0/b/zupanapietrynie-75709.appspot.com/o/usersProfilePhoto%2Fdefault_avatar.webp?alt=media&token=960c17cf-9f0d-46f5-ad3b-f5c3a45d135e";
       String? name = currentUser.email;
       await _firebaseAuth.currentUser?.updateDisplayName(name?.split('@')[0]);
+      await _firebaseAuth.currentUser?.updatePhotoURL(defaultPhoto);
       await _firebaseFirestore
           .collection("users")
           .doc(currentUser.id)
           .set(currentUser.toJsonUserInit());
+      await _firebaseFirestore.collection("users").doc(currentUser.id).update({"name": name?.split('@')[0]});
+      await _firebaseFirestore.collection("users").doc(currentUser.id).update({"photo": defaultPhoto});
       await logOut();
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
@@ -262,8 +266,9 @@ class AuthenticationRepository {
 
     try {
       await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
-      await _firebaseStorage.refFromURL(currentUser.photo!).delete();
+      // await _firebaseStorage.refFromURL(currentUser.photo!).delete();
       await _firebaseAuth.currentUser?.delete();
+      logOut();
     } catch (_) {
       //obsga wyjatku
     }

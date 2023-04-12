@@ -73,6 +73,7 @@ class _SinglePostState extends State<SinglePost> {
                   width: 40,
                   height: 40,
                   child: Avatar(
+                    avatarSize: 38,
                       photo: chooseAvatar(
                           post.ownerId,
                           usersToPosts)),
@@ -161,7 +162,7 @@ class _SinglePostState extends State<SinglePost> {
                 if (post.numberOfComments != 0) const SizedBox(width: 8),
               ],
             ),
-            if(isCommentsShowed) Comments(),
+            if(isCommentsShowed) Comments(postId: post.id!, isAdmin: isAdmin),
             const SizedBox(height: 20,),
             Row(
               children: [

@@ -60,6 +60,7 @@ class _PostsListState extends State<PostsList> {
                     Container(
                       width: width * 0.95,
                       child: ListView.separated(
+                        key: UniqueKey(),
                           separatorBuilder: (context, index) => SizedBox(
                                 height: 20,
                               ),

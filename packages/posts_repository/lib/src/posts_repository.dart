@@ -23,7 +23,11 @@ class PostsRepository {
 
   late QueryDocumentSnapshot<Object?> postSnapshot;
 
-  Future<void> createNewPost(List<File?> photos, String content) async {
+  User getCurrentUSer() {
+    return _authenticationRepository.currentUser;
+  }
+
+  Future<Post> createNewPost(List<File?> photos, String content) async {
     String uuid = const Uuid().v1();
     List<String> photosPaths = [];
     DateTime postCreationDate = DateTime.now();
@@ -44,7 +48,9 @@ class PostsRepository {
         "postPhotos": photosPaths,
         "numberOfComments": 0
       };
+      Post newPostReturn = Post(id: uuid,ownerId: _authenticationRepository.currentUser.id, creationDate: postCreationDate.toString(), postContent: content, numberOfComments: 0, postPhotos: photosPaths);
       await _firebaseFirestore.collection("posts").doc(uuid).set(newPost);
+      return newPostReturn;
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
     } catch (_) {
@@ -94,8 +100,8 @@ class PostsRepository {
   Future<List<Comment>> fetchComments(String postId) async {
     try {
       List<Comment> fetchedComments = [];
-      await _firebaseFirestore.collection('comments').where('postId', isEqualTo: postId)
-          // .orderBy('creationDate', descending: true)
+      await _firebaseFirestore.collection('comments')
+          .where('postId', isEqualTo: postId)
           .get().then((
           QuerySnapshot querySnapshot) {
             for (var doc in querySnapshot.docs) {
@@ -108,8 +114,8 @@ class PostsRepository {
               ));
         }
       });
-      print(fetchedComments.length);
-      return fetchedComments;
+      fetchedComments.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+      return fetchedComments.reversed.toList();
           } on FirebaseException catch (e)
       {
         throw FireStoreException.fromCode(e.code);
@@ -183,6 +189,7 @@ class PostsRepository {
       ids.add(element.ownerId);
     });
     Set<UserToPost> usersToPosts = {};
+    usersToPosts.add(UserToPost(id: _authenticationRepository.currentUser.id, name: _authenticationRepository.currentUser.name!, photo: _authenticationRepository.currentUser.photo!));
     try {
       for (String id in ids) {
         await _firebaseFirestore
@@ -220,7 +227,7 @@ class PostsRepository {
     }
   }
 
-  Future<void> updatePost(Post post) async {
+  Future<void> updatePost(Post post, String newContent) async {
     try {
       bool isAdmin = await _authenticationRepository.isAdmin();
       if (isAdmin == true ||
@@ -229,8 +236,9 @@ class PostsRepository {
           "id": post.id,
           "ownerId": post.ownerId,
           "creationDate": post.creationDate,
-          "postContent": post.postContent,
+          "postContent": newContent,
           "postPhotos": post.postPhotos,
+          "numberOfComments": post.numberOfComments,
         };
         await _firebaseFirestore
             .collection('posts')

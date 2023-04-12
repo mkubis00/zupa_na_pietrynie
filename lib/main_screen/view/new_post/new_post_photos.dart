@@ -23,7 +23,9 @@ class NewPostPhotosState extends State<NewPostPhotos> {
         buildWhen: (previous, current) =>
             previous.newPostPhotos != current.newPostPhotos,
         builder: (BuildContext context, state) {
-          return ListView.builder(
+          return
+            Container( child:
+            ListView.builder(
             itemCount: state.newPostPhotos.length,
             itemBuilder: (context, index) {
               final String? item = state.newPostPhotos[index]?.path;
@@ -49,7 +51,7 @@ class NewPostPhotosState extends State<NewPostPhotos> {
                 visualDensity: VisualDensity(vertical: -4),
               );
             },
-          );
+          ));
         });
   }
 }

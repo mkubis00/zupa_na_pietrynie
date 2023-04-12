@@ -23,7 +23,7 @@ class AvatarButton extends StatelessWidget {
             onPressed: () {},
             child: Align(
               alignment: Alignment.topCenter,
-              child: Avatar(photo: user.photo),
+              child: Avatar(photo: user.photo, avatarSize: 38),
             ),
           );
         });

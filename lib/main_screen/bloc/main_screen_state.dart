@@ -14,19 +14,25 @@ enum EventsCounterStatus {
 
 enum CommentsStatus { empty, success, failure }
 
+enum CommentDeleteStatus { deleted, empty }
+
+enum PostUpdateStatus { updated, empty }
+
 class MainScreenState extends Equatable {
-  const MainScreenState(
-      {this.postsStatus = PostStatus.initial,
-      this.posts = const <Post>[],
-      this.newPostContent = "",
-      this.newPostPhotos = const <File>[],
-      this.newPostStatus = FormzStatus.pure,
-      this.errorMessage,
-      this.eventsCounter = 0,
-      this.eventsCounterState = EventsCounterStatus.initial,
-      this.usersToPosts = const {},
-      this.comments = const <Comment>[],
-      this.commentsStatus = CommentsStatus.empty});
+  const MainScreenState({this.postsStatus = PostStatus.initial,
+    this.posts = const <Post>[],
+    this.newPostContent = "",
+    this.newPostPhotos = const <File>[],
+    this.newPostStatus = FormzStatus.pure,
+    this.errorMessage,
+    this.eventsCounter = 0,
+    this.eventsCounterState = EventsCounterStatus.initial,
+    this.usersToPosts = const {},
+    this.comments = const <String, List<Comment>>{},
+    this.commentsStatus = CommentsStatus.empty,
+    this.commentDeleteStatus = CommentDeleteStatus.empty,
+    this.postUpdateStatus = PostUpdateStatus.empty
+  });
 
   final PostStatus postsStatus;
   final List<Post> posts;
@@ -37,8 +43,10 @@ class MainScreenState extends Equatable {
   final int eventsCounter;
   final EventsCounterStatus eventsCounterState;
   final Set<UserToPost> usersToPosts;
-  final List<Comment> comments;
+  final Map<String, List<Comment>> comments;
   final CommentsStatus commentsStatus;
+  final CommentDeleteStatus commentDeleteStatus;
+  final PostUpdateStatus postUpdateStatus;
 
   MainScreenState copyWith({
     PostStatus? status,
@@ -50,8 +58,10 @@ class MainScreenState extends Equatable {
     int? eventsCounter,
     EventsCounterStatus? eventsCounterState,
     Set<UserToPost>? usersToPosts,
-    List<Comment>? comments,
+    Map<String, List<Comment>>? comments,
     CommentsStatus? commentsStatus,
+    CommentDeleteStatus? commentDeleteStatus,
+    PostUpdateStatus? postUpdateStatus,
   }) {
     return MainScreenState(
         postsStatus: status ?? this.postsStatus,
@@ -64,12 +74,15 @@ class MainScreenState extends Equatable {
         eventsCounterState: eventsCounterState ?? this.eventsCounterState,
         usersToPosts: usersToPosts ?? this.usersToPosts,
         comments: comments ?? this.comments,
-        commentsStatus: commentsStatus ?? this.commentsStatus);
+        commentsStatus: commentsStatus ?? this.commentsStatus,
+        commentDeleteStatus: commentDeleteStatus ?? this.commentDeleteStatus,
+        postUpdateStatus: postUpdateStatus ?? this.postUpdateStatus
+    );
   }
 
   @override
   String toString() {
-    return '''PostState { status: $postsStatus, posts: ${posts.length} }''';
+    return '''PostState { status: $postsStatus, posts: ${posts.length}, comments ${comments}}''';
   }
 
   @override
@@ -84,5 +97,7 @@ class MainScreenState extends Equatable {
         usersToPosts,
         comments,
         commentsStatus,
+        commentDeleteStatus,
+        postUpdateStatus,
       ];
 }

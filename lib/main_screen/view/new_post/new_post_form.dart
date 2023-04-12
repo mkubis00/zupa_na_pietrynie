@@ -33,7 +33,7 @@ class NewPostFormState extends State<NewPostForm> {
                   SizedBox(
                     width: 45,
                     height: 45,
-                    child: Avatar(photo: user.photo),
+                    child: Avatar(photo: user.photo, avatarSize: 38),
                   ),
                   const SizedBox(width: 20),
                   Text(user.name!),

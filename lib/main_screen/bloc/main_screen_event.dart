@@ -47,8 +47,9 @@ class DeletePost extends MainScreenEvent {
 
 class UpdatePost extends MainScreenEvent {
   final Post postToUpdate;
+  final String newContent;
 
-  UpdatePost(this.postToUpdate);
+  UpdatePost(this.postToUpdate, this.newContent);
 }
 
 class FetchComments extends MainScreenEvent {
@@ -62,4 +63,13 @@ class CommentAdd extends MainScreenEvent {
   final String postId;
 
   CommentAdd(this.commentContent, this.postId);
+}
+
+class DeleteComment extends MainScreenEvent {
+  final Comment commentToDelete;
+
+  DeleteComment(this.commentToDelete);
+}
+
+class InitUserSetUp extends MainScreenEvent {
 }
