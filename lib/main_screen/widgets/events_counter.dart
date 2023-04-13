@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 
-class EventsCounterForm extends StatelessWidget {
+class EventsCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final int test = context.select((MainScreenBloc mainScreenBloc) =>
-        mainScreenBloc.state.eventsCounter!);
+    final int eventsCounter = context.select(
+        (MainScreenBloc mainScreenBloc) => mainScreenBloc.state.eventsCounter!);
     return BlocBuilder<MainScreenBloc, MainScreenState>(
         buildWhen: (previous, current) =>
             previous.eventsCounterState != current.eventsCounterState,
@@ -50,7 +50,7 @@ class EventsCounterForm extends StatelessWidget {
                                 TextStyle(fontSize: 16, color: AppColors.WHITE),
                           ),
                           Text(
-                            test.toString(),
+                            eventsCounter.toString(),
                             style: TextStyle(
                               fontSize: 19,
                               color: AppColors.WHITE,

@@ -29,7 +29,7 @@ class _PostsListState extends State<PostsList> {
   }
 
   void _onScroll() {
-    if (_isBottom) context.read<MainScreenBloc>().add(PostFetched(false));
+    if (_isBottom) context.read<MainScreenBloc>().add(PostsFetch(false));
   }
 
   bool get _isBottom {
@@ -74,7 +74,7 @@ class _PostsListState extends State<PostsList> {
                                 ? const BottomLoader()
                                 : SinglePost(post: post, usersToPosts: state.usersToPosts, isAdmin: isAdmin, key: UniqueKey(),);
                           }));
-          case PostStatus.initial:
+          case PostStatus.empty:
             return const Center(child: CircularProgressIndicator());
         }
       },

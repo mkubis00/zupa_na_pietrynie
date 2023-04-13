@@ -63,7 +63,7 @@ class EditButton extends StatelessWidget {
                                 TextButton(
                                   onPressed: () {
                                     if (10 <= msgController.value.text.length) {
-                                      context.read<MainScreenBloc>().add(UpdatePost(post,msgController.value.text ));
+                                      context.read<MainScreenBloc>().add(PostUpdate(post,msgController.value.text ));
                                       Navigator.pop(context);
                                     } else {
                                       null;
@@ -80,7 +80,7 @@ class EditButton extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      context.read<MainScreenBloc>().add(DeletePost(post));
+                      context.read<MainScreenBloc>().add(PostDelete(post));
                       Navigator.pop(context);
                     },
                     child: const Text('Usuń',

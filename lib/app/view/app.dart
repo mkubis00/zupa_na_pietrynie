@@ -44,7 +44,7 @@ class App extends StatelessWidget {
             BlocProvider<MainScreenBloc>(
                 create: (BuildContext context) => MainScreenBloc(PostsRepository(
                     authenticationRepository:
-                    context.read<AuthenticationRepository>()))..add(EventsCounterFetch())..add(PostFetched(true))),
+                    context.read<AuthenticationRepository>()))..add(EventsCounterFetch())..add(PostsFetch(true))),
           ],
         child: const AppView(),
       ),

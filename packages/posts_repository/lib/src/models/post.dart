@@ -18,7 +18,7 @@ class Post extends Equatable {
   final List<String>? postPhotos;
   final int numberOfComments;
 
-  // static const empty = Post(ownerId: '', creationDate: '', postContent: '', numberOfComments: 0);
+  static const empty = Post(ownerId: '', creationDate: '', postContent: '', numberOfComments: 0);
 
   @override
   List<Object?> get props =>

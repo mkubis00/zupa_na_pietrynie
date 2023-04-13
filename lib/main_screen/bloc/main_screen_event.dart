@@ -7,69 +7,68 @@ abstract class MainScreenEvent extends Equatable {
   const MainScreenEvent();
 }
 
-class PostFetched extends MainScreenEvent {
+class PostsFetch extends MainScreenEvent {
   final bool fromBeginning;
 
-  const PostFetched(this.fromBeginning);
+  const PostsFetch(this.fromBeginning);
 }
 
-class PostAdd extends MainScreenEvent {
-  PostAdd();
+class PostCreate extends MainScreenEvent {
+  PostCreate();
 }
 
-class PostAddPhotosChanged extends MainScreenEvent {
+class NewPostPhotosChange extends MainScreenEvent {
   final List<File?> photos;
 
-  PostAddPhotosChanged(this.photos);
+  NewPostPhotosChange(this.photos);
 }
 
-class PostAddContentChanged extends MainScreenEvent {
+class NewPostContentChange extends MainScreenEvent {
   final String content;
 
-  PostAddContentChanged(this.content);
+  NewPostContentChange(this.content);
 }
 
-class PostAddPhotoDeleted extends MainScreenEvent {
+class NewPostPhotoDelete extends MainScreenEvent {
   final int index;
 
-  PostAddPhotoDeleted(this.index);
+  NewPostPhotoDelete(this.index);
 }
 
 class EventsCounterFetch extends MainScreenEvent {
   EventsCounterFetch();
 }
 
-class DeletePost extends MainScreenEvent {
+class PostDelete extends MainScreenEvent {
   final Post postToDelete;
 
-  DeletePost(this.postToDelete);
+  PostDelete(this.postToDelete);
 }
 
-class UpdatePost extends MainScreenEvent {
+class PostUpdate extends MainScreenEvent {
   final Post postToUpdate;
   final String newContent;
 
-  UpdatePost(this.postToUpdate, this.newContent);
+  PostUpdate(this.postToUpdate, this.newContent);
 }
 
-class FetchComments extends MainScreenEvent {
+class CommentsFetch extends MainScreenEvent {
   final String postId;
 
-  FetchComments(this.postId);
+  CommentsFetch(this.postId);
 }
 
-class CommentAdd extends MainScreenEvent {
+class CommentCreate extends MainScreenEvent {
   final String commentContent;
   final String postId;
 
-  CommentAdd(this.commentContent, this.postId);
+  CommentCreate(this.commentContent, this.postId);
 }
 
-class DeleteComment extends MainScreenEvent {
+class CommentDelete extends MainScreenEvent {
   final Comment commentToDelete;
 
-  DeleteComment(this.commentToDelete);
+  CommentDelete(this.commentToDelete);
 }
 
-class InitUserSetUp extends MainScreenEvent {
-}
+class InitUserSetUp extends MainScreenEvent {}

@@ -1,12 +1,14 @@
-import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:posts_repository/posts_repository.dart';
+import 'package:authentication_repository/authentication_repository.dart';
+
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/main_screen/bloc/main_screen_bloc.dart';
+import 'package:zupa_na_pietrynie/app/app.dart';
+import 'package:zupa_na_pietrynie/home/home.dart';
 
-import '../../../app/bloc/app_bloc.dart';
-import '../../../home/widgets/avatar.dart';
 
 class Comments extends StatefulWidget {
   const Comments({Key? key, required String this.postId, required bool this.isAdmin}) : super(key: key);
@@ -112,7 +114,7 @@ class _CommentsState extends State<Comments> {
                           // the method which is called
                           // when button is pressed
                           onPressed: () {
-                            context.read<MainScreenBloc>().add(DeleteComment(state.comments[postId]![index]));
+                            context.read<MainScreenBloc>().add(CommentDelete(state.comments[postId]![index]));
                             setState(() {
 
                             });

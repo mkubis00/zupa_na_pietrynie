@@ -149,7 +149,7 @@ class _SinglePostState extends State<SinglePost> {
                 if (post.numberOfComments == 0) Text("Komentarze: " + post.numberOfComments.toString()),
                 if (post.numberOfComments != 0) TextButton(onPressed: ()=>{
                   if (isCommentsShowed == false) {
-                    context.read<MainScreenBloc>().add(FetchComments(post.id!)),
+                    context.read<MainScreenBloc>().add(CommentsFetch(post.id!)),
                     isCommentsShowed = true
                   } else {
                     isCommentsShowed = false
@@ -195,7 +195,7 @@ class _SinglePostState extends State<SinglePost> {
                     tooltip: 'Increase volume by 10',
                     onPressed: () {
                       if (3 <= msgController.value.text.length) {
-                        context.read<MainScreenBloc>().add(CommentAdd(msgController.value.text, post.id!));
+                        context.read<MainScreenBloc>().add(CommentCreate(msgController.value.text, post.id!));
                         msgController.clear();
                       }
                     },
