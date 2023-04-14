@@ -12,16 +12,89 @@ class PostsRepository {
     FirebaseStorage? firebaseStorage,
     required AuthenticationRepository authenticationRepository,
     FirebaseFirestore? firebaseFirestore,
-  })
-      : _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
+  })  : _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
         _authenticationRepository = authenticationRepository,
-        _firebaseFirestore = FirebaseFirestore.instance;
+        _firebaseFirestore = FirebaseFirestore.instance {
+    _newPostSubscription = _newPostStream().listen((event) {
+      _newPostFromStream(event);
+    });
+    _postChangeSubscription = _postChangeStream().listen((event) {
+      _updatePostFromStream(event.docChanges);
+    });
+  }
 
   final FirebaseStorage _firebaseStorage;
   final FirebaseFirestore _firebaseFirestore;
   final AuthenticationRepository _authenticationRepository;
 
   late QueryDocumentSnapshot<Object?> postSnapshot;
+
+  late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
+      _postChangeSubscription;
+  late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
+      _newPostSubscription;
+
+  final StreamController<Post> _controller = StreamController.broadcast();
+
+  Stream<Post> get posts => _controller.stream;
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> _postChangeStream() {
+    final docRef = _firebaseFirestore
+        .collection('posts')
+        .orderBy('creationDate', descending: true)
+        .limit(20);
+    return docRef.snapshots(includeMetadataChanges: true);
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> _newPostStream() {
+    final docRef = _firebaseFirestore
+        .collection("posts")
+        .orderBy('creationDate', descending: true)
+        .limit(1);
+    return docRef.snapshots();
+  }
+
+  void _newPostFromStream(QuerySnapshot<Map<String, dynamic>> event) {
+    try {
+      if (event.docs.length == 1) {
+        QueryDocumentSnapshot<Map<String, dynamic>> newPostDoc =
+            event.docs.elementAt(0);
+        Post newPost = Post(
+            id: newPostDoc['id'],
+            ownerId: newPostDoc['ownerId'],
+            creationDate: newPostDoc['creationDate'],
+            postContent: newPostDoc['postContent'],
+            postPhotos: List<String>.from(newPostDoc['postPhotos'] as List),
+            numberOfComments: newPostDoc['numberOfComments']);
+        _controller.sink.add(newPost);
+      }
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
+
+  void _updatePostFromStream(
+      List<DocumentChange<Map<String, dynamic>>> documentChangeList) {
+    try {
+      if (documentChangeList.length == 1) {
+        Map<String, dynamic>? data = documentChangeList.elementAt(0).doc.data();
+        Post updatedPost = Post(
+            ownerId: data!['ownerId'],
+            creationDate: data!['creationDate'],
+            postContent: data!['postContent'],
+            id: data!['id'],
+            postPhotos: List<String>.from(data!['postPhotos'] as List),
+            numberOfComments: data!['numberOfComments']);
+        _controller.sink.add(updatedPost);
+      }
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
 
   User getCurrentUSer() {
     return _authenticationRepository.currentUser;
@@ -37,7 +110,7 @@ class PostsRepository {
         String? name = photo?.path.substring(index! + 1);
         await _firebaseStorage.ref().child("posts/$uuid/$name").putFile(photo!);
         final String path =
-        await _firebaseStorage.ref("posts/$uuid/$name").getDownloadURL();
+            await _firebaseStorage.ref("posts/$uuid/$name").getDownloadURL();
         photosPaths.add(path);
       }
       final newPost = <String, dynamic>{
@@ -48,7 +121,13 @@ class PostsRepository {
         "postPhotos": photosPaths,
         "numberOfComments": 0
       };
-      Post newPostReturn = Post(id: uuid,ownerId: _authenticationRepository.currentUser.id, creationDate: postCreationDate.toString(), postContent: content, numberOfComments: 0, postPhotos: photosPaths);
+      Post newPostReturn = Post(
+          id: uuid,
+          ownerId: _authenticationRepository.currentUser.id,
+          creationDate: postCreationDate.toString(),
+          postContent: content,
+          numberOfComments: 0,
+          postPhotos: photosPaths);
       await _firebaseFirestore.collection("posts").doc(uuid).set(newPost);
       return newPostReturn;
     } on FirebaseException catch (e) {
@@ -70,8 +149,10 @@ class PostsRepository {
         "creationDate": commentCreationDate.toString()
       };
       await _firebaseFirestore.collection("comments").doc(uuid).set(newComment);
-      await _firebaseFirestore.collection("posts").doc(postId).update(
-          {'numberOfComments': FieldValue.increment(1)});
+      await _firebaseFirestore
+          .collection("posts")
+          .doc(postId)
+          .update({'numberOfComments': FieldValue.increment(1)});
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
     } catch (_) {
@@ -85,8 +166,10 @@ class PostsRepository {
       if (isAdmin == true ||
           _authenticationRepository.currentUser.id == ownerId) {
         await _firebaseFirestore.collection("comments").doc(id).delete();
-        await _firebaseFirestore.collection("posts").doc(postId).update(
-            {'numberOfComments': FieldValue.increment(-1)});
+        await _firebaseFirestore
+            .collection("posts")
+            .doc(postId)
+            .update({'numberOfComments': FieldValue.increment(-1)});
       } else {
         throw const FireStoreException();
       }
@@ -100,26 +183,27 @@ class PostsRepository {
   Future<List<Comment>> fetchComments(String postId) async {
     try {
       List<Comment> fetchedComments = [];
-      await _firebaseFirestore.collection('comments')
+      await _firebaseFirestore
+          .collection('comments')
           .where('postId', isEqualTo: postId)
-          .get().then((
-          QuerySnapshot querySnapshot) {
-            for (var doc in querySnapshot.docs) {
+          .get()
+          .then((QuerySnapshot querySnapshot) {
+        for (QueryDocumentSnapshot<Object?> doc in querySnapshot.docs) {
           fetchedComments.add(Comment(
             ownerId: doc['ownerId'],
             creationDate: doc['creationDate'],
             commentContent: doc['commentContent'],
             id: doc['id'],
             postId: doc['postId'],
-              ));
+          ));
         }
       });
-      fetchedComments.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+      fetchedComments
+          .sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
       return fetchedComments.reversed.toList();
-          } on FirebaseException catch (e)
-      {
-        throw FireStoreException.fromCode(e.code);
-      } catch (_) {
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
       throw const FireStoreException();
     }
   }
@@ -127,9 +211,9 @@ class PostsRepository {
   Future<int> eventsCounterFetch() async {
     try {
       QuerySnapshot<Map<String, dynamic>> test =
-      await _firebaseFirestore.collection("events_counter").limit(1).get();
+          await _firebaseFirestore.collection("events_counter").limit(1).get();
       DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-      test.docs.elementAt(0);
+          test.docs.elementAt(0);
       return documentSnapshot.get('count');
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
@@ -155,8 +239,7 @@ class PostsRepository {
               postContent: doc['postContent'],
               id: doc['id'],
               postPhotos: List<String>.from(doc['postPhotos'] as List),
-              numberOfComments: doc['numberOfComments']
-          ));
+              numberOfComments: doc['numberOfComments']));
         });
         querySnapshot.size > 0 ? postSnapshot = querySnapshot.docs.last : null;
       });
@@ -174,8 +257,7 @@ class PostsRepository {
               postContent: doc['postContent'],
               id: doc['id'],
               postPhotos: List<String>.from(doc['postPhotos'] as List),
-              numberOfComments: doc['numberOfComments']
-          ));
+              numberOfComments: doc['numberOfComments']));
         });
         postSnapshot = querySnapshot.docs.last;
       });
@@ -183,15 +265,18 @@ class PostsRepository {
     return fetchedPosts;
   }
 
-  Future<Set<UserToPost>> getUserstoPosts(List<dynamic> postsOrComments) async {
-    Set<String> ids = {};
+  Future<Set<UserToPost>> getUsersToPosts(List<dynamic> postsOrComments) async {
+    Set<String> usersToPostsIds = {};
     postsOrComments.forEach((element) {
-      ids.add(element.ownerId);
+      usersToPostsIds.add(element.ownerId);
     });
     Set<UserToPost> usersToPosts = {};
-    usersToPosts.add(UserToPost(id: _authenticationRepository.currentUser.id, name: _authenticationRepository.currentUser.name!, photo: _authenticationRepository.currentUser.photo!));
+    usersToPosts.add(UserToPost(
+        id: _authenticationRepository.currentUser.id,
+        name: _authenticationRepository.currentUser.name!,
+        photo: _authenticationRepository.currentUser.photo!));
     try {
-      for (String id in ids) {
+      for (String id in usersToPostsIds) {
         await _firebaseFirestore
             .collection('users')
             .doc(id)
@@ -201,7 +286,9 @@ class PostsRepository {
               id: document.get('id'),
               name: document.get('name'),
               photo: document.get('photo')));
-        }).catchError((error) {});
+        }).catchError((error) {
+          throw const FireStoreException();
+        });
       }
       return usersToPosts;
     } on FirebaseException catch (e) {

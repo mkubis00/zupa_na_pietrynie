@@ -20,6 +20,12 @@ class Post extends Equatable {
 
   static const empty = Post(ownerId: '', creationDate: '', postContent: '', numberOfComments: 0);
 
+
+  @override
+  String toString() {
+    return 'Post{id: $id, ownerId: $ownerId, creationDate: $creationDate, postContent: $postContent, postPhotos: $postPhotos, numberOfComments: $numberOfComments}';
+  }
+
   @override
   List<Object?> get props =>
       [id, ownerId, creationDate, postContent, postPhotos, numberOfComments];

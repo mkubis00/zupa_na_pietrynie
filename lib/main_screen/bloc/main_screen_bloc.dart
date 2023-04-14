@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:posts_repository/posts_repository.dart';
 
 import 'package:bloc/bloc.dart';
@@ -24,7 +25,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 }
 
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
-  MainScreenBloc(this._postsRepository) : super(const MainScreenState()) {
+  MainScreenBloc(this._postsRepository, ) : super(const MainScreenState()) {
     on<PostsFetch>(_postsFetch,
         transformer: throttleDroppable(throttleDuration));
     on<NewPostContentChange>(_newPostContentChanged);
@@ -38,10 +39,44 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     on<CommentDelete>(_commentDelete);
     on<PostUpdate>(_postUpdate);
     on<InitUserSetUp>(_initUserSetUp);
+    on<_PostUpdateStream>(_updatePostFromDbStream);
     add(InitUserSetUp());
+    _postRepositorySubscription = _postsRepository.posts.listen((event) {
+      add(_PostUpdateStream(event));
+    });
   }
 
   final PostsRepository _postsRepository;
+
+  late final StreamSubscription<Post> _postRepositorySubscription;
+
+  StreamController<int> _controller = StreamController.broadcast();
+  Stream<void> get widgetStateUpdate => _controller.stream;
+
+  Future<void> _updatePostFromDbStream(_PostUpdateStream event,  Emitter<MainScreenState> emit) async {
+    if (state.posts.length > 0 ) {
+      bool isInPosts = false;
+      List<Post> posts = [];
+      Set<UserToPost> usersToPost = {};
+      posts.addAll(state.posts);
+      for (Post post in posts) {
+        if (post.id == event.postToUpdate.id) {
+          posts.add(event.postToUpdate);
+          posts.remove(post);
+          isInPosts = true;
+          break;
+        }
+      }
+      if (!isInPosts ) {
+        posts.add(event.postToUpdate);
+        usersToPost.addAll(state.usersToPosts);
+        usersToPost.addAll(await _postsRepository.getUsersToPosts([event.postToUpdate]));
+      }
+      posts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+      isInPosts ? emit(state.copyWith(posts: posts.reversed.toList())) : emit(state.copyWith(posts: posts.reversed.toList(), usersToPosts: usersToPost));
+      _controller.sink.add(1);
+    }
+  }
 
   void _initUserSetUp(InitUserSetUp event, Emitter<MainScreenState> emit) {
     User user = _postsRepository.getCurrentUSer();
@@ -117,7 +152,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       if (event.fromBeginning) {
         List<Post> posts = await _postsRepository.postFetch(true);
         InitUserSetUp();
-        usersToPosts.addAll(await _postsRepository.getUserstoPosts(posts));
+        usersToPosts.addAll(await _postsRepository.getUsersToPosts(posts));
         usersToPosts.add(
             UserToPost.unknown);
         emit(state.copyWith(
@@ -127,7 +162,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       } else {
         List<Post> posts = await _postsRepository.postFetch(false);
         usersToPosts.addAll(state.usersToPosts);
-        usersToPosts.addAll(await _postsRepository.getUserstoPosts(posts));
+        usersToPosts.addAll(await _postsRepository.getUsersToPosts(posts));
         emit(state.copyWith(
             posts: state.posts + posts,
             usersToPosts: usersToPosts,
@@ -152,6 +187,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       List<Post> updatedPosts = [];
       updatedPosts.addAll(state.posts);
       updatedPosts.insert(0, newPost);
+      add(PostsFetch(true));
       emit(state.copyWith(
         newPostStatus: FormzStatus.submissionSuccess,
         newPostPhotos: [],
@@ -179,13 +215,14 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       posts.addAll(state.posts);
       posts.remove(event.postToDelete);
       emit(state.copyWith(posts: posts, postDeleteStatus: FormzStatus.submissionSuccess));
+      emit(state.copyWith(postDeleteStatus: FormzStatus.pure));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
           errorMessage: e.message, postDeleteStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(errorMessage: "", postDeleteStatus: FormzStatus.pure));
     } catch (_) {
       emit(state.copyWith(postDeleteStatus: FormzStatus.submissionFailure));
-      emit(state.copyWith(postDeleteStatus: FormzStatus.pure));
+
     }
   }
 
@@ -209,10 +246,11 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       }
     }
     newPosts.addAll(state.posts);
-    newPosts.remove(postToDelete);
-    newPosts.add(postToAdd);
-    newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-    emit(state.copyWith(posts: newPosts.reversed.toList()));
+    if (newPosts.indexOf(postToDelete) > 19) {newPosts.remove(postToDelete);
+      newPosts.add(postToAdd);
+      newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+      emit(state.copyWith(posts: newPosts.reversed.toList()));
+    }
   }
 
 
@@ -231,7 +269,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           name: _postsRepository.getCurrentUSer().name!,
           photo: _postsRepository.getCurrentUSer().photo!);
       usersToPosts.add(help);
-      usersToPosts.addAll(await _postsRepository.getUserstoPosts(comments));
+      usersToPosts.addAll(await _postsRepository.getUsersToPosts(comments));
       Map<String, List<Comment>> commentsToState = {};
       commentsToState.addAll(state.comments);
       commentsToState.addAll({event.postId: comments});
@@ -309,5 +347,11 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         commentDeleteStatus: CommentDeleteStatus.deleted,
         posts: newPosts.reversed.toList()));
     emit(state.copyWith(commentDeleteStatus: CommentDeleteStatus.empty));
+  }
+
+  @override
+  Future<void> close() {
+    // _test.cancel();
+    return super.close();
   }
 }

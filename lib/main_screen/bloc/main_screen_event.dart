@@ -72,3 +72,9 @@ class CommentDelete extends MainScreenEvent {
 }
 
 class InitUserSetUp extends MainScreenEvent {}
+
+class _PostUpdateStream extends MainScreenEvent {
+  final Post postToUpdate;
+
+  _PostUpdateStream(this.postToUpdate);
+}
