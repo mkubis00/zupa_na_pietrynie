@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:posts_repository/posts_repository.dart';
+import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/main_screen/widgets/posts/posts_list.dart';
 import 'package:zupa_na_pietrynie/main_screen/widgets/posts/single_post.dart';
 
@@ -24,10 +26,10 @@ class _TestState extends State<Test> {
     return BlocBuilder<MainScreenBloc, MainScreenState>(
       buildWhen: (previous, current) => previous.posts != current.posts,
       builder: (context, state) {
-        switch (state.postsStatus) {
-          case PostStatus.failure:
+        switch (state.postsFetchStatus) {
+          case FormzStatus.submissionFailure:
             return const Center(child: Text('failed to fetch posts'));
-          case PostStatus.success:
+          case FormzStatus.submissionSuccess:
             return
               Container(
                   width: width * 0.95,
@@ -46,8 +48,8 @@ class _TestState extends State<Test> {
                             ? const BottomLoader()
                             : SinglePost(post: post, usersToPosts: state.usersToPosts, isAdmin: isAdmin, key: UniqueKey(),);
                       }));
-          case PostStatus.empty:
-            return const Center(child: CircularProgressIndicator());
+          default:
+            return const Center(child: CircularProgressIndicator(color: AppColors.BLACK,));
         }
       },
     );

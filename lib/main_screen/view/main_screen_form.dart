@@ -72,7 +72,15 @@ class _MainScreenFormState extends State<MainScreenForm> {
                   content: Text(MainScreenStrings.SNACK_BAR_NEW_POST_ADDING),
                 ),
               );
-          } else if (state.postUpdateStatus.name == "updated") {
+          } else if (state.newCommentStatus.isSubmissionSuccess) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text("Dodano nowy komenatrz"),
+                ),
+              );
+          }else if (state.postUpdateStatus.isSubmissionSuccess) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -80,7 +88,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                   content: Text("Zaktualizowano post"),
                 ),
               );
-          } else if (state.postUpdateStatus.name == "failure") {
+          } else if (state.postUpdateStatus.isSubmissionFailure) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
               ..showSnackBar(
@@ -110,6 +118,30 @@ class _MainScreenFormState extends State<MainScreenForm> {
               ..showSnackBar(
                 SnackBar(
                   content: Text("Usunięto post"),
+                ),
+              );
+          } else if (state.newCommentStatus.isSubmissionFailure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text("Nie udalo się dodać komentarza"),
+                ),
+              );
+          } else if (state.commentDeleteStatus.isSubmissionSuccess) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text("Usunięto komenatrz"),
+                ),
+              );
+          } else if (state.commentDeleteStatus.isSubmissionFailure) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text("Nie udalo się usunąć komentarza"),
                 ),
               );
           }

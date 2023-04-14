@@ -156,7 +156,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         emit(state.copyWith(
             posts: posts,
             usersToPosts: usersToPosts,
-            status: PostStatus.success));
+            status: FormzStatus.submissionSuccess));
       } else {
         List<Post> posts = await _postsRepository.postFetch(false);
         usersToPosts.addAll(state.usersToPosts);
@@ -164,14 +164,14 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         emit(state.copyWith(
             posts: state.posts + posts,
             usersToPosts: usersToPosts,
-            status: PostStatus.success));
+            status: FormzStatus.submissionSuccess));
       }
     } on FireStoreException catch (e) {
-      emit(state.copyWith(errorMessage: e.message, status: PostStatus.failure));
-      emit(state.copyWith(errorMessage: "", status: PostStatus.empty));
+      emit(state.copyWith(errorMessage: e.message, status: FormzStatus.submissionFailure));
+      emit(state.copyWith(errorMessage: "", status: FormzStatus.pure));
     } catch (_) {
-      emit(state.copyWith(status: PostStatus.failure));
-      emit(state.copyWith(status: PostStatus.empty));
+      emit(state.copyWith(status: FormzStatus.submissionFailure));
+      emit(state.copyWith(status: FormzStatus.pure));
     }
   }
 
@@ -219,16 +219,16 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
       emit(state.copyWith(
           posts: newPosts.reversed.toList(),
-          postUpdateStatus: PostUpdateStatus.updated));
-      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.empty));
+          postUpdateStatus: FormzStatus.submissionSuccess));
+      emit(state.copyWith(postUpdateStatus: FormzStatus.pure));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
-          errorMessage: e.message, postUpdateStatus: PostUpdateStatus.failure));
+          errorMessage: e.message, postUpdateStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(
-          errorMessage: "", postUpdateStatus: PostUpdateStatus.empty));
+          errorMessage: "", postUpdateStatus: FormzStatus.pure));
     } catch (_) {
-      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.failure));
-      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.empty));
+      emit(state.copyWith(postUpdateStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(postUpdateStatus: FormzStatus.pure));
     }
   }
 
@@ -256,16 +256,22 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         newPosts.remove(postToDelete);
         newPosts.add(postToAdd);
         newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-        emit(state.copyWith(posts: newPosts.reversed.toList()));
+        emit(state.copyWith(posts: newPosts.reversed.toList(), newCommentStatus: FormzStatus.submissionSuccess));
+        print("ELLOOO " + state.newCommentStatus.name);
+      } else {
+        print("dsdsds");
+        emit(state.copyWith(newCommentStatus: FormzStatus.submissionSuccess));
       }
-    } on FireStoreException catch (e) {
-    } catch (_) {}
+      emit(state.copyWith(newCommentStatus: FormzStatus.pure));
+    } catch (_) {
+      emit(state.copyWith(newCommentStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(newCommentStatus: FormzStatus.pure));
+    }
   }
 
   Future<void> _commentsFetch(
       CommentsFetch event, Emitter<MainScreenState> emit) async {
     try {
-      emit(state.copyWith(commentsStatus: CommentsStatus.empty));
       List<Comment> comments =
           await _postsRepository.fetchComments(event.postId);
       Set<UserToPost> usersToPosts = {};
@@ -280,17 +286,17 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       commentsToState.addAll(state.comments);
       commentsToState.addAll({event.postId: comments});
       emit(state.copyWith(
-          commentsStatus: CommentsStatus.success,
+          commentsStatus: FormzStatus.submissionSuccess,
           comments: commentsToState,
           usersToPosts: usersToPosts));
-      emit(state.copyWith(commentsStatus: CommentsStatus.empty));
+      emit(state.copyWith(commentsStatus: FormzStatus.pure));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
-          errorMessage: e.message, commentsStatus: CommentsStatus.failure));
-      emit(state.copyWith(commentsStatus: CommentsStatus.empty));
+          errorMessage: e.message, commentsStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(commentsStatus: FormzStatus.pure));
     } catch (_) {
-      emit(state.copyWith(commentsStatus: CommentsStatus.failure));
-      emit(state.copyWith(commentsStatus: CommentsStatus.empty));
+      emit(state.copyWith(commentsStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(commentsStatus: FormzStatus.pure));
     }
   }
 
@@ -323,16 +329,19 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
         emit(state.copyWith(
             comments: comments,
-            commentDeleteStatus: CommentDeleteStatus.deleted,
+            commentDeleteStatus: FormzStatus.submissionSuccess,
             posts: newPosts.reversed.toList()));
+        emit(state.copyWith(commentDeleteStatus: FormzStatus.pure));
       } else {
         emit(state.copyWith(
             comments: comments,
-            commentDeleteStatus: CommentDeleteStatus.deleted));
-        emit(state.copyWith(commentDeleteStatus: CommentDeleteStatus.empty));
+            commentDeleteStatus: FormzStatus.submissionSuccess));
+        emit(state.copyWith(commentDeleteStatus: FormzStatus.pure));
       }
-    } on FireStoreException catch (e) {
-    } catch (_) {}
+    } catch (_) {
+      emit(state.copyWith(commentDeleteStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(commentDeleteStatus: FormzStatus.pure));
+    }
   }
 
   Future<void> _eventsCounterFetch(
@@ -342,12 +351,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         int eventsCounter = await _postsRepository.eventsCounterFetch();
         emit(state.copyWith(
             eventsCounter: eventsCounter,
-            eventsCounterState: EventsCounterStatus.success));
+            eventsCounterState: FormzStatus.submissionSuccess));
       }
     } on FirebaseException catch (e) {
-      emit(state.copyWith(eventsCounterState: EventsCounterStatus.failure));
+      emit(state.copyWith(eventsCounterState: FormzStatus.submissionFailure));
     } catch (_) {
-      emit(state.copyWith(eventsCounterState: EventsCounterStatus.failure));
+      emit(state.copyWith(eventsCounterState: FormzStatus.submissionFailure));
     } finally {
       this.state.eventsCounterState.name == 'failure'
           ? {

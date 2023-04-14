@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 
@@ -13,7 +14,7 @@ class EventsCounter extends StatelessWidget {
         buildWhen: (previous, current) =>
             previous.eventsCounterState != current.eventsCounterState,
         builder: (context, state) {
-          return state.eventsCounterState.name == "success"
+          return state.eventsCounterState.isSubmissionSuccess
               ? Container(
                   height: 100,
                   width: width * 0.98,

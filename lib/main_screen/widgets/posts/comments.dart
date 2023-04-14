@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:formz/formz.dart';
 
 import 'package:posts_repository/posts_repository.dart';
 import 'package:authentication_repository/authentication_repository.dart';
@@ -69,9 +70,8 @@ class _CommentsState extends State<Comments> {
       BlocBuilder<MainScreenBloc, MainScreenState>(
         buildWhen: (previous, current) => previous.comments != current.comments,
         builder: (context, state) {
-          print("Dsds");
           switch (state.commentsStatus) {
-            case CommentsStatus.success:
+            case FormzStatus.submissionSuccess:
               return Column(
                 children: [
                   SizedBox(width: width * 0.9, child: Divider(color: AppColors.BLACK,)),

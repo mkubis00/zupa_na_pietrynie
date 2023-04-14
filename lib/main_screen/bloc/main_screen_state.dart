@@ -1,36 +1,27 @@
 part of 'main_screen_bloc.dart';
 
-enum PostStatus { empty, success, failure }
-
-enum EventsCounterStatus { initial, success, failure }
-
-enum CommentsStatus { empty, success, failure }
-
-enum CommentDeleteStatus { deleted, empty,failure }
-
-enum PostUpdateStatus { updated, empty, failure }
-
 class MainScreenState extends Equatable {
   const MainScreenState({
-      this.postsStatus = PostStatus.empty,
+      this.postsFetchStatus = FormzStatus.pure,
       this.posts = const <Post>[],
       this.newPostContent = "",
       this.newPostPhotos = const <File>[],
       this.newPostStatus = FormzStatus.pure,
       this.errorMessage,
       this.eventsCounter = 0,
-      this.eventsCounterState = EventsCounterStatus.initial,
+      this.eventsCounterState = FormzStatus.pure,
       this.usersToPosts = const {},
       this.comments = const <String, List<Comment>>{},
-      this.commentsStatus = CommentsStatus.empty,
-      this.commentDeleteStatus = CommentDeleteStatus.empty,
-      this.postUpdateStatus = PostUpdateStatus.empty,
+      this.commentsStatus = FormzStatus.pure,
+      this.commentDeleteStatus = FormzStatus.pure,
+      this.postUpdateStatus = FormzStatus.pure,
       this.postDeleteStatus = FormzStatus.pure,
+      this.newCommentStatus = FormzStatus.pure,
   });
 
-  final PostStatus postsStatus;
   final List<Post> posts;
-  final PostUpdateStatus postUpdateStatus;
+  final FormzStatus postsFetchStatus;
+  final FormzStatus postUpdateStatus;
   final FormzStatus postDeleteStatus;
 
   final String newPostContent;
@@ -40,34 +31,35 @@ class MainScreenState extends Equatable {
   final String? errorMessage;
 
   final int eventsCounter;
-  final EventsCounterStatus eventsCounterState;
+  final FormzStatus eventsCounterState;
 
   final Set<UserToPost> usersToPosts;
 
   final Map<String, List<Comment>> comments;
-  final CommentsStatus commentsStatus;
-  final CommentDeleteStatus commentDeleteStatus;
-
+  final FormzStatus commentsStatus;
+  final FormzStatus commentDeleteStatus;
+  final FormzStatus newCommentStatus;
 
 
   MainScreenState copyWith({
-    PostStatus? status,
+    FormzStatus? status,
     List<Post>? posts,
     String? newPostContent,
     List<File?>? newPostPhotos,
     FormzStatus? newPostStatus,
     String? errorMessage,
     int? eventsCounter,
-    EventsCounterStatus? eventsCounterState,
+    FormzStatus? eventsCounterState,
     Set<UserToPost>? usersToPosts,
     Map<String, List<Comment>>? comments,
-    CommentsStatus? commentsStatus,
-    CommentDeleteStatus? commentDeleteStatus,
-    PostUpdateStatus? postUpdateStatus,
+    FormzStatus? commentsStatus,
+    FormzStatus? commentDeleteStatus,
+    FormzStatus? postUpdateStatus,
     FormzStatus? postDeleteStatus,
+    FormzStatus? newCommentStatus,
   }) {
     return MainScreenState(
-        postsStatus: status ?? this.postsStatus,
+        postsFetchStatus: status ?? this.postsFetchStatus,
         posts: posts ?? this.posts,
         newPostContent: newPostContent ?? this.newPostContent,
         newPostPhotos: newPostPhotos ?? this.newPostPhotos,
@@ -81,6 +73,7 @@ class MainScreenState extends Equatable {
         commentDeleteStatus: commentDeleteStatus ?? this.commentDeleteStatus,
         postUpdateStatus: postUpdateStatus ?? this.postUpdateStatus,
         postDeleteStatus: postDeleteStatus ?? this.postDeleteStatus,
+        newCommentStatus: newCommentStatus ?? this.newCommentStatus,
     );
 
   }
@@ -97,7 +90,7 @@ class MainScreenState extends Equatable {
 
   @override
   List<Object> get props => [
-        postsStatus,
+        postsFetchStatus,
         posts,
         newPostContent,
         newPostPhotos,
@@ -110,5 +103,6 @@ class MainScreenState extends Equatable {
         commentDeleteStatus,
         postUpdateStatus,
         postDeleteStatus,
+        newCommentStatus,
       ];
 }
