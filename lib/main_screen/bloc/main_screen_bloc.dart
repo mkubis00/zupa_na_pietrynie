@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:authentication_repository/authentication_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:posts_repository/posts_repository.dart';
 
 import 'package:bloc/bloc.dart';
@@ -25,7 +24,9 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 }
 
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
-  MainScreenBloc(this._postsRepository, ) : super(const MainScreenState()) {
+  MainScreenBloc(
+    this._postsRepository,
+  ) : super(const MainScreenState()) {
     on<PostsFetch>(_postsFetch,
         transformer: throttleDroppable(throttleDuration));
     on<NewPostContentChange>(_newPostContentChanged);
@@ -51,31 +52,39 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   late final StreamSubscription<Post> _postRepositorySubscription;
 
   StreamController<int> _controller = StreamController.broadcast();
+
   Stream<void> get widgetStateUpdate => _controller.stream;
 
-  Future<void> _updatePostFromDbStream(_PostUpdateStream event,  Emitter<MainScreenState> emit) async {
-    if (state.posts.length > 0 ) {
-      bool isInPosts = false;
-      List<Post> posts = [];
-      Set<UserToPost> usersToPost = {};
-      posts.addAll(state.posts);
-      for (Post post in posts) {
-        if (post.id == event.postToUpdate.id) {
-          posts.add(event.postToUpdate);
-          posts.remove(post);
-          isInPosts = true;
-          break;
+  Future<void> _updatePostFromDbStream(
+      _PostUpdateStream event, Emitter<MainScreenState> emit) async {
+    try {
+      if (state.posts.length > 0) {
+        bool isInPosts = false;
+        List<Post> posts = [];
+        Set<UserToPost> usersToPost = {};
+        posts.addAll(state.posts);
+        for (Post post in posts) {
+          if (post.id == event.postToUpdate.id) {
+            posts.add(event.postToUpdate);
+            posts.remove(post);
+            isInPosts = true;
+            break;
+          }
         }
+        if (!isInPosts) {
+          posts.add(event.postToUpdate);
+          usersToPost.addAll(state.usersToPosts);
+          usersToPost.addAll(
+              await _postsRepository.getUsersToPosts([event.postToUpdate]));
+        }
+        posts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+        isInPosts
+            ? emit(state.copyWith(posts: posts.reversed.toList()))
+            : emit(state.copyWith(
+                posts: posts.reversed.toList(), usersToPosts: usersToPost));
+        _controller.sink.add(1);
       }
-      if (!isInPosts ) {
-        posts.add(event.postToUpdate);
-        usersToPost.addAll(state.usersToPosts);
-        usersToPost.addAll(await _postsRepository.getUsersToPosts([event.postToUpdate]));
-      }
-      posts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-      isInPosts ? emit(state.copyWith(posts: posts.reversed.toList())) : emit(state.copyWith(posts: posts.reversed.toList(), usersToPosts: usersToPost));
-      _controller.sink.add(1);
-    }
+    } catch (_) {}
   }
 
   void _initUserSetUp(InitUserSetUp event, Emitter<MainScreenState> emit) {
@@ -108,76 +117,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     );
   }
 
-  Future<void> _postUpdate(
-      PostUpdate event, Emitter<MainScreenState> emit) async {
-    try {
-      await _postsRepository.updatePost(event.postToUpdate, event.newContent);
-      Post postToDelete = Post.empty;
-      Post postToAdd = Post.empty;
-      List<Post> newPosts = [];
-      for (Post post in state.posts) {
-        if (post.id == event.postToUpdate.id) {
-          postToDelete = post;
-          postToAdd = new Post(
-              id: post.id,
-              ownerId: post.ownerId,
-              creationDate: post.creationDate,
-              postContent: event.newContent,
-              numberOfComments: post.numberOfComments,
-              postPhotos: post.postPhotos);
-        }
-      }
-      newPosts.addAll(state.posts);
-      newPosts.remove(postToDelete);
-      newPosts.add(postToAdd);
-      newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-      emit(state.copyWith(
-          posts: newPosts.reversed.toList(),
-          postUpdateStatus: PostUpdateStatus.updated));
-      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.empty));
-    } on FireStoreException catch (e) {
-      emit(state.copyWith(
-          errorMessage: e.message, postUpdateStatus: PostUpdateStatus.failure));
-      emit(state.copyWith(errorMessage: "", postUpdateStatus: PostUpdateStatus.empty));
-    } catch (_) {
-      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.failure));
-      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.empty));
-    }
-  }
-
-  Future<void> _postsFetch(
-      PostsFetch event, Emitter<MainScreenState> emit) async {
-    try {
-      Set<UserToPost> usersToPosts = {};
-      if (event.fromBeginning) {
-        List<Post> posts = await _postsRepository.postFetch(true);
-        InitUserSetUp();
-        usersToPosts.addAll(await _postsRepository.getUsersToPosts(posts));
-        usersToPosts.add(
-            UserToPost.unknown);
-        emit(state.copyWith(
-            posts: posts,
-            usersToPosts: usersToPosts,
-            status: PostStatus.success));
-      } else {
-        List<Post> posts = await _postsRepository.postFetch(false);
-        usersToPosts.addAll(state.usersToPosts);
-        usersToPosts.addAll(await _postsRepository.getUsersToPosts(posts));
-        emit(state.copyWith(
-            posts: state.posts + posts,
-            usersToPosts: usersToPosts,
-            status: PostStatus.success));
-      }
-    } on FireStoreException catch (e) {
-      emit(state.copyWith(
-          errorMessage: e.message, status: PostStatus.failure));
-      emit(state.copyWith(errorMessage: "", status: PostStatus.empty));
-    } catch (_) {
-      emit(state.copyWith(status: PostStatus.failure));
-      emit(state.copyWith(status: PostStatus.empty));
-    }
-  }
-
   Future<void> _postCreate(
       PostCreate event, Emitter<MainScreenState> emit) async {
     emit(state.copyWith(newPostStatus: FormzStatus.submissionInProgress));
@@ -187,7 +126,6 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       List<Post> updatedPosts = [];
       updatedPosts.addAll(state.posts);
       updatedPosts.insert(0, newPost);
-      add(PostsFetch(true));
       emit(state.copyWith(
         newPostStatus: FormzStatus.submissionSuccess,
         newPostPhotos: [],
@@ -206,6 +144,37 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     }
   }
 
+  Future<void> _postsFetch(
+      PostsFetch event, Emitter<MainScreenState> emit) async {
+    try {
+      Set<UserToPost> usersToPosts = {};
+      if (event.fromBeginning) {
+        List<Post> posts = await _postsRepository.postFetch(true);
+        InitUserSetUp();
+        usersToPosts.add(UserToPost.unknown);
+        usersToPosts.addAll(await _postsRepository.getUsersToPosts(posts));
+        emit(state.copyWith(
+            posts: posts,
+            usersToPosts: usersToPosts,
+            status: PostStatus.success));
+      } else {
+        List<Post> posts = await _postsRepository.postFetch(false);
+        usersToPosts.addAll(state.usersToPosts);
+        usersToPosts.addAll(await _postsRepository.getUsersToPosts(posts));
+        emit(state.copyWith(
+            posts: state.posts + posts,
+            usersToPosts: usersToPosts,
+            status: PostStatus.success));
+      }
+    } on FireStoreException catch (e) {
+      emit(state.copyWith(errorMessage: e.message, status: PostStatus.failure));
+      emit(state.copyWith(errorMessage: "", status: PostStatus.empty));
+    } catch (_) {
+      emit(state.copyWith(status: PostStatus.failure));
+      emit(state.copyWith(status: PostStatus.empty));
+    }
+  }
+
   Future<void> _postDelete(
       PostDelete event, Emitter<MainScreenState> emit) async {
     try {
@@ -214,47 +183,84 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       List<Post> posts = [];
       posts.addAll(state.posts);
       posts.remove(event.postToDelete);
-      emit(state.copyWith(posts: posts, postDeleteStatus: FormzStatus.submissionSuccess));
+      emit(state.copyWith(
+          posts: posts, postDeleteStatus: FormzStatus.submissionSuccess));
       emit(state.copyWith(postDeleteStatus: FormzStatus.pure));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
-          errorMessage: e.message, postDeleteStatus: FormzStatus.submissionFailure));
-      emit(state.copyWith(errorMessage: "", postDeleteStatus: FormzStatus.pure));
+          errorMessage: e.message,
+          postDeleteStatus: FormzStatus.submissionFailure));
+      emit(
+          state.copyWith(errorMessage: "", postDeleteStatus: FormzStatus.pure));
     } catch (_) {
       emit(state.copyWith(postDeleteStatus: FormzStatus.submissionFailure));
-
     }
   }
 
+  Future<void> _postUpdate(
+      PostUpdate event, Emitter<MainScreenState> emit) async {
+    try {
+      await _postsRepository.updatePost(event.postToUpdate, event.newContent);
+      List<Post> newPosts = [];
+      newPosts.addAll(state.posts);
+      for (Post post in newPosts) {
+        if (post.id == event.postToUpdate.id) {
+          newPosts.add(Post(
+              id: post.id,
+              ownerId: post.ownerId,
+              creationDate: post.creationDate,
+              postContent: event.newContent,
+              numberOfComments: post.numberOfComments,
+              postPhotos: post.postPhotos));
+          newPosts.remove(post);
+          break;
+        }
+      }
+      newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+      emit(state.copyWith(
+          posts: newPosts.reversed.toList(),
+          postUpdateStatus: PostUpdateStatus.updated));
+      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.empty));
+    } on FireStoreException catch (e) {
+      emit(state.copyWith(
+          errorMessage: e.message, postUpdateStatus: PostUpdateStatus.failure));
+      emit(state.copyWith(
+          errorMessage: "", postUpdateStatus: PostUpdateStatus.empty));
+    } catch (_) {
+      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.failure));
+      emit(state.copyWith(postUpdateStatus: PostUpdateStatus.empty));
+    }
+  }
 
   Future<void> _commentCreate(
       CommentCreate event, Emitter<MainScreenState> emit) async {
-    await _postsRepository.createComment(event.commentContent, event.postId);
-    Post postToDelete = Post.empty;
-    Post postToAdd = Post.empty;
-    List<Post> newPosts = [];
-    for (Post post in state.posts) {
-      if (post.id == event.postId) {
-        postToDelete = post;
-        postToAdd = new Post(
-            id: post.id,
-            ownerId: post.ownerId,
-            creationDate: post.creationDate,
-            postContent: post.postContent,
-            numberOfComments: post.numberOfComments + 1,
-            postPhotos: post.postPhotos);
+    try {
+      await _postsRepository.createComment(event.commentContent, event.postId);
+      Post postToDelete = Post.empty;
+      Post postToAdd = Post.empty;
+      List<Post> newPosts = [];
+      for (Post post in state.posts) {
+        if (post.id == event.postId) {
+          postToDelete = post;
+          postToAdd = new Post(
+              id: post.id,
+              ownerId: post.ownerId,
+              creationDate: post.creationDate,
+              postContent: post.postContent,
+              numberOfComments: post.numberOfComments + 1,
+              postPhotos: post.postPhotos);
+        }
       }
-    }
-    newPosts.addAll(state.posts);
-    if (newPosts.indexOf(postToDelete) > 19) {newPosts.remove(postToDelete);
-      newPosts.add(postToAdd);
-      newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-      emit(state.copyWith(posts: newPosts.reversed.toList()));
-    }
+      newPosts.addAll(state.posts);
+      if (newPosts.indexOf(postToDelete) > 19) {
+        newPosts.remove(postToDelete);
+        newPosts.add(postToAdd);
+        newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+        emit(state.copyWith(posts: newPosts.reversed.toList()));
+      }
+    } on FireStoreException catch (e) {
+    } catch (_) {}
   }
-
-
-
 
   Future<void> _commentsFetch(
       CommentsFetch event, Emitter<MainScreenState> emit) async {
@@ -264,11 +270,11 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           await _postsRepository.fetchComments(event.postId);
       Set<UserToPost> usersToPosts = {};
       usersToPosts.addAll(state.usersToPosts);
-      UserToPost help = UserToPost(
+      UserToPost currentUser = UserToPost(
           id: _postsRepository.getCurrentUSer().id,
           name: _postsRepository.getCurrentUSer().name!,
           photo: _postsRepository.getCurrentUSer().photo!);
-      usersToPosts.add(help);
+      usersToPosts.add(currentUser);
       usersToPosts.addAll(await _postsRepository.getUsersToPosts(comments));
       Map<String, List<Comment>> commentsToState = {};
       commentsToState.addAll(state.comments);
@@ -288,7 +294,46 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     }
   }
 
-
+  Future<void> _commentDelete(
+      CommentDelete event, Emitter<MainScreenState> emit) async {
+    try {
+      await _postsRepository.deleteComment(event.commentToDelete.id!,
+          event.commentToDelete.ownerId!, event.commentToDelete.postId);
+      Map<String, List<Comment>> comments = state.comments;
+      comments[event.commentToDelete.postId]?.remove(event.commentToDelete);
+      List<Post> newPosts = [];
+      newPosts.addAll(state.posts);
+      Post postToDelete = Post.empty;
+      Post postToAdd = Post.empty;
+      for (Post post in newPosts) {
+        if (post.id == event.commentToDelete.postId) {
+          postToAdd = new Post(
+              id: post.id,
+              ownerId: post.ownerId,
+              creationDate: post.creationDate,
+              postContent: post.postContent,
+              numberOfComments: post.numberOfComments - 1,
+              postPhotos: post.postPhotos);
+          postToDelete = post;
+          break;
+        }
+      }
+      if (newPosts.indexOf(postToDelete) > 19) {
+        newPosts.add(postToAdd);
+        newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
+        emit(state.copyWith(
+            comments: comments,
+            commentDeleteStatus: CommentDeleteStatus.deleted,
+            posts: newPosts.reversed.toList()));
+      } else {
+        emit(state.copyWith(
+            comments: comments,
+            commentDeleteStatus: CommentDeleteStatus.deleted));
+        emit(state.copyWith(commentDeleteStatus: CommentDeleteStatus.empty));
+      }
+    } on FireStoreException catch (e) {
+    } catch (_) {}
+  }
 
   Future<void> _eventsCounterFetch(
       EventsCounterFetch event, Emitter<MainScreenState> emit) async {
@@ -313,45 +358,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     }
   }
 
-
-
-  Future<void> _commentDelete(
-      CommentDelete event, Emitter<MainScreenState> emit) async {
-    await _postsRepository.deleteComment(event.commentToDelete.id!,
-        event.commentToDelete.ownerId!, event.commentToDelete.postId);
-    Map<String, List<Comment>> comments = state.comments;
-    comments[event.commentToDelete.postId]?.remove(event.commentToDelete);
-    Post postToDelete = Post(
-        ownerId: '', creationDate: '', postContent: '', numberOfComments: 0);
-    Post postToAdd = Post(
-        ownerId: '', creationDate: '', postContent: '', numberOfComments: 0);
-    List<Post> newPosts = [];
-    for (Post post in state.posts) {
-      if (post.id == event.commentToDelete.postId) {
-        postToDelete = post;
-        postToAdd = new Post(
-            id: post.id,
-            ownerId: post.ownerId,
-            creationDate: post.creationDate,
-            postContent: post.postContent,
-            numberOfComments: post.numberOfComments - 1,
-            postPhotos: post.postPhotos);
-      }
-    }
-    newPosts.addAll(state.posts);
-    newPosts.remove(postToDelete);
-    newPosts.add(postToAdd);
-    newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-    emit(state.copyWith(
-        comments: comments,
-        commentDeleteStatus: CommentDeleteStatus.deleted,
-        posts: newPosts.reversed.toList()));
-    emit(state.copyWith(commentDeleteStatus: CommentDeleteStatus.empty));
-  }
-
   @override
   Future<void> close() {
-    // _test.cancel();
+    _postRepositorySubscription.cancel();
     return super.close();
   }
 }
