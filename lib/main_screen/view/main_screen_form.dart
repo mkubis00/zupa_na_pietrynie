@@ -1,10 +1,15 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:formz/formz.dart';
+import 'package:zupa_na_pietrynie/content_holder/src/snack_bars/snack_bar_info.dart';
+import 'package:zupa_na_pietrynie/content_holder/src/snack_bars/snack_bar_success.dart';
 
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
+
+import '../../content_holder/src/snack_bars/snack_bar_warning.dart';
 
 class MainScreenForm extends StatefulWidget {
   const MainScreenForm({Key? key}) : super(key: key);
@@ -43,107 +48,36 @@ class _MainScreenFormState extends State<MainScreenForm> {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return BlocListener<MainScreenBloc, MainScreenState>(
         listener: (context, state) {
           if (state.newPostStatus.isSubmissionSuccess) {
-            setState(() {});
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                const SnackBar(
-                  content:
-                      const Text(MainScreenStrings.SNACK_BAR_NEW_POST_ADDED),
-                ),
-              );
+            snackBarSuccess(
+                context, MainScreenStrings.SNACK_BAR_NEW_POST_ADDED);
+            // setState(() {});
           } else if (state.newPostStatus.isSubmissionFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(MainScreenStrings.SNACK_BAR_NEW_POST_FAILED +
-                      state.errorMessage!),
-                ),
-              );
+            snackBarWarning(
+                context, MainScreenStrings.SNACK_BAR_NEW_POST_FAILED);
           } else if (state.newPostStatus.isSubmissionInProgress) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text(MainScreenStrings.SNACK_BAR_NEW_POST_ADDING),
-                ),
-              );
+            snackBarInfo(context, MainScreenStrings.SNACK_BAR_NEW_POST_ADDING);
           } else if (state.newCommentStatus.isSubmissionSuccess) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Dodano nowy komenatrz"),
-                ),
-              );
-          }else if (state.postUpdateStatus.isSubmissionSuccess) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Zaktualizowano post"),
-                ),
-              );
+            snackBarSuccess(context, "Dodano nowy komentarz");
+          } else if (state.postUpdateStatus.isSubmissionSuccess) {
+            snackBarInfo(context, "Zaktualizowano post");
           } else if (state.postUpdateStatus.isSubmissionFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Nie udalo się zaktualizować postu"),
-                ),
-              );
+            snackBarWarning(context, "Nie udalo się zaktualizować postu");
           } else if (state.commentsStatus.name == "failure") {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Nie udalo sie pobrać komentarzy"),
-                ),
-              );
+            snackBarWarning(context, "Nie udalo sie pobrać komentarzy");
           } else if (state.postDeleteStatus.isSubmissionFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Nie udalo sie usunąć posta"),
-                ),
-              );
+            snackBarWarning(context, "Nie udalo sie usunąć posta");
           } else if (state.postDeleteStatus.isSubmissionSuccess) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Usunięto post"),
-                ),
-              );
+            snackBarInfo(context, "Usunięto post");
           } else if (state.newCommentStatus.isSubmissionFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Nie udalo się dodać komentarza"),
-                ),
-              );
+            snackBarWarning(context, "Nie udalo się dodać komentarza");
           } else if (state.commentDeleteStatus.isSubmissionSuccess) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Usunięto komenatrz"),
-                ),
-              );
+            snackBarInfo(context, "Usunięto komenatrz");
           } else if (state.commentDeleteStatus.isSubmissionFailure) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(
-                SnackBar(
-                  content: Text("Nie udalo się usunąć komentarza"),
-                ),
-              );
+            snackBarWarning(context, "Nie udalo się usunąć komentarza");
           }
         },
         child: Scaffold(

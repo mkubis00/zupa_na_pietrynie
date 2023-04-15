@@ -167,7 +167,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
             status: FormzStatus.submissionSuccess));
       }
     } on FireStoreException catch (e) {
-      emit(state.copyWith(errorMessage: e.message, status: FormzStatus.submissionFailure));
+      emit(state.copyWith(
+          errorMessage: e.message, status: FormzStatus.submissionFailure));
       emit(state.copyWith(errorMessage: "", status: FormzStatus.pure));
     } catch (_) {
       emit(state.copyWith(status: FormzStatus.submissionFailure));
@@ -223,9 +224,10 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       emit(state.copyWith(postUpdateStatus: FormzStatus.pure));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
-          errorMessage: e.message, postUpdateStatus: FormzStatus.submissionFailure));
-      emit(state.copyWith(
-          errorMessage: "", postUpdateStatus: FormzStatus.pure));
+          errorMessage: e.message,
+          postUpdateStatus: FormzStatus.submissionFailure));
+      emit(
+          state.copyWith(errorMessage: "", postUpdateStatus: FormzStatus.pure));
     } catch (_) {
       emit(state.copyWith(postUpdateStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(postUpdateStatus: FormzStatus.pure));
@@ -256,7 +258,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         newPosts.remove(postToDelete);
         newPosts.add(postToAdd);
         newPosts.sort((a, b) => a.creationDate!.compareTo(b.creationDate!));
-        emit(state.copyWith(posts: newPosts.reversed.toList(), newCommentStatus: FormzStatus.submissionSuccess));
+        emit(state.copyWith(
+            posts: newPosts.reversed.toList(),
+            newCommentStatus: FormzStatus.submissionSuccess));
         print("ELLOOO " + state.newCommentStatus.name);
       } else {
         print("dsdsds");
@@ -292,7 +296,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       emit(state.copyWith(commentsStatus: FormzStatus.pure));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
-          errorMessage: e.message, commentsStatus: FormzStatus.submissionFailure));
+          errorMessage: e.message,
+          commentsStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(commentsStatus: FormzStatus.pure));
     } catch (_) {
       emit(state.copyWith(commentsStatus: FormzStatus.submissionFailure));

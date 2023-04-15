@@ -53,17 +53,6 @@ class _CommentsState extends State<Comments> {
     final User user = context.select((AppBloc bloc) => bloc.state.user);
     return BlocListener<MainScreenBloc, MainScreenState>(
         listener: (context, state) {
-      if (state.commentDeleteStatus.name == 'deleted') {
-        setState(() {});
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(
-              content:
-              const Text("Usunięto komentarz"),
-            ),
-          );
-    }
       },
     child:
 

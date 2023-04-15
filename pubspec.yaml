@@ -27,6 +27,7 @@ dependencies:
   stream_transform: ^2.0.0
   bloc_concurrency: ^0.2.0
   file_picker: ^5.2.5
+  animated_snack_bar: ^0.3.0
 
 
 dev_dependencies:
