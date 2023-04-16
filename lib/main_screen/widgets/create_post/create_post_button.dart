@@ -15,7 +15,7 @@ class CreatePostButton extends StatelessWidget {
           return Padding(
               padding: EdgeInsets.only(top: 10, bottom: 10, right: 5),
               child: ElevatedButton(
-                key: const Key('loginForm_continue_raisedButton'),
+                key: const Key('create_post_button'),
                 child: const Text(
                   MainScreenStrings.PUBLISH,
                   style: const TextStyle(color: AppColors.WHITE),

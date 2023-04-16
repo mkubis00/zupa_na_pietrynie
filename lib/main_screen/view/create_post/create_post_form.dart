@@ -12,7 +12,7 @@ class CreatePostRoute extends StatelessWidget {
         bottomSheet: ChoosePhotosButton(),
         appBar: AppBar(
           title: const Text(
-            'Opublikuj post',
+            MainScreenStrings.CREATE_POST,
             style: TextStyle(color: AppColors.BLACK),
           ),
           backgroundColor: AppColors.WHITE,

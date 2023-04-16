@@ -19,11 +19,10 @@ class _ContentInputState extends State<ContentInput> {
         height: height * 0.53,
         child: TextFormField(
           initialValue: context.read<MainScreenBloc>().state.newPostContent,
-          onChanged: (content) => context
-              .read<MainScreenBloc>()
-              .add(NewPostContentChange(content)),
+          onChanged: (content) =>
+              context.read<MainScreenBloc>().add(NewPostContentChange(content)),
           cursorColor: AppColors.BLACK,
-          maxLines: 100,
+          maxLines: 70,
           decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: AppColors.BLACK),

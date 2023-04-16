@@ -1,15 +1,10 @@
-import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:formz/formz.dart';
-import 'package:zupa_na_pietrynie/content_holder/src/snack_bars/snack_bar_info.dart';
-import 'package:zupa_na_pietrynie/content_holder/src/snack_bars/snack_bar_success.dart';
 
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
-
-import '../../content_holder/src/snack_bars/snack_bar_warning.dart';
 
 class MainScreenForm extends StatefulWidget {
   const MainScreenForm({Key? key}) : super(key: key);
@@ -48,36 +43,34 @@ class _MainScreenFormState extends State<MainScreenForm> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return BlocListener<MainScreenBloc, MainScreenState>(
         listener: (context, state) {
           if (state.newPostStatus.isSubmissionSuccess) {
             snackBarSuccess(
                 context, MainScreenStrings.SNACK_BAR_NEW_POST_ADDED);
-            // setState(() {});
           } else if (state.newPostStatus.isSubmissionFailure) {
             snackBarWarning(
                 context, MainScreenStrings.SNACK_BAR_NEW_POST_FAILED);
           } else if (state.newPostStatus.isSubmissionInProgress) {
             snackBarInfo(context, MainScreenStrings.SNACK_BAR_NEW_POST_ADDING);
           } else if (state.newCommentStatus.isSubmissionSuccess) {
-            snackBarSuccess(context, "Dodano nowy komentarz");
+            snackBarSuccess(context, MainScreenStrings.SNACK_BAR_NEW_COMMENT_ADDED);
           } else if (state.postUpdateStatus.isSubmissionSuccess) {
-            snackBarInfo(context, "Zaktualizowano post");
+            snackBarInfo(context, MainScreenStrings.SNACK_BAR_POST_UPDATED);
           } else if (state.postUpdateStatus.isSubmissionFailure) {
-            snackBarWarning(context, "Nie udalo się zaktualizować postu");
-          } else if (state.commentsStatus.name == "failure") {
-            snackBarWarning(context, "Nie udalo sie pobrać komentarzy");
+            snackBarWarning(context, MainScreenStrings.SNACK_BAR_POST_UPDATE_FAILURE);
+          } else if (state.commentsStatus.isSubmissionFailure) {
+            snackBarWarning(context, MainScreenStrings.SNACK_BAR_COMMENTS_FETCH_FAILURE);
           } else if (state.postDeleteStatus.isSubmissionFailure) {
-            snackBarWarning(context, "Nie udalo sie usunąć posta");
+            snackBarWarning(context, MainScreenStrings.SNACK_BAR_POST_DELETE_FAILURE);
           } else if (state.postDeleteStatus.isSubmissionSuccess) {
-            snackBarInfo(context, "Usunięto post");
+            snackBarInfo(context, MainScreenStrings.SNACK_BAR_POST_DELETED);
           } else if (state.newCommentStatus.isSubmissionFailure) {
-            snackBarWarning(context, "Nie udalo się dodać komentarza");
+            snackBarWarning(context, MainScreenStrings.SNACK_BAR_COMMENT_ADD_FAILURE);
           } else if (state.commentDeleteStatus.isSubmissionSuccess) {
-            snackBarInfo(context, "Usunięto komenatrz");
+            snackBarInfo(context, MainScreenStrings.SNACK_BAR_COMMENT_DELETED);
           } else if (state.commentDeleteStatus.isSubmissionFailure) {
-            snackBarWarning(context, "Nie udalo się usunąć komentarza");
+            snackBarWarning(context, MainScreenStrings.SNACK_BAR_COMMENT_DELETE_FAILURE);
           }
         },
         child: Scaffold(
@@ -107,7 +100,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                         const SizedBox(height: 15),
                         EventsCounter(),
                         const SizedBox(height: 20),
-                        PostsList(),
+                        PostsListController(),
                         const SizedBox(height: 10),
                       ],
                     ),

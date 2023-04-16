@@ -28,7 +28,7 @@ class ChoosePhotosButton extends StatelessWidget {
             child: SizedBox(
                 width: width,
                 child: TextButton(
-                  key: const Key('loginForm_googleLogin_raisedButton'),
+                  key: const Key('choose_photos_key_button'),
                   child: const Text(
                     MainScreenStrings.CHOOSE_PHOTOS,
                     style: TextStyle(color: AppColors.BLACK),
