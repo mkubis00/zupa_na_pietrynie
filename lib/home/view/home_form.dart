@@ -23,9 +23,9 @@ class _MainScreenFormState extends State<MainScreenForm> {
       style: optionStyle,
     ),
     Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
+        'Ten panel\nzostanie dodany\nwkrótce...',
+        style: optionStyle,
+      ),
   ];
 
   void _onItemTapped(int index) {
@@ -39,6 +39,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        toolbarHeight: 30,
         backgroundColor: AppColors.WHITE,
         actions: <Widget>[
           IconButton(
@@ -54,28 +55,32 @@ class _MainScreenFormState extends State<MainScreenForm> {
         alignment: const Alignment(0, -1 / 3),
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar:
+      SizedBox(
+        // height: 91,
+        child:
+      BottomNavigationBar(
         elevation: 0,
         backgroundColor: AppColors.WHITE,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: '',
+            label: 'Posty',
           ),
           BottomNavigationBarItem(
             icon: Icon(IconData(0xe78e, fontFamily: 'MaterialIcons')),
-            label: '',
+            label: 'Wydarzenia',
           ),
           BottomNavigationBarItem(
             icon: Icon(IconData(0xe054, fontFamily: 'MaterialIcons')),
-            label: '',
+            label: 'Pomoc Bezdomnym',
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: AppColors.BLACK,
         unselectedItemColor: AppColors.GREY,
         onTap: _onItemTapped,
-      ),
+      )),
     );
   }
 }

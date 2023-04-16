@@ -65,7 +65,7 @@ class EditButton extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    if (10 <= msgController.value.text.length) {
+                                    if (10 <= msgController.value.text.length && msgController.value.text != post.postContent) {
                                       context.read<MainScreenBloc>().add(
                                           PostUpdate(
                                               post, msgController.value.text));

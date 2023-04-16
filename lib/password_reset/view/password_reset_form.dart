@@ -14,24 +14,11 @@ class PasswordResetForm extends StatelessWidget {
     return BlocListener<PasswordResetCubit, PasswordResetState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ??
-                    PasswordResetString.SNACK_BAR_PASSWORD_RESET_FAILURE),
-              ),
-            );
+          snackBarWarning(
+              context, PasswordResetString.SNACK_BAR_PASSWORD_RESET_FAILURE);
         } else if (state.status.isSubmissionSuccess) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: const Text(
-                    PasswordResetString.SNACK_BAR_RESET_EMAIL_SENDED),
-              ),
-            );
-          Navigator.of(context).pop();
+          snackBarSuccess(
+              context, PasswordResetString.SNACK_BAR_RESET_EMAIL_SENDED);
         }
       },
       child: Align(

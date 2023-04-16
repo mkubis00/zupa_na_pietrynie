@@ -13,14 +13,7 @@ class LoginForm extends StatelessWidget {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                    state.errorMessage ?? LoginStrings.SNACK_BAR_LOGIN_FAILURE),
-              ),
-            );
+          snackBarWarning(context, state.errorMessage ?? LoginStrings.SNACK_BAR_LOGIN_FAILURE);
         }
       },
       child: Align(

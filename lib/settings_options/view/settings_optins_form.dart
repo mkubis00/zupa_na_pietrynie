@@ -21,36 +21,19 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final User user = context.select((AppBloc bloc) => bloc.state.user);
-    final loginProvider = context.select((AppBloc bloc) => bloc.state.loginProvider);
+    final loginProvider =
+        context.select((AppBloc bloc) => bloc.state.loginProvider);
     return BlocListener<SettingOptionsCubit, SettingOptionsState>(
       listener: (context, state) {
         if (state.emailStatus.isSubmissionFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage ??
-                    SettingsOptionsStrings.SNACK_BAR_USER_CREADENTIAL_ERROR),
-              ),
-            );
+          snackBarWarning(
+              context, SettingsOptionsStrings.SNACK_BAR_USER_CREADENTIAL_ERROR);
         } else if (state.emailStatus.isSubmissionSuccess) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content:
-                    const Text(SettingsOptionsStrings.SNACK_BAR_EMAIL_UPDATED),
-              ),
-            );
+          snackBarSuccess(
+              context, SettingsOptionsStrings.SNACK_BAR_EMAIL_UPDATED);
         } else if (state.nameStatus.isSubmissionSuccess) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content:
-                    const Text(SettingsOptionsStrings.SNACK_BAR_NAME_UPDATED),
-              ),
-            );
+          snackBarSuccess(
+              context, SettingsOptionsStrings.SNACK_BAR_NAME_UPDATED);
         }
       },
       child: Align(
@@ -108,8 +91,10 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
               if (this.isUserOptions) const SizedBox(height: 23),
               if (this.isUserOptions && loginProvider == 'password')
                 SizedBox(width: width * 0.85, child: EmailInput(user.email)),
-              if (this.isUserOptions && loginProvider == 'password') EmailResetButton(width),
-              if (this.isUserOptions && loginProvider == 'password') const SizedBox(height: 30),
+              if (this.isUserOptions && loginProvider == 'password')
+                EmailResetButton(width),
+              if (this.isUserOptions && loginProvider == 'password')
+                const SizedBox(height: 30),
               if (this.isUserOptions)
                 SizedBox(width: width * 0.85, child: NameInput(user.name)),
               if (this.isUserOptions) SaveNewName(width),

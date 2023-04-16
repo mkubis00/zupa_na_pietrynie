@@ -14,67 +14,56 @@ class SignUpForm extends StatelessWidget {
       listener: (context, state) {
         final String email = state.email.value;
         if (state.status.isSubmissionSuccess) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(SignUpString.snackBarAccountCreated(email)),
-              ),
-            );
+          snackBarInfo(context, SignUpString.snackBarAccountCreated(email));
           Navigator.of(context).pop();
         } else if (state.status.isSubmissionFailure) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                  content: Text(state.errorMessage ??
-                      SignUpString.SNACK_BAR_ACCOUNT_NOT_CREATED)),
-            );
+          snackBarWarning(context,
+              state.errorMessage ?? SignUpString.SNACK_BAR_ACCOUNT_NOT_CREATED);
         }
       },
       child: Align(
         alignment: const Alignment(0, -2 / 3),
         child: SingleChildScrollView(
-              child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                        alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          'assets/bloc_logo_small.png',
-                          height: 170,
-                        )),
-                    SizedBox(
-                        width: width * 0.85,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            child: const Text(
-                              SignUpString.MAIN_INSCRIPTION,
-                              style:
-                                  TextStyle(fontWeight: FontWeight.w900, fontSize: 30),
-                            ),
-                          ),
-                        )),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: width * 0.85,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: const Text(
-                          SignUpString.SECOND_INSCRIPTION,
-                          style: TextStyle(fontSize: 15),
-                        ),
-                      ),
+            child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+                alignment: Alignment.topCenter,
+                child: Image.asset(
+                  'assets/bloc_logo_small.png',
+                  height: 170,
+                )),
+            SizedBox(
+                width: width * 0.85,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    child: const Text(
+                      SignUpString.MAIN_INSCRIPTION,
+                      style:
+                          TextStyle(fontWeight: FontWeight.w900, fontSize: 30),
                     ),
-                    const SizedBox(height: 25),
-                    SizedBox(width: width * 0.85, child: EmailInput()),
-                    const SizedBox(height: 15),
-                    SizedBox(width: width * 0.85, child: PasswordInput()),
-                    const SizedBox(height: 15),
-                    SizedBox(width: width * 0.85, child: ConfirmPasswordInput()),
-                    const SizedBox(height: 20),
-                    SignUpButton(width),
+                  ),
+                )),
+            const SizedBox(height: 8),
+            SizedBox(
+              width: width * 0.85,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  SignUpString.SECOND_INSCRIPTION,
+                  style: TextStyle(fontSize: 15),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            SizedBox(width: width * 0.85, child: EmailInput()),
+            const SizedBox(height: 15),
+            SizedBox(width: width * 0.85, child: PasswordInput()),
+            const SizedBox(height: 15),
+            SizedBox(width: width * 0.85, child: ConfirmPasswordInput()),
+            const SizedBox(height: 20),
+            SignUpButton(width),
           ],
         )),
       ),
