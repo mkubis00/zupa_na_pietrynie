@@ -304,6 +304,7 @@ class PostsRepository {
       if (isAdmin == true ||
           _authenticationRepository.currentUser.id == ownerId) {
         await _firebaseFirestore.collection('posts').doc(postId).delete();
+        //usuniecie komentarzy trzeba dodać
       } else {
         throw const FireStoreException();
       }
