@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/events/events.dart';
-import 'package:intl/intl.dart';
 
-
-class PublishDate extends StatelessWidget {
-  const PublishDate({Key? key}) : super(key: key);
+class EventDescriptionWindow extends StatelessWidget {
+  const EventDescriptionWindow({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
     return BlocBuilder<EventsBloc, EventsState>(
         buildWhen: (previous, current) =>
-        previous.newEventPublishDate != current.newEventPublishDate,
+            previous.newEventDescription != current.newEventDescription,
         builder: (context, state) {
-          print("ELo");
           return Container(
               width: width * 0.935,
               decoration: BoxDecoration(
@@ -36,7 +32,7 @@ class PublishDate extends StatelessWidget {
                       children: [
                         const SizedBox(width: 10),
                         Text(
-                          "Data opublikowania:",
+                          "Opis wydarzenia:",
                           style: TextStyle(
                             fontSize: 20,
                           ),
@@ -46,38 +42,34 @@ class PublishDate extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
-                      width: width * 0.88,
+                      width: width * 0.9,
                       child: TextFormField(
-                        key: UniqueKey(),
-                          initialValue: state.newEventPublishDate,
-                          // controller: TextEditingController(),
-                          decoration:  InputDecoration(
-                              contentPadding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        initialValue: state.newEventDescription,
+                        cursorColor: AppColors.BLACK,
+                        key: const Key('loginForm_emailInput_textField'),
+                        maxLength: 500,
+                        maxLines: 5,
+                        onChanged: (description) => context
+                            .read<EventsBloc>()
+                            .add(NewEventDescriptionChangeEvent(description)),
+                        decoration: InputDecoration(
+                            contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                             focusedBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: BorderSide(color: Colors.grey)),
-                            icon: Icon(Icons.calendar_today, color: Colors.grey),
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(width: 1),
-                                  borderRadius: BorderRadius.circular(10)),
-                            errorBorder: UnderlineInputBorder(
+                            errorText: state.newEventDescription.length < 10
+                                ? 'zbyt krótki opis'
+                                : null,
+                            enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(width: 1),
                                 borderRadius: BorderRadius.circular(10)),
-                            focusedErrorBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(width: 1, color: AppColors.RED),
-                                borderRadius: BorderRadius.circular(10)),
-                          ),
-                          readOnly: true,
-                          onTap: () async {
-                            DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(), //get today's date
-                                firstDate:DateTime.now(), //DateTime.now() - not to allow to choose before today.
-                                lastDate: DateTime(2101)
-                            );
-                            String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate!);
-                            context.read<EventsBloc>().add(NewEventPublishDateChangeEvent(formattedDate));
-                          }
+                          errorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(width: 1),
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedErrorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(width: 1, color: AppColors.RED),
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
                       )),
                   const SizedBox(height: 20),
                 ],

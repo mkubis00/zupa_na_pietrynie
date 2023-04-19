@@ -36,13 +36,13 @@ class CreateEventForm extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  EventTitle(),
+                  EventTitleWindow(),
                   const SizedBox(height: 20),
-                  EventDescription(),
+                  EventDescriptionWindow(),
                   const SizedBox(height: 20),
-                  PublishDate(),
+                  PublishDateWindow(),
                   const SizedBox(height: 20),
-                  EventDays(),
+                  EventDaysWindow(),
                 ],
               ),
             )))));

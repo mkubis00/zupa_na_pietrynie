@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/events/events.dart';
 
-class EventTitle extends StatelessWidget {
-  const EventTitle({Key? key}) : super(key: key);
+class EventTitleWindow extends StatelessWidget {
+  const EventTitleWindow({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

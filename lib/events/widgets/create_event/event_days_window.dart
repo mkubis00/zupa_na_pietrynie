@@ -4,8 +4,8 @@ import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/events/events.dart';
 import 'package:intl/intl.dart';
 
-class EventDays extends StatelessWidget {
-  const EventDays({Key? key}) : super(key: key);
+class EventDaysWindow extends StatelessWidget {
+  const EventDaysWindow({Key? key}) : super(key: key);
 
 
   static String getDayWeekName(int i) {
