@@ -4,6 +4,7 @@ import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 
 import '../../settings_options/view/settings_options_page.dart';
 import 'package:zupa_na_pietrynie/settings_options/settings_options.dart';
+import 'package:zupa_na_pietrynie/events/events.dart';
 
 class MainScreenForm extends StatefulWidget {
   const MainScreenForm({Key? key}) : super(key: key);
@@ -18,10 +19,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     MainScreenPage(),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
+    EventsPage(),
     Text(
         'Ten panel\nzostanie dodany\nwkrótce...',
         style: optionStyle,

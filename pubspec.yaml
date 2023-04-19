@@ -11,6 +11,8 @@ dependencies:
     path: packages/authentication_repository
   posts_repository:
     path: packages/posts_repository
+  events_repository:
+    path: packages/events_repository
   bloc: ^8.1.0
   equatable: ^2.0.3
   firebase_core: ^2.1.0
