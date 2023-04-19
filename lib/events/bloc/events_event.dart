@@ -39,3 +39,12 @@ class DeleteNewEventDay extends EventsEvent {
 
   DeleteNewEventDay(this.eventDayToDelete);
 }
+
+class AddNewEventElement extends EventsEvent {
+
+  final EventDay eventDay;
+  final String hour;
+  final String title;
+
+  AddNewEventElement(this.eventDay, this.hour, this.title);
+}

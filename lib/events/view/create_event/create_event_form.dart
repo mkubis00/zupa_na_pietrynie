@@ -43,6 +43,7 @@ class CreateEventForm extends StatelessWidget {
                   PublishDateWindow(),
                   const SizedBox(height: 20),
                   EventDaysWindow(),
+                  const SizedBox(height: 30),
                 ],
               ),
             )))));

@@ -15,6 +15,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<NewEventDayValueChange>(_onNewEventValueChange);
     on<AddNewEventDay>(_addNewEventDayToEvent);
     on<DeleteNewEventDay>(_deleteNewEventDay);
+    on<AddNewEventElement>(_AddNewEventElement);
   }
 
 
@@ -57,5 +58,27 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     eventDays.addAll(state.newEventDays);
     eventDays.remove(event.eventDayToDelete);
     emit(state.copyWith(newEventDays: eventDays));
+  }
+
+  void _AddNewEventElement(AddNewEventElement event, Emitter<EventsState> emit) {
+    List<EventElement> eventElements = [];
+    EventDay newEventDay;
+    for(EventDay eventDay in state.newEventDays) {
+      if (eventDay == event.eventDay) {
+        eventElements.addAll(eventDay.eventElements);
+        eventElements.add(EventElement(title: event.title, hour: event.hour, participants: []));
+        eventElements.sort((a, b) => a.hour!.compareTo(b.hour!));
+        newEventDay = eventDay.copyWith(eventElements: eventElements);
+        List<EventDay> newEventDays = [];
+        newEventDays.addAll(state.newEventDays);
+        newEventDays.remove(eventDay);
+        newEventDays.add(newEventDay);
+        emit(state.copyWith(newEventDays: newEventDays));
+        print(newEventDays);
+        break;
+
+      }
+    }
+
   }
 }
