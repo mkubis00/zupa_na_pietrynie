@@ -7,6 +7,7 @@ class CreateEventForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
         // bottomSheet: ,
         appBar: AppBar(
@@ -24,17 +25,26 @@ class CreateEventForm extends StatelessWidget {
         ),
         body: Align(
             alignment: AlignmentDirectional.topCenter,
+            child: Container(
+            child: SizedBox(
+
+          width: width * 0.95,
             child: SingleChildScrollView(
               child: Column(
+
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 20),
                   EventTitle(),
                   const SizedBox(height: 20),
-                  EventDescription()
+                  EventDescription(),
+                  const SizedBox(height: 20),
+                  PublishDate(),
+                  const SizedBox(height: 20),
+                  EventDays(),
                 ],
               ),
-            )));
+            )))));
   }
 }

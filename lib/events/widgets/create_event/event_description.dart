@@ -9,13 +9,12 @@ class EventDescription extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-
     return BlocBuilder<EventsBloc, EventsState>(
         buildWhen: (previous, current) =>
             previous.newEventDescription != current.newEventDescription,
         builder: (context, state) {
           return Container(
-              width: width * 0.95,
+              width: width * 0.935,
               decoration: BoxDecoration(
                 color: AppColors.WHITE,
                 borderRadius: BorderRadius.circular(20),
@@ -44,24 +43,33 @@ class EventDescription extends StatelessWidget {
                   const SizedBox(height: 10),
                   SizedBox(
                       width: width * 0.9,
-                      child: TextField(
+                      child: TextFormField(
+                        initialValue: state.newEventDescription,
                         cursorColor: AppColors.BLACK,
                         key: const Key('loginForm_emailInput_textField'),
                         maxLength: 500,
                         maxLines: 5,
                         onChanged: (description) => context
                             .read<EventsBloc>()
-                            .add(EventDescriptionChangeEvent(description)),
+                            .add(NewEventDescriptionChangeEvent(description)),
                         decoration: InputDecoration(
-                            focusedBorder: OutlineInputBorder(
+                            contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            focusedBorder: UnderlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide(color: AppColors.BLACK)),
+                                borderSide: BorderSide(color: Colors.grey)),
                             errorText: state.newEventDescription.length < 10
                                 ? 'zbyt krótki opis'
                                 : null,
-                            enabledBorder: OutlineInputBorder(
+                            enabledBorder: UnderlineInputBorder(
                                 borderSide: BorderSide(width: 1),
-                                borderRadius: BorderRadius.circular(10))),
+                                borderRadius: BorderRadius.circular(10)),
+                          errorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(width: 1),
+                              borderRadius: BorderRadius.circular(10)),
+                          focusedErrorBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(width: 1, color: AppColors.RED),
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
                       )),
                   const SizedBox(height: 20),
                 ],

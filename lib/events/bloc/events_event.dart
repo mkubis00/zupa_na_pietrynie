@@ -4,14 +4,38 @@ abstract class EventsEvent{
   const EventsEvent();
 }
 
-class EventTitleChangeEvent extends EventsEvent {
+class NewEventTitleChangeEvent extends EventsEvent {
   final String newTitle;
 
-  EventTitleChangeEvent(this.newTitle);
+  NewEventTitleChangeEvent(this.newTitle);
 }
 
-class EventDescriptionChangeEvent extends EventsEvent {
+class NewEventDescriptionChangeEvent extends EventsEvent {
   final String newDescription;
 
-  EventDescriptionChangeEvent(this.newDescription);
+  NewEventDescriptionChangeEvent(this.newDescription);
+}
+
+class NewEventPublishDateChangeEvent extends EventsEvent {
+  final String newPublishDate;
+
+  NewEventPublishDateChangeEvent(this.newPublishDate);
+}
+
+class NewEventDayValueChange extends EventsEvent {
+  final String newEventDay;
+
+  NewEventDayValueChange(this.newEventDay);
+}
+
+class AddNewEventDay extends EventsEvent {
+
+  AddNewEventDay();
+}
+
+class DeleteNewEventDay extends EventsEvent {
+
+  final EventDay eventDayToDelete;
+
+  DeleteNewEventDay(this.eventDayToDelete);
 }

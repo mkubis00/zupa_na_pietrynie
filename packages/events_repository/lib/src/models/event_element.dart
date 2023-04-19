@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class EventElement extends Equatable {
   final String? id;
   final String title;
-  final DateTime hour;
+  final String hour;
   final List<String> participants;
 
   const EventElement({
@@ -16,7 +16,7 @@ class EventElement extends Equatable {
   EventElement copyWith({
     String? id,
     String? title,
-    DateTime? hour,
+    String? hour,
     List<String>? participants,
   }) {
     return EventElement(
