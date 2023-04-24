@@ -10,7 +10,7 @@ class CreateEventButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<EventsBloc, EventsState>(
         buildWhen: (previous, current) =>
-        previous.newEvent != current.newEvent, // DO ZMIANY
+        previous.isNewPostReadyToSubmit != current.isNewPostReadyToSubmit, // DO ZMIANY
         builder: (context, state) {
           return Padding(
               padding: EdgeInsets.only(top: 10, bottom: 10, right: 5),
@@ -25,9 +25,10 @@ class CreateEventButton extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     backgroundColor: AppColors.BLACK),
-                onPressed:() {
+                onPressed: state.isNewPostReadyToSubmit ? () {
+                  context.read<EventsBloc>().add(NewEventCreate());
                   Navigator.pop(context);
-                }
+                }: null,
               ));
         });
   }

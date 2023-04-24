@@ -11,6 +11,7 @@ class EventsState extends Equatable {
     this.newEventDay = '',
     this.newEventElementHour = '',
     this.newEventElementTitle = '',
+    this.isNewPostReadyToSubmit = false,
   });
 
   final Event newEvent;
@@ -25,6 +26,7 @@ class EventsState extends Equatable {
 
   final String newEventElementTitle;
   final String newEventElementHour;
+  final bool isNewPostReadyToSubmit;
 
   EventsState copyWith({
     Event? newEvent,
@@ -36,6 +38,7 @@ class EventsState extends Equatable {
     List<EventDay>? newEventDays,
     String? newEventElementTitle,
     String? newEventElementHour,
+    bool? isNewPostReadyToSubmit,
   }) {
     return EventsState(
       newEvent: newEvent ?? this.newEvent,
@@ -47,6 +50,7 @@ class EventsState extends Equatable {
       newEventDays: newEventDays ?? this.newEventDays,
       newEventElementHour: newEventElementHour ?? this.newEventElementTitle,
       newEventElementTitle: newEventElementTitle ?? this.newEventElementTitle,
+      isNewPostReadyToSubmit: isNewPostReadyToSubmit ?? this.isNewPostReadyToSubmit,
     );
   }
 
@@ -61,5 +65,6 @@ class EventsState extends Equatable {
     newEventDays,
     newEventElementTitle,
     newEventElementTitle,
+    isNewPostReadyToSubmit,
   ];
 }

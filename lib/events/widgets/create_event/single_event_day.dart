@@ -2,8 +2,7 @@ import 'package:events_repository/events_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zupa_na_pietrynie/events/events.dart';
-
-import '../../../content_holder/src/colors/colors.dart';
+import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 
 class SingleEventDay extends StatelessWidget {
   SingleEventDay({Key? key, required EventDay this.eventDay}) : super(key: key);
@@ -23,6 +22,21 @@ class SingleEventDay extends StatelessWidget {
             children: [
               const SizedBox(width: 10),
               Text(eventDay.dayOfEvent + ":", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
+              Spacer(),
+              IconButton(
+                icon: const Icon(
+                  IconData(
+                    0xe1b9,
+                    fontFamily: 'MaterialIcons',
+                  ),
+                  color: AppColors.FACEBOOK_BLUE,
+                ),
+                // the method which is called
+                // when button is pressed
+                onPressed: () {
+                  context.read<EventsBloc>().add(DeleteNewEventDay(eventDay));
+                },
+              )
             ],
           ),
           const SizedBox(height: 5),

@@ -48,3 +48,16 @@ class AddNewEventElement extends EventsEvent {
 
   AddNewEventElement(this.eventDay, this.hour, this.title);
 }
+
+class DeleteNewEventElement extends EventsEvent {
+
+  final EventDay eventDay;
+  final EventElement eventElement;
+
+  DeleteNewEventElement(this.eventDay, this.eventElement);
+}
+
+class NewEventCreate extends EventsEvent {
+
+  NewEventCreate();
+}
