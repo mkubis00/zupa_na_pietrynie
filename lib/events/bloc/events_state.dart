@@ -12,6 +12,9 @@ class EventsState extends Equatable {
     this.newEventElementHour = '',
     this.newEventElementTitle = '',
     this.isNewPostReadyToSubmit = false,
+    this.events = const [],
+    this.eventsStatus = FormzStatus.pure,
+    this.errorMessage = '',
   });
 
   final Event newEvent;
@@ -28,6 +31,11 @@ class EventsState extends Equatable {
   final String newEventElementHour;
   final bool isNewPostReadyToSubmit;
 
+  final List<Event> events;
+  final FormzStatus eventsStatus;
+
+  final String errorMessage;
+
   EventsState copyWith({
     Event? newEvent,
     FormzStatus? newEventStatus,
@@ -39,6 +47,9 @@ class EventsState extends Equatable {
     String? newEventElementTitle,
     String? newEventElementHour,
     bool? isNewPostReadyToSubmit,
+    List<Event>? events,
+    FormzStatus? eventsStatus,
+    String? errorMessage,
   }) {
     return EventsState(
       newEvent: newEvent ?? this.newEvent,
@@ -51,6 +62,9 @@ class EventsState extends Equatable {
       newEventElementHour: newEventElementHour ?? this.newEventElementTitle,
       newEventElementTitle: newEventElementTitle ?? this.newEventElementTitle,
       isNewPostReadyToSubmit: isNewPostReadyToSubmit ?? this.isNewPostReadyToSubmit,
+      events: events ?? this.events,
+      eventsStatus: eventsStatus ?? this.eventsStatus,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
@@ -66,5 +80,8 @@ class EventsState extends Equatable {
     newEventElementTitle,
     newEventElementTitle,
     isNewPostReadyToSubmit,
+    events,
+    eventsStatus,
+    errorMessage
   ];
 }

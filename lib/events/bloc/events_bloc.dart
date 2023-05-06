@@ -18,6 +18,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<AddNewEventElement>(_addNewEventElement);
     on<DeleteNewEventElement>(_deleteNewEventElement);
     on<NewEventCreate>(_eventCreate);
+    on<EventsFetch>(_eventsFetch);
   }
 
   final EventsRepository _eventsRepository;
@@ -153,6 +154,22 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       emit(state.copyWith(newEventStatus: FormzStatus.submissionFailure));
     } finally {
       emit(state.copyWith(newEventStatus: FormzStatus.pure));
+    }
+  }
+
+  Future<void> _eventsFetch(EventsFetch event, Emitter<EventsState> emit ) async {
+    try {
+      List<Event> events = await _eventsRepository.fetchEvents();
+      emit(state.copyWith(events: events, eventsStatus: FormzStatus.submissionSuccess));
+    } on FireStoreException catch (e) {
+      emit(state.copyWith(
+          errorMessage: e.message,
+          eventsStatus: FormzStatus.submissionFailure));
+      emit(
+          state.copyWith(errorMessage: "", eventsStatus: FormzStatus.pure));
+    } catch (_) {
+      emit(state.copyWith(eventsStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(eventsStatus: FormzStatus.pure));
     }
   }
 }

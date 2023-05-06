@@ -36,6 +36,7 @@ class App extends StatelessWidget {
           BlocProvider<EventsBloc>(
               create: (BuildContext context) => EventsBloc(EventsRepository(authenticationRepository:
               context.read<AuthenticationRepository>()))
+                  ..add(EventsFetch())
           ),
         ],
         child: const AppView(),

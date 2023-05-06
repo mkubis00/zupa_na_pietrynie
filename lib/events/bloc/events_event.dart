@@ -61,3 +61,8 @@ class NewEventCreate extends EventsEvent {
 
   NewEventCreate();
 }
+
+class EventsFetch extends EventsEvent {
+
+  EventsFetch();
+}

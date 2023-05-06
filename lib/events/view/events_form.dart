@@ -26,7 +26,7 @@ class EventsForm extends StatelessWidget {
           );
         },
         child: const Icon(Icons.add)) : null,
-    body: Container(color: AppColors.FACEBOOK_BLUE,)),
+    body: EventsList()),
     );
   }
 }
