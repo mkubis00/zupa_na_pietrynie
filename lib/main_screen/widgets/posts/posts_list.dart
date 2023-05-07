@@ -29,7 +29,7 @@ class _PostsListState extends State<PostsList> {
                 width: width * 0.95,
                 child: ListView.separated(
                     key: UniqueKey(),
-                    separatorBuilder: (context, index) => SizedBox(
+                    separatorBuilder: (context, index) => const SizedBox(
                           height: 20,
                         ),
                     scrollDirection: Axis.vertical,
@@ -37,6 +37,7 @@ class _PostsListState extends State<PostsList> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.posts.length,
                     itemBuilder: (BuildContext context, int index) {
+                      print(state.posts.length);
                       Post post = state.posts[index];
                       return index >= state.posts.length
                           ? const BottomLoader()

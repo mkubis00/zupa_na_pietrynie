@@ -12,7 +12,7 @@ class EventsState extends Equatable {
     this.newEventElementHour = '',
     this.newEventElementTitle = '',
     this.isNewPostReadyToSubmit = false,
-    this.events = const [],
+    this.events = const <Event>[],
     this.eventsStatus = FormzStatus.pure,
     this.errorMessage = '',
   });
@@ -68,8 +68,16 @@ class EventsState extends Equatable {
     );
   }
 
+
+  @override
+  String toString() {
+    return 'EventsState{events: $events}';
+  }
+
   @override
   List<Object?> get props => [
+    events,
+    eventsStatus,
     newEvent,
     newEventStatus,
     newEventTitle,
@@ -78,10 +86,8 @@ class EventsState extends Equatable {
     newEventDay,
     newEventDays,
     newEventElementTitle,
-    newEventElementTitle,
+    newEventElementHour,
     isNewPostReadyToSubmit,
-    events,
-    eventsStatus,
     errorMessage
   ];
 }

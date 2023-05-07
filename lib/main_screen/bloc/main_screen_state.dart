@@ -78,7 +78,10 @@ class MainScreenState extends Equatable {
 
   }
 
-  // @override
+  @override
+  String toString() {
+    return 'MainScreenState{posts: $posts}';
+  } // @override
   // String toString() {
   //   return '''PostState { status: $postsStatus, posts: ${posts.length},
   //   comments ${comments.length}, commetsStatus ${commentsStatus},
@@ -87,6 +90,8 @@ class MainScreenState extends Equatable {
   //   eventsCounter ${eventsCounter}, eventsCounterState ${eventsCounterState},
   //   userToPost ${usersToPosts}''';
   // }
+
+
 
   @override
   List<Object> get props => [

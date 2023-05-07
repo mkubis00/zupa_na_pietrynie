@@ -8,7 +8,7 @@ part 'events_event.dart';
 part 'events_state.dart';
 
 class EventsBloc extends Bloc<EventsEvent, EventsState> {
-  EventsBloc(this._eventsRepository) : super(EventsState()) {
+  EventsBloc(this._eventsRepository) : super(const EventsState()) {
     on<NewEventTitleChangeEvent>(_onEventTitleChange);
     on<NewEventDescriptionChangeEvent>(_onEventDescriptionChange);
     on<NewEventPublishDateChangeEvent>(_onEventPublishDateChange);
@@ -157,9 +157,10 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     }
   }
 
-  Future<void> _eventsFetch(EventsFetch event, Emitter<EventsState> emit ) async {
+  Future<void> _eventsFetch(EventsFetch event, Emitter<EventsState> emit) async {
     try {
       List<Event> events = await _eventsRepository.fetchEvents();
+      print("Dsdsd" + events.toString());
       emit(state.copyWith(events: events, eventsStatus: FormzStatus.submissionSuccess));
     } on FireStoreException catch (e) {
       emit(state.copyWith(

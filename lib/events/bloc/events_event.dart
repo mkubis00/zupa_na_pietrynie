@@ -1,7 +1,10 @@
 part of 'events_bloc.dart';
 
-abstract class EventsEvent{
+abstract class EventsEvent extends Equatable {
   const EventsEvent();
+
+  @override
+  List<Object> get props => [];
 }
 
 class NewEventTitleChangeEvent extends EventsEvent {
@@ -63,6 +66,4 @@ class NewEventCreate extends EventsEvent {
 }
 
 class EventsFetch extends EventsEvent {
-
-  EventsFetch();
 }
