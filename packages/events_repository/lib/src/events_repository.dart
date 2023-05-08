@@ -8,7 +8,8 @@ class EventsRepository {
   EventsRepository({
     required AuthenticationRepository authenticationRepository,
     FirebaseFirestore? firebaseFirestore,
-  })  : _authenticationRepository = authenticationRepository,
+  })
+      : _authenticationRepository = authenticationRepository,
         _firebaseFirestore = FirebaseFirestore.instance;
 
   final AuthenticationRepository _authenticationRepository;
@@ -85,24 +86,27 @@ class EventsRepository {
         List<EventDay> eventsDayToReturn = [];
         for (EventDay eventDay in eventDays) {
           List<EventElement> eventElements =
-              await _fetchEventElement(eventDay.id!);
-          eventElements.sort((a, b) => DateFormat('HH:mm')
-              .parse(a.hour)!
-              .compareTo(DateFormat('HH:mm').parse(b.hour)));
+          await _fetchEventElement(eventDay.id!);
+          eventElements.sort((a, b) =>
+              DateFormat('HH:mm')
+                  .parse(a.hour)!
+                  .compareTo(DateFormat('HH:mm').parse(b.hour)));
           EventDay eventDayWithElements =
-              eventDay.copyWith(eventElements: eventElements);
+          eventDay.copyWith(eventElements: eventElements);
           eventsDayToReturn.add(eventDayWithElements);
         }
-        eventsDayToReturn.sort((a, b) => DateFormat('dd-MM')
-            .parse(a.dayOfEvent.substring(0, 5))!
-            .compareTo(
+        eventsDayToReturn.sort((a, b) =>
+            DateFormat('dd-MM')
+                .parse(a.dayOfEvent.substring(0, 5))!
+                .compareTo(
                 DateFormat('dd-MM').parse(b.dayOfEvent.substring(0, 5)!)));
         Event eventWithDays = event.copyWith(eventDays: eventsDayToReturn);
         eventsToReturn.add(eventWithDays);
       }
-      eventsToReturn.sort((a, b) => DateFormat('dd-MM')
-          .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
-          .compareTo(DateFormat('dd-MM')
+      eventsToReturn.sort((a, b) =>
+          DateFormat('dd-MM')
+              .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
+              .compareTo(DateFormat('dd-MM')
               .parse(b.eventDays[0].dayOfEvent.substring(0, 5))!));
       return eventsToReturn;
     } on FirebaseException catch (e) {
@@ -145,5 +149,22 @@ class EventsRepository {
       });
     });
     return eventElements;
+  }
+
+  String getCurrentUSerId() {
+    return _authenticationRepository.currentUser.id;
+  }
+
+  Future<void> updateEventElementParticipation(String eventElementId,
+      List<String> eventElementParticipants) async {
+    try {
+      await _firebaseFirestore.collection('events_elements')
+          .doc(eventElementId)
+          .update({'participants': eventElementParticipants});
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
   }
 }

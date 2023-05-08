@@ -1,3 +1,5 @@
+
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:posts_repository/posts_repository.dart';
 
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/app/app.dart';
+import 'package:zupa_na_pietrynie/events/events.dart';
 import 'package:zupa_na_pietrynie/home/home.dart';
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 
@@ -34,7 +37,7 @@ class _SingleEventState extends State<SingleEvent> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    final User user = context.select((AppBloc bloc) => bloc.state.user);
+    final String userId = context.select((AppBloc bloc) => bloc.state.user.id);
     return Container(
         decoration: BoxDecoration(
           color: AppColors.WHITE,
@@ -111,7 +114,8 @@ class _SingleEventState extends State<SingleEvent> {
                                     Row(
                                       children: [
                                         const SizedBox(width: 18),
-                                        SwitchExample(),
+                                        // SwitchExample(event.eventDays[index].eventElements[i].participants),
+                                        SwitchParticipation(userId: userId, eventElement: event.eventDays[index].eventElements[i],key: UniqueKey(),),
                                         const SizedBox(width: 5),
                                         Align(
                                           alignment: Alignment.topLeft,
@@ -134,18 +138,61 @@ class _SingleEventState extends State<SingleEvent> {
   }
 }
 
-class SwitchExample extends StatefulWidget {
-  const SwitchExample({super.key});
+
+class SwitchParticipation extends StatelessWidget {
+  const SwitchParticipation({Key? key, required String this.userId, required EventElement this.eventElement}) : super(key: key);
+
+
+  final String userId;
+  final EventElement eventElement;
+
+  bool _isPicked(String userId, List<String> participants) {
+    return participants.contains(userId);
+  }
 
   @override
-  State<SwitchExample> createState() => _SwitchExampleState();
+  Widget build(BuildContext context) {
+    return Switch(
+      // This bool value toggles the switch.
+      value: _isPicked(userId, eventElement.participants),
+      activeColor: Colors.green,
+      onChanged: (bool value) {
+        context.read<EventsBloc>().add(EventElementParticipationChange(value, eventElement));
+        print(value);
+      },
+    );
+  }
+}
+
+
+
+class SwitchExample extends StatefulWidget {
+
+
+  final List<String> participants;
+
+  SwitchExample(this.participants);
+
+  @override
+  State<SwitchExample> createState() => _SwitchExampleState(participants);
 }
 
 class _SwitchExampleState extends State<SwitchExample> {
   bool light = false;
+  final List<String> participants;
+
+  bool _isPicked(String userId, List<String> participants) {
+    return participants.contains(userId);
+  }
+
+
+  _SwitchExampleState(this.participants);
 
   @override
   Widget build(BuildContext context) {
+    print("dupa");
+    final String userId = context.select((AppBloc bloc) => bloc.state.user.id);
+    light = _isPicked(userId, participants);
     return Switch(
       // This bool value toggles the switch.
       value: light,

@@ -55,6 +55,11 @@ class _EventsListControllerState extends State<EventsListController> {
 
   @override
   Widget build(BuildContext context) {
-    return EventsList();
-  }}
+    // return BlocBuilder<EventsBloc, EventsState>(
+    //     buildWhen: (previous, current) => previous.events != current.events,
+    // builder: (context, state) {
+    return EventsList(key: UniqueKey());
+        // });
+  }
+}
 

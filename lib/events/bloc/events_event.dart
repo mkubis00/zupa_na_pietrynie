@@ -67,3 +67,11 @@ class NewEventCreate extends EventsEvent {
 
 class EventsFetch extends EventsEvent {
 }
+
+class EventElementParticipationChange extends EventsEvent {
+
+  final bool addParticipation;
+  final EventElement eventElement;
+
+  EventElementParticipationChange(this.addParticipation, this.eventElement);
+}

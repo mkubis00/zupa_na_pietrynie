@@ -25,7 +25,6 @@ class _EventsListState extends State<EventsList> {
     return BlocBuilder<EventsBloc, EventsState>(
       buildWhen: (previous, current) => previous.eventsStatus != current.eventsStatus,
       builder: (context, state) {
-        print(state.events.length);
         switch (state.eventsStatus) {
           case FormzStatus.submissionSuccess:
             return
@@ -73,58 +72,6 @@ class BottomLoader extends StatelessWidget {
         width: 24,
         child: CircularProgressIndicator(strokeWidth: 1.5),
       ),
-    );
-  }
-}
-
-class PostsList1 extends StatefulWidget {
-  const PostsList1({Key? key}) : super(key: key);
-
-  @override
-  State<PostsList1> createState() => _PostsList1State();
-}
-
-class _PostsList1State extends State<PostsList1> {
-  @override
-  Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    final bool isAdmin = context.read<AppBloc>().state.isAdmin;
-    return BlocBuilder<MainScreenBloc, MainScreenState>(
-      buildWhen: (previous, current) => previous.posts != current.posts,
-      builder: (context, state) {
-        switch (state.postsFetchStatus) {
-          case FormzStatus.submissionSuccess:
-            return 
-              Container(
-                width: width * 0.95,
-                child: ListView.separated(
-                    key: UniqueKey(),
-                    separatorBuilder: (context, index) => const SizedBox(
-                      height: 20,
-                    ),
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: state.posts.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      print(state.posts.length);
-                      Post post = state.posts[index];
-                      return index >= state.posts.length
-                          ? const BottomLoader()
-                          :
-                      SinglePost(
-                          post: post,
-                          usersToPosts: state.usersToPosts,
-                          isAdmin: isAdmin,
-                          key: UniqueKey());
-                    }));
-          default:
-            return const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.BLACK,
-                ));
-        }
-      },
     );
   }
 }

@@ -49,6 +49,10 @@ class _EventsFormState extends State<EventsForm> {
     final bool isAdmin = context.read<AppBloc>().state.isAdmin;
     return BlocListener<EventsBloc, EventsState>(
         listener: (context, state) {
+          if (state.eventElementChangeStatus.isSubmissionFailure) {
+            snackBarWarning(
+                context, "Wystąpil blad w trakcie zapisu do wydarzenia");
+          }
         },
         child: Scaffold(
             floatingActionButton: isAdmin ? FloatingActionButton(

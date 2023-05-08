@@ -19,6 +19,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<DeleteNewEventElement>(_deleteNewEventElement);
     on<NewEventCreate>(_eventCreate);
     on<EventsFetch>(_eventsFetch);
+    on<EventElementParticipationChange>(_eventElementParticipationChange);
   }
 
   final EventsRepository _eventsRepository;
@@ -173,6 +174,26 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     } catch (_) {
       emit(state.copyWith(eventsStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(eventsStatus: FormzStatus.pure));
+    }
+  }
+
+  Future<void> _eventElementParticipationChange(EventElementParticipationChange event, Emitter<EventsState> emit) async {
+    try {
+    List<String> participants = [];
+    participants.addAll(event.eventElement.participants);
+      if (event.addParticipation) {
+        participants.add(_eventsRepository.getCurrentUSerId());
+      } else {
+        participants.remove(_eventsRepository.getCurrentUSerId());
+      }
+      await _eventsRepository.updateEventElementParticipation(event.eventElement.id!, participants);
+    } catch (_) {
+      emit(state.copyWith(
+          eventElementChangeStatus: FormzStatus.submissionFailure)
+          );
+      emit(state.copyWith(
+          eventElementChangeStatus: FormzStatus.pure)
+      );
     }
   }
 }
