@@ -80,6 +80,8 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
         List<EventElement> eventElements = [];
         EventDay newEventDay;
         eventElements.addAll(eventDay.eventElements);
+        print("PPPPPPPP");
+        print(event.hour);
         eventElements.add(EventElement(
             title: event.title, hour: event.hour, participants: []));
         eventElements.sort((a, b) => a.hour!.compareTo(b.hour!));
@@ -160,7 +162,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
   Future<void> _eventsFetch(EventsFetch event, Emitter<EventsState> emit) async {
     try {
       List<Event> events = await _eventsRepository.fetchEvents();
-      print("Dsdsd" + events.toString());
+      emit(state.copyWith(eventsStatus: FormzStatus.pure));
       emit(state.copyWith(events: events, eventsStatus: FormzStatus.submissionSuccess));
     } on FireStoreException catch (e) {
       emit(state.copyWith(

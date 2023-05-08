@@ -2,6 +2,7 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:events_repository/events_repository.dart';
 import 'package:uuid/uuid.dart';
+import 'package:intl/intl.dart';
 
 class EventsRepository {
   EventsRepository({
@@ -64,52 +65,85 @@ class EventsRepository {
   Future<List<Event>> fetchEvents() async {
     try {
       List<Event> events = [];
+      List<Event> eventsToReturn = [];
       await _firebaseFirestore
           .collection('events')
           .orderBy('publishDate', descending: true)
           .get()
           .then((QuerySnapshot eventSnapshot) {
         eventSnapshot.docs.forEach((eventDoc) async {
-          List<EventDay> eventDays = [];
-          await _firebaseFirestore
-              .collection('events_days')
-              .where('eventId', isEqualTo: eventDoc['id'])
-              .get()
-              .then((QuerySnapshot eventDaySnapshot) {
-            eventDaySnapshot.docs.forEach((eventDayDoc) async {
-              List<EventElement> eventElements = [];
-              await _firebaseFirestore
-                  .collection('events_elements')
-                  .where('eventDayId', isEqualTo: eventDayDoc['id'])
-                  .get()
-                  .then((QuerySnapshot eventElementSnapshot) {
-                eventElementSnapshot.docs.forEach((eventElementDoc) {
-                  eventElements.add(EventElement(
-                      id: eventElementDoc['id'],
-                      title: eventElementDoc['title'],
-                      hour: eventElementDoc['hour'],
-                      participants: List<String>.from(eventElementDoc['participants'])));
-                });
-              });
-              eventDays.add(EventDay(
-                  id: eventDayDoc['id'],
-                  dayOfEvent: eventDayDoc['dayOfEvent'],
-                  eventElements: eventElements));
-            });
-          });
           events.add(Event(
               id: eventDoc['id'],
               title: eventDoc['title'],
               description: eventDoc['description'],
-              eventDays: eventDays,
+              eventDays: const [],
               publishDate: eventDoc['publishDate']));
         });
       });
-      return events;
+      for (Event event in events) {
+        List<EventDay> eventDays = await _fetchEventDays(event.id!);
+        List<EventDay> eventsDayToReturn = [];
+        for (EventDay eventDay in eventDays) {
+          List<EventElement> eventElements =
+              await _fetchEventElement(eventDay.id!);
+          eventElements.sort((a, b) => DateFormat('HH:mm')
+              .parse(a.hour)!
+              .compareTo(DateFormat('HH:mm').parse(b.hour)));
+          EventDay eventDayWithElements =
+              eventDay.copyWith(eventElements: eventElements);
+          eventsDayToReturn.add(eventDayWithElements);
+        }
+        eventsDayToReturn.sort((a, b) => DateFormat('dd-MM')
+            .parse(a.dayOfEvent.substring(0, 5))!
+            .compareTo(
+                DateFormat('dd-MM').parse(b.dayOfEvent.substring(0, 5)!)));
+        Event eventWithDays = event.copyWith(eventDays: eventsDayToReturn);
+        eventsToReturn.add(eventWithDays);
+      }
+      eventsToReturn.sort((a, b) => DateFormat('dd-MM')
+          .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
+          .compareTo(DateFormat('dd-MM')
+              .parse(b.eventDays[0].dayOfEvent.substring(0, 5))!));
+      return eventsToReturn;
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
     } catch (_) {
       throw const FireStoreException();
     }
+  }
+
+  Future<List<EventDay>> _fetchEventDays(String eventId) async {
+    List<EventDay> eventDays = [];
+    await _firebaseFirestore
+        .collection('events_days')
+        .where('eventId', isEqualTo: eventId)
+        .get()
+        .then((QuerySnapshot eventDaySnapshot) {
+      eventDaySnapshot.docs.forEach((eventDayDoc) async {
+        eventDays.add(EventDay(
+            id: eventDayDoc['id'],
+            dayOfEvent: eventDayDoc['dayOfEvent'],
+            eventElements: const []));
+      });
+    });
+    return eventDays;
+  }
+
+  Future<List<EventElement>> _fetchEventElement(String eventDayId) async {
+    List<EventElement> eventElements = [];
+    await _firebaseFirestore
+        .collection('events_elements')
+        .where('eventDayId', isEqualTo: eventDayId)
+        .get()
+        .then((QuerySnapshot eventElementSnapshot) {
+      eventElementSnapshot.docs.forEach((eventElementDoc) {
+        eventElements.add(EventElement(
+            id: eventElementDoc['id'],
+            title: eventElementDoc['title'],
+            hour: eventElementDoc['hour'],
+            participants: List<String>.from(eventElementDoc['participants'])));
+      });
+    });
+    return eventElements;
   }
 }

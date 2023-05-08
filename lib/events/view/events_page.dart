@@ -10,9 +10,11 @@ class EventsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 8, left: 5, right: 5),
-      child: const EventsForm(),
+    return
+      Padding(
+      padding: const EdgeInsets.only(top: 8, bottom: 8, left: 1, right: 1),
+      child:
+      const EventsForm(),
     );
   }
 }

@@ -7,6 +7,8 @@ import 'package:zupa_na_pietrynie/events/events.dart';
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 
+import '../../app/bloc/app_bloc.dart';
+
 class EventsForm extends StatefulWidget {
   const EventsForm({Key? key}) : super(key: key);
 
@@ -44,21 +46,22 @@ class _EventsFormState extends State<EventsForm> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAdmin = context.read<AppBloc>().state.isAdmin;
     return BlocListener<EventsBloc, EventsState>(
         listener: (context, state) {
         },
         child: Scaffold(
-            floatingActionButton: FloatingActionButton(
+            floatingActionButton: isAdmin ? FloatingActionButton(
                 foregroundColor: AppColors.WHITE,
                 backgroundColor: AppColors.BLACK,
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CreatePostRoute()),
+                        builder: (context) => const CreateEventForm()),
                   );
                 },
-                child: const Icon(Icons.add)),
+                child: const Icon(Icons.add)) : null,
             body: Container(
                 child: Align(
                   alignment: AlignmentDirectional.topCenter,
@@ -72,8 +75,8 @@ class _EventsFormState extends State<EventsForm> {
                         child: Column(
                           children: [
                             const SizedBox(height: 15),
-
-                            EventsListController(),
+                            Padding(padding: EdgeInsetsDirectional.only(start: 10, end: 10), child:
+                            EventsListController()),
                             const SizedBox(height: 10),
                           ],
                         ),

@@ -8,6 +8,7 @@ import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/app/app.dart';
 import 'package:zupa_na_pietrynie/events/events.dart';
 import 'package:zupa_na_pietrynie/main_screen/main_screen.dart';
+import 'package:events_repository/events_repository.dart';
 
 class EventsList extends StatefulWidget {
   const EventsList({Key? key}) : super(key: key);
@@ -41,16 +42,14 @@ class _EventsListState extends State<EventsList> {
                     itemCount: state.events.length,
                     itemBuilder: (BuildContext context, int index) {
                       print(state.events.length);
-                      // Event post = state.events[index];
+                      Event post = state.events[index];
                       return index >= state.events.length
                           ? const BottomLoader()
                           :
-                      // SinglePost(
-                      //     post: post,
-                      //     usersToPosts: state.usersToPosts,
-                      //     isAdmin: isAdmin,
-                      //     key: UniqueKey());
-                      Text("DADADA", key: UniqueKey(),);
+                      SingleEvent(
+                          event: post,
+                          isAdmin: isAdmin,
+                          key: UniqueKey());
                     }));
           default:
             return const Center(
@@ -95,7 +94,8 @@ class _PostsList1State extends State<PostsList1> {
       builder: (context, state) {
         switch (state.postsFetchStatus) {
           case FormzStatus.submissionSuccess:
-            return Container(
+            return 
+              Container(
                 width: width * 0.95,
                 child: ListView.separated(
                     key: UniqueKey(),
@@ -111,7 +111,8 @@ class _PostsList1State extends State<PostsList1> {
                       Post post = state.posts[index];
                       return index >= state.posts.length
                           ? const BottomLoader()
-                          : SinglePost(
+                          :
+                      SinglePost(
                           post: post,
                           usersToPosts: state.usersToPosts,
                           isAdmin: isAdmin,
