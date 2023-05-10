@@ -43,7 +43,9 @@ class PostsRepository {
         .collection('posts')
         .orderBy('creationDate', descending: true)
         .limit(20);
-    return docRef.snapshots(includeMetadataChanges: true);
+    return docRef.snapshots(includeMetadataChanges: true).handleError( (error){
+     return;
+    });
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> _newPostStream() {
@@ -51,7 +53,11 @@ class PostsRepository {
         .collection("posts")
         .orderBy('creationDate', descending: true)
         .limit(1);
-    return docRef.snapshots();
+    return docRef.snapshots()
+        .handleError( (error){
+      return;
+    })
+  ;
   }
 
   void _newPostFromStream(QuerySnapshot<Map<String, dynamic>> event) {
@@ -318,8 +324,10 @@ class PostsRepository {
   Future<void> updatePost(Post post, String newContent) async {
     try {
       bool isAdmin = await _authenticationRepository.isAdmin();
-      if (isAdmin == true ||
-          _authenticationRepository.currentUser.id == post.ownerId) {
+      if (isAdmin == true
+          ||
+          _authenticationRepository.currentUser.id == post.ownerId
+      ) {
         final updatePost = <String, dynamic>{
           "id": post.id,
           "ownerId": post.ownerId,

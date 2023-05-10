@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:events_repository/events_repository.dart';
 import 'package:formz/formz.dart';
+import 'package:intl/intl.dart';
 
 part 'events_event.dart';
 
@@ -20,9 +23,66 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<NewEventCreate>(_eventCreate);
     on<EventsFetch>(_eventsFetch);
     on<EventElementParticipationChange>(_eventElementParticipationChange);
+    on<_EventElementUpdateStream>(_updateEventFromDbStream);
+    _eventRepositorySubscription =
+        _eventsRepository.eventElement.listen(cancelOnError: false,(event) {
+      add(_EventElementUpdateStream(event));
+    });
   }
 
   final EventsRepository _eventsRepository;
+
+  late final StreamSubscription<EventElement> _eventRepositorySubscription;
+
+  Future<void> _updateEventFromDbStream(
+      _EventElementUpdateStream event, Emitter<EventsState> emit) async {
+    try {
+      List<Event> events = [];
+      events.addAll(state.events);
+      List<EventElement> newEventElements = [];
+      List<EventDay> newEventDays = [];
+      bool isEventElementChanged = false;
+      for (Event eventInEvents in events) {
+        for (EventDay eventDay in eventInEvents.eventDays) {
+          for (EventElement eventElement in eventDay.eventElements) {
+            if (eventElement.id == event.eventElement.id) {
+              newEventElements.addAll(eventDay.eventElements);
+              newEventElements.add(event.eventElement);
+              newEventElements.remove(eventElement);
+              newEventElements.sort((a, b) => DateFormat('HH:mm')
+                  .parse(a.hour)!
+                  .compareTo(DateFormat('HH:mm').parse(b.hour)));
+              isEventElementChanged = true;
+              break;
+            }
+          }
+          if (isEventElementChanged) {
+            newEventDays.addAll(eventInEvents.eventDays);
+            newEventDays
+                .add(eventDay.copyWith(eventElements: newEventElements));
+            newEventDays.remove(eventDay);
+            newEventDays.sort((a, b) => DateFormat('dd-MM')
+                .parse(a.dayOfEvent.substring(0, 5))!
+                .compareTo(
+                    DateFormat('dd-MM').parse(b.dayOfEvent.substring(0, 5)!)));
+            break;
+          }
+        }
+        if (isEventElementChanged) {
+          events.add(eventInEvents.copyWith(eventDays: newEventDays));
+          events.remove(eventInEvents);
+          events.sort((a, b) => DateFormat('dd-MM')
+              .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
+              .compareTo(DateFormat('dd-MM')
+                  .parse(b.eventDays[0].dayOfEvent.substring(0, 5))!));
+          break;
+        }
+      }
+      emit(state.copyWith(events: events));
+    } catch (_) {
+      print("duap");
+    }
+  }
 
   void _onEventTitleChange(
       NewEventTitleChangeEvent event, Emitter<EventsState> emit) {
@@ -81,8 +141,6 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
         List<EventElement> eventElements = [];
         EventDay newEventDay;
         eventElements.addAll(eventDay.eventElements);
-        print("PPPPPPPP");
-        print(event.hour);
         eventElements.add(EventElement(
             title: event.title, hour: event.hour, participants: []));
         eventElements.sort((a, b) => a.hour!.compareTo(b.hour!));
@@ -160,40 +218,47 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     }
   }
 
-  Future<void> _eventsFetch(EventsFetch event, Emitter<EventsState> emit) async {
+  Future<void> _eventsFetch(
+      EventsFetch event, Emitter<EventsState> emit) async {
     try {
       List<Event> events = await _eventsRepository.fetchEvents();
       emit(state.copyWith(eventsStatus: FormzStatus.pure));
-      emit(state.copyWith(events: events, eventsStatus: FormzStatus.submissionSuccess));
+      emit(state.copyWith(
+          events: events, eventsStatus: FormzStatus.submissionSuccess));
     } on FireStoreException catch (e) {
       emit(state.copyWith(
           errorMessage: e.message,
           eventsStatus: FormzStatus.submissionFailure));
-      emit(
-          state.copyWith(errorMessage: "", eventsStatus: FormzStatus.pure));
+      emit(state.copyWith(errorMessage: "", eventsStatus: FormzStatus.pure));
     } catch (_) {
       emit(state.copyWith(eventsStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(eventsStatus: FormzStatus.pure));
     }
   }
 
-  Future<void> _eventElementParticipationChange(EventElementParticipationChange event, Emitter<EventsState> emit) async {
+  Future<void> _eventElementParticipationChange(
+      EventElementParticipationChange event, Emitter<EventsState> emit) async {
     try {
-    List<String> participants = [];
-    participants.addAll(event.eventElement.participants);
+      List<String> participants = [];
+      participants.addAll(event.eventElement.participants);
       if (event.addParticipation) {
-        participants.add(_eventsRepository.getCurrentUSerId());
+        participants.add(_eventsRepository.getCurrentUser().id);
+        print(_eventsRepository.getCurrentUser().id);
       } else {
-        participants.remove(_eventsRepository.getCurrentUSerId());
+        participants.remove(_eventsRepository.getCurrentUser().id);
       }
-      await _eventsRepository.updateEventElementParticipation(event.eventElement.id!, participants);
+      await _eventsRepository.updateEventElementParticipation(
+          event.eventElement.id!, participants);
     } catch (_) {
       emit(state.copyWith(
-          eventElementChangeStatus: FormzStatus.submissionFailure)
-          );
-      emit(state.copyWith(
-          eventElementChangeStatus: FormzStatus.pure)
-      );
+          eventElementChangeStatus: FormzStatus.submissionFailure));
+      emit(state.copyWith(eventElementChangeStatus: FormzStatus.pure));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _eventRepositorySubscription.cancel();
+    return super.close();
   }
 }

@@ -40,7 +40,6 @@ class _EventsListState extends State<EventsList> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.events.length,
                     itemBuilder: (BuildContext context, int index) {
-                      print(state.events.length);
                       Event post = state.events[index];
                       return index >= state.events.length
                           ? const BottomLoader()

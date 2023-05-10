@@ -75,3 +75,9 @@ class EventElementParticipationChange extends EventsEvent {
 
   EventElementParticipationChange(this.addParticipation, this.eventElement);
 }
+
+class _EventElementUpdateStream extends EventsEvent {
+  final EventElement eventElement;
+
+  _EventElementUpdateStream(this.eventElement);
+}

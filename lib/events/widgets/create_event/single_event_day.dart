@@ -127,7 +127,7 @@ class SingleEventDay extends StatelessWidget {
                           ),
                           backgroundColor: AppColors.BLACK),
                       onPressed: () {
-                        _hourController.text.length == 4 ? _hourController.value = _hourController.value.copyWith(text: _hourController.text + "0") : null;
+                        _hourController.text.length == 4 && _hourController.text[1] != ':' ? _hourController.value = _hourController.value.copyWith(text: _hourController.text + "0") : null;
                         context.read<EventsBloc>().add(AddNewEventElement(eventDay,
                             _hourController.text,
                             _titleController.text));

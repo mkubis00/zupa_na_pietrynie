@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:events_repository/events_repository.dart';
@@ -10,10 +12,48 @@ class EventsRepository {
     FirebaseFirestore? firebaseFirestore,
   })
       : _authenticationRepository = authenticationRepository,
-        _firebaseFirestore = FirebaseFirestore.instance;
+        _firebaseFirestore = FirebaseFirestore.instance {
+    _newEventElementSubscription = _eventElementChangeStream().listen((event) {
+      _newEventElementFromStream(event.docChanges);
+    });
+
+  }
+
 
   final AuthenticationRepository _authenticationRepository;
   final FirebaseFirestore _firebaseFirestore;
+
+  late final StreamSubscription<QuerySnapshot<Map<String, dynamic>>>
+  _newEventElementSubscription;
+
+  final StreamController<EventElement> _controller = StreamController.broadcast();
+
+  Stream<EventElement> get eventElement => _controller.stream;
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> _eventElementChangeStream() {
+    final docRef = _firebaseFirestore
+        .collection("events_elements");
+    return docRef.snapshots(includeMetadataChanges: true);
+  }
+
+  void _newEventElementFromStream(List<DocumentChange<Map<String, dynamic>>> documentChangeList) {
+    try {
+      if (documentChangeList.length == 1) {
+        Map<String, dynamic>? data = documentChangeList.elementAt(0).doc.data();
+        EventElement updatedEventElement = EventElement(
+            id: data!['id'],
+            title: data!['title'],
+            hour: data!['hour'],
+            participants: List<String>.from(data!['participants'] as List),
+        );
+        _controller.sink.add(updatedEventElement);
+      }
+    } on FirebaseException catch (e) {
+      throw FireStoreException.fromCode(e.code);
+    } catch (_) {
+      throw const FireStoreException();
+    }
+  }
 
   Future<void> createNewEvent(Event event) async {
     try {
@@ -151,8 +191,8 @@ class EventsRepository {
     return eventElements;
   }
 
-  String getCurrentUSerId() {
-    return _authenticationRepository.currentUser.id;
+  User getCurrentUser() {
+    return _authenticationRepository.currentUser;
   }
 
   Future<void> updateEventElementParticipation(String eventElementId,
@@ -164,7 +204,13 @@ class EventsRepository {
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
     } catch (_) {
+      print("TUTAAAAJ");
       throw const FireStoreException();
     }
   }
+
+  void dispose() {
+
+  }
+
 }

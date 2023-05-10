@@ -37,7 +37,6 @@ class _PostsListState extends State<PostsList> {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: state.posts.length,
                     itemBuilder: (BuildContext context, int index) {
-                      print(state.posts.length);
                       Post post = state.posts[index];
                       return index >= state.posts.length
                           ? const BottomLoader()
