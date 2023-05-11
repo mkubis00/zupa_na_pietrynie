@@ -27,7 +27,18 @@ class _EventsListState extends State<EventsList> {
       builder: (context, state) {
         switch (state.eventsStatus) {
           case FormzStatus.submissionSuccess:
-            return
+            if (state.events.length == 0) {
+              return
+                Padding(
+                  padding: EdgeInsetsDirectional.only(top: 150),
+                  child:
+                  SizedBox(
+                      width: width * 0.8,
+                  child:
+                  Text("Aktualnie nie ma dostępnych nowych wydarzeń ...\nWróć tu za jakiś czas", textAlign: TextAlign.center,)),
+                );
+            } else {
+              return
               Container(
                 width: width * 0.95,
                 child: ListView.separated(
@@ -48,7 +59,7 @@ class _EventsListState extends State<EventsList> {
                           event: post,
                           isAdmin: isAdmin,
                           key: UniqueKey());
-                    }));
+                    }));}
           default:
             return const Center(
                 child: CircularProgressIndicator(

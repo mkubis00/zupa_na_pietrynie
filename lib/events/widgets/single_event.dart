@@ -1,6 +1,7 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import 'package:events_repository/events_repository.dart';
 import 'package:posts_repository/posts_repository.dart';
@@ -29,11 +30,26 @@ class _SingleEventState extends State<SingleEvent> {
 
   _SingleEventState(this.event, this.isAdmin);
 
+  bool isAfterPublishDate() {
+    DateTime publishDateTime = DateFormat('dd-MM-yyyy')
+        .parse(event.publishDate);
+    DateTime now = DateTime.now();
+    now.compareTo(publishDateTime);
+    if (now.compareTo(publishDateTime) < 0) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     final String userId = context.select((AppBloc bloc) => bloc.state.user.id);
-    return Container(
+    return
+      isAfterPublishDate() ?
+      Container(
         decoration: BoxDecoration(
           color: AppColors.WHITE,
           borderRadius: BorderRadius.circular(20),
@@ -45,23 +61,27 @@ class _SingleEventState extends State<SingleEvent> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
+            if (isAdmin)
             Row(
               children: [
                 Spacer(),
                 SizedBox(
-                  height: 18,
-                  child: IconButton(
-                    icon: const Icon(
-                      IconData(
-                        0xe1b9,
-                        fontFamily: 'MaterialIcons',
-                      ),
-                      color: AppColors.RED,
+                  height: 35,
+                  child:
+                  Padding(
+                  padding: EdgeInsetsDirectional.only(top: 15, end: 10),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.red),
                     ),
+                    
                     // the method which is called
                     // when button is pressed
-                    onPressed: () {},
-                  ),
+                    onPressed: () {
+                      context.read<EventsBloc>().add(DeleteEvent(event));
+                    }, child: Text("Usuń"),
+                  )),
                 ) // Dodanie przycisku usuń/resetuj
               ],
             ),
@@ -159,7 +179,12 @@ class _SingleEventState extends State<SingleEvent> {
                 }),
             const SizedBox(height: 20),
           ],
-        ));
+        )) :
+      Container(
+        child: Center(
+          child: Text('Już niedlugo dostęne nowe wydarzenie...'),
+        ),
+      );
   }
 }
 

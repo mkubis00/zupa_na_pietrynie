@@ -24,6 +24,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     on<EventsFetch>(_eventsFetch);
     on<EventElementParticipationChange>(_eventElementParticipationChange);
     on<_EventElementUpdateStream>(_updateEventFromDbStream);
+    on<DeleteEvent>(_eventDelete);
     _eventRepositorySubscription =
         _eventsRepository.eventElement.listen(cancelOnError: false,(event) {
       add(_EventElementUpdateStream(event));
@@ -69,7 +70,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
           }
         }
         if (isEventElementChanged) {
-          events.add(eventInEvents.copyWith(eventDays: newEventDays));
+          events.insert(0, eventInEvents.copyWith(eventDays: newEventDays));
           events.remove(eventInEvents);
           events.sort((a, b) => DateFormat('dd-MM')
               .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
@@ -204,13 +205,22 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
           description: state.newEventDescription,
           eventDays: state.newEventDays,
           publishDate: state.newEventPublishDate);
-      await _eventsRepository.createNewEvent(newEvent);
+      Event createdEvent = await _eventsRepository.createNewEvent(newEvent);
+      List<Event> events = [];
+      events.add(createdEvent);
+      events.addAll(state.events);
+      events.sort((a, b) => DateFormat('dd-MM')
+          .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
+          .compareTo(DateFormat('dd-MM')
+          .parse(b.eventDays[0].dayOfEvent.substring(0, 5))!));
       emit(state.copyWith(
           newEventStatus: FormzStatus.submissionSuccess,
           newEventTitle: '',
           newEventDescription: '',
           newEventPublishDate: '',
-          newEventDays: []));
+          newEventDays: [],
+          events: events,
+      ));
     } catch (_) {
       emit(state.copyWith(newEventStatus: FormzStatus.submissionFailure));
     } finally {
@@ -253,6 +263,22 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       emit(state.copyWith(
           eventElementChangeStatus: FormzStatus.submissionFailure));
       emit(state.copyWith(eventElementChangeStatus: FormzStatus.pure));
+    }
+  }
+
+  Future<void> _eventDelete(DeleteEvent event, Emitter<EventsState> emit) async {
+    try {
+      await _eventsRepository.deleteEvent(event.eventToDelete);
+      List<Event> events = [];
+      events.addAll(state.events);
+      events.remove(event.eventToDelete);
+      emit(state.copyWith(events: events, eventDeleted: FormzStatus.submissionSuccess));
+    } on FireStoreException catch (e) {
+      emit(state.copyWith(eventDeleted: FormzStatus.submissionFailure));
+    } catch (_) {
+      emit(state.copyWith(eventDeleted: FormzStatus.submissionFailure));
+    } finally {
+      emit(state.copyWith(eventDeleted: FormzStatus.pure));
     }
   }
 

@@ -16,6 +16,7 @@ class EventsState extends Equatable {
     this.eventsStatus = FormzStatus.pure,
     this.errorMessage = '',
     this.eventElementChangeStatus = FormzStatus.pure,
+    this.eventDeleted = FormzStatus.pure,
   });
 
   final Event newEvent;
@@ -39,6 +40,8 @@ class EventsState extends Equatable {
 
   final FormzStatus eventElementChangeStatus;
 
+  final FormzStatus eventDeleted;
+
   EventsState copyWith({
     Event? newEvent,
     FormzStatus? newEventStatus,
@@ -54,6 +57,7 @@ class EventsState extends Equatable {
     FormzStatus? eventsStatus,
     String? errorMessage,
     FormzStatus? eventElementChangeStatus,
+    FormzStatus? eventDeleted,
   }) {
     return EventsState(
       newEvent: newEvent ?? this.newEvent,
@@ -70,6 +74,7 @@ class EventsState extends Equatable {
       eventsStatus: eventsStatus ?? this.eventsStatus,
       errorMessage: errorMessage ?? this.errorMessage,
       eventElementChangeStatus: eventElementChangeStatus ?? this.eventElementChangeStatus,
+      eventDeleted: eventDeleted ?? this.eventDeleted,
     );
   }
 
@@ -95,5 +100,6 @@ class EventsState extends Equatable {
     isNewPostReadyToSubmit,
     errorMessage,
     eventElementChangeStatus,
+    eventDeleted,
   ];
 }

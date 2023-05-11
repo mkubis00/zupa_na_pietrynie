@@ -81,3 +81,10 @@ class _EventElementUpdateStream extends EventsEvent {
 
   _EventElementUpdateStream(this.eventElement);
 }
+
+class DeleteEvent extends EventsEvent {
+
+  final Event eventToDelete;
+
+  DeleteEvent(this.eventToDelete);
+}

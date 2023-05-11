@@ -52,6 +52,18 @@ class _EventsFormState extends State<EventsForm> {
           if (state.eventElementChangeStatus.isSubmissionFailure) {
             snackBarWarning(
                 context, "Wystąpil blad w trakcie zapisu do wydarzenia");
+          } else if (state.eventDeleted.isSubmissionSuccess) {
+            snackBarSuccess(
+                context, "Usunięto wydarzenie");
+          } else if (state.eventDeleted.isSubmissionFailure) {
+            snackBarWarning(
+                context, "Nie usunięto wydarzenia, wystąpil blad");
+          } else if (state.newEventStatus.isSubmissionSuccess) {
+            snackBarSuccess(
+                context, "Dodano wydarzenie");
+          } else if (state.newEventStatus.isSubmissionFailure) {
+            snackBarWarning(
+                context, "Nie udalo się dodać wydarzenia");
           }
         },
         child: Scaffold(
