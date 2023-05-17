@@ -20,10 +20,6 @@ class _MainScreenFormState extends State<MainScreenForm> {
   static const List<Widget> _widgetOptions = <Widget>[
     MainScreenPage(),
     EventsPage(),
-    Text(
-        'Ten panel\nzostanie dodany\nwkrótce...',
-        style: optionStyle,
-      ),
   ];
 
   void _onItemTapped(int index) {
@@ -68,10 +64,6 @@ class _MainScreenFormState extends State<MainScreenForm> {
           BottomNavigationBarItem(
             icon: Icon(IconData(0xe78e, fontFamily: 'MaterialIcons')),
             label: 'Wydarzenia',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xe054, fontFamily: 'MaterialIcons')),
-            label: 'Pomoc Bezdomnym',
           ),
         ],
         currentIndex: _selectedIndex,

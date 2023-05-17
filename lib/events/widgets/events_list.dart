@@ -35,7 +35,7 @@ class _EventsListState extends State<EventsList> {
                   SizedBox(
                       width: width * 0.8,
                   child:
-                  Text("Aktualnie nie ma dostępnych nowych wydarzeń ...\nWróć tu za jakiś czas", textAlign: TextAlign.center,)),
+                  Text("Aktualnie nie ma dostępnych nowych wydarzeń.\nNowe wydarzenia wkrótce...", textAlign: TextAlign.center,)),
                 );
             } else {
               return

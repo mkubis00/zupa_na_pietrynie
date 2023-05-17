@@ -156,7 +156,10 @@ class _SingleEventState extends State<SingleEvent> {
                                 itemCount:
                                     event.eventDays[index].eventElements.length,
                                 itemBuilder: (BuildContext context, int i) {
-                                  return Row(
+                                  return
+                                    Padding(padding: EdgeInsetsDirectional.only(bottom: 5,top: 5),
+                                    child:
+                                    Row(
                                     children: [
                                       const SizedBox(width: 18),
                                       // SwitchExample(event.eventDays[index].eventElements[i].participants),
@@ -203,7 +206,7 @@ class _SingleEventState extends State<SingleEvent> {
                                             ),
                                           )),
                                     ],
-                                  );
+                                  ));
                                 }),
                             const SizedBox(height: 10),
                           ]));

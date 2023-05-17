@@ -53,6 +53,19 @@ class EventsRepository {
     }
   }
 
+  String getLastDayOfEvent(List<EventDay> eventDays) {
+    String year = DateTime.now().year.toString();
+    String lastDayOfEvent = '${eventDays[0].dayOfEvent.substring(0,5)}-$year';
+    for (EventDay eventDay in eventDays) {
+      String dayOfEvent = '${eventDay.dayOfEvent.substring(0,5)}-$year';
+      if (DateFormat('dd-MM-yyyy')
+          .parse(lastDayOfEvent).compareTo(DateFormat('dd-MM-yyyy').parse(dayOfEvent)) == -1) {
+        lastDayOfEvent = dayOfEvent;
+      }
+    }
+    return lastDayOfEvent;
+  }
+
   Future<Event> createNewEvent(Event event) async {
     try {
       if (await _authenticationRepository.isAdmin()) {
@@ -61,7 +74,8 @@ class EventsRepository {
           'id': eventUuid,
           'title': event.title,
           'description': event.description,
-          'publishDate': event.publishDate
+          'publishDate': event.publishDate,
+          'lastDayOfEvent': getLastDayOfEvent(event.eventDays),
         };
         await _firebaseFirestore
             .collection('events')
