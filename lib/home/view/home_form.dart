@@ -16,7 +16,7 @@ class MainScreenForm extends StatefulWidget {
 class _MainScreenFormState extends State<MainScreenForm> {
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     MainScreenPage(),
     EventsPage(),
@@ -31,47 +31,61 @@ class _MainScreenFormState extends State<MainScreenForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        toolbarHeight: 30,
-        backgroundColor: AppColors.WHITE,
-        actions: <Widget>[
-          IconButton(
-            key: const Key('homePage_logout_iconButton'),
-            icon: const Icon(Icons.settings),
-            color: AppColors.BLACK,
-            onPressed: () =>
-                Navigator.of(context).push<void>(SettingOptionsPage.route()),
-          )
-        ],
-      ),
-      body: Align(
-        alignment: const Alignment(0, -1 / 3),
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar:
-      SizedBox(
-        // height: 91,
-        child:
-      BottomNavigationBar(
-        elevation: 0,
-        backgroundColor: AppColors.WHITE,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Posty',
+        appBar: AppBar(
+          elevation: 0,
+          toolbarHeight: 30,
+          backgroundColor: AppColors.BACKGROUND_COLOR,
+          actions: <Widget>[
+            IconButton(
+              key: const Key('homePage_logout_iconButton'),
+              icon: const Icon(Icons.settings),
+              color: AppColors.BLACK,
+              onPressed: () =>
+                  Navigator.of(context).push<void>(SettingOptionsPage.route()),
+            )
+          ],
+        ),
+        body:
+            //   Align(
+            // alignment: const Alignment(0, -1 / 3),
+            // child:
+            _widgetOptions.elementAt(_selectedIndex),
+        // ),
+        bottomNavigationBar:
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.GREEN,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.GREY,
+                blurRadius: 0,
+                offset: Offset(
+                  0,
+                  1,
+                ),
+              )
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xe78e, fontFamily: 'MaterialIcons')),
-            label: 'Wydarzenia',
+          child:
+          BottomNavigationBar(
+            elevation: 0,
+            backgroundColor: AppColors.BACKGROUND_COLOR,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Posty',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(IconData(0xe78e, fontFamily: 'MaterialIcons')),
+                label: 'Wydarzenia',
+              ),
+            ],
+            currentIndex: _selectedIndex,
+            selectedItemColor: AppColors.GREEN,
+            unselectedItemColor: AppColors.GREY,
+            onTap: _onItemTapped,
           ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: AppColors.BLACK,
-        unselectedItemColor: AppColors.GREY,
-        onTap: _onItemTapped,
-      )),
-    );
+        ));
   }
 }
-

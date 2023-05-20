@@ -63,7 +63,10 @@ class _SinglePostState extends State<SinglePost> {
           color: AppColors.WHITE,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: AppColors.GREY, blurRadius: 10, spreadRadius: 1)
+            BoxShadow(color: AppColors.GREY, blurRadius: 10, offset: Offset(
+              0,
+              1,
+            ),)
           ],
         ),
         child: Column(

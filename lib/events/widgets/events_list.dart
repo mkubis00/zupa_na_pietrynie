@@ -40,7 +40,6 @@ class _EventsListState extends State<EventsList> {
             } else {
               return
               Container(
-                width: width * 0.95,
                 child: ListView.separated(
                     key: UniqueKey(),
                     separatorBuilder: (context, index) => const SizedBox(

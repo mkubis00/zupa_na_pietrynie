@@ -48,8 +48,10 @@ class _SingleEventState extends State<SingleEvent> {
               color: AppColors.WHITE,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
-                BoxShadow(
-                    color: AppColors.GREY, blurRadius: 10, spreadRadius: 1)
+                BoxShadow(color: AppColors.GREY, blurRadius: 10, offset: Offset(
+                  0,
+                  1,
+                ),)
               ],
             ),
             child: Column(
@@ -64,7 +66,7 @@ class _SingleEventState extends State<SingleEvent> {
                         height: 35,
                         child: Padding(
                             padding:
-                                EdgeInsetsDirectional.only(top: 15, end: 10),
+                                EdgeInsetsDirectional.only(top: 0, end: 0),
                             child: ElevatedButton(
                               style: ButtonStyle(
                                 backgroundColor:
@@ -112,7 +114,7 @@ class _SingleEventState extends State<SingleEvent> {
                     child: Text(
                       event.title,
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 17),
                     )),
                 const SizedBox(height: 12),
                 Padding(
@@ -128,7 +130,7 @@ class _SingleEventState extends State<SingleEvent> {
                       'Dni wydarzenia:',
                       style: TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     )),
                 ListView.builder(
@@ -201,7 +203,7 @@ class _SingleEventState extends State<SingleEvent> {
                                                         .toString(),
                                                     style: const TextStyle(
                                                         fontWeight:
-                                                            FontWeight.bold)),
+                                                            FontWeight.w600)),
                                               ],
                                             ),
                                           )),
@@ -242,7 +244,7 @@ class SwitchParticipation extends StatelessWidget {
     return Switch(
       key: UniqueKey(),
       value: light,
-      activeColor: Colors.green,
+      activeColor: AppColors.GREEN,
       onChanged: (bool value) {
         context
             .read<EventsBloc>()
@@ -273,7 +275,6 @@ class _SwitchExampleState extends State<SwitchExample> {
 
   @override
   Widget build(BuildContext context) {
-    print("dupa");
     final String userId = context.select((AppBloc bloc) => bloc.state.user.id);
     light = _isPicked(userId, participants);
     return Switch(

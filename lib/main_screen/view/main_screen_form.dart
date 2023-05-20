@@ -76,7 +76,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
         child: Scaffold(
             floatingActionButton: FloatingActionButton(
                 foregroundColor: AppColors.WHITE,
-                backgroundColor: AppColors.BLACK,
+                backgroundColor: AppColors.GREEN,
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -86,6 +86,7 @@ class _MainScreenFormState extends State<MainScreenForm> {
                 },
                 child: const Icon(Icons.add)),
             body: Container(
+                color: AppColors.BACKGROUND_COLOR,
                 child: Align(
               alignment: AlignmentDirectional.topCenter,
               child: RefreshIndicator(

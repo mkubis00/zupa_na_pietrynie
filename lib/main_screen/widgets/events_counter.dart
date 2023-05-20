@@ -15,17 +15,24 @@ class EventsCounter extends StatelessWidget {
             previous.eventsCounterState != current.eventsCounterState,
         builder: (context, state) {
           return state.eventsCounterState.isSubmissionSuccess
-              ? Container(
+              ? Padding(padding: EdgeInsetsDirectional.only(start: 8, end: 8)
+
+              , child: Container(
                   height: 100,
                   width: width * 0.98,
                   decoration: BoxDecoration(
-                    color: AppColors.randomEventCounterColor(),
+                    color: AppColors.GREEN,
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
                           color: AppColors.GREY,
                           blurRadius: 10,
-                          spreadRadius: 1)
+
+                      offset: Offset(
+                        0,
+                        1,
+                      ),
+                      )
                     ],
                   ),
                   child: Column(
@@ -68,7 +75,7 @@ class EventsCounter extends StatelessWidget {
                       )
                     ],
                   ),
-                )
+                ))
               : Container(
                   height: 100,
                   width: width * 0.93,

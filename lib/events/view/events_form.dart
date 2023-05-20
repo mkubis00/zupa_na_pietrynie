@@ -47,6 +47,7 @@ class _EventsFormState extends State<EventsForm> {
   @override
   Widget build(BuildContext context) {
     final bool isAdmin = context.read<AppBloc>().state.isAdmin;
+    double width = MediaQuery.of(context).size.width;
     return BlocListener<EventsBloc, EventsState>(
         listener: (context, state) {
           if (state.eventElementChangeStatus.isSubmissionFailure) {
@@ -69,7 +70,7 @@ class _EventsFormState extends State<EventsForm> {
         child: Scaffold(
             floatingActionButton: isAdmin ? FloatingActionButton(
                 foregroundColor: AppColors.WHITE,
-                backgroundColor: AppColors.BLACK,
+              backgroundColor: AppColors.GREEN,
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -79,6 +80,7 @@ class _EventsFormState extends State<EventsForm> {
                 },
                 child: const Icon(Icons.add)) : null,
             body: Container(
+                color: AppColors.BACKGROUND_COLOR,
                 child: Align(
                   alignment: AlignmentDirectional.topCenter,
                   child: RefreshIndicator(
@@ -87,11 +89,40 @@ class _EventsFormState extends State<EventsForm> {
                         context.read<EventsBloc>().add(EventsFetch());
                       },
                       child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(),
                         controller: _scrollController,
                         child: Column(
                           children: [
                             const SizedBox(height: 15),
-                            Padding(padding: EdgeInsetsDirectional.only(start: 10, end: 10), child:
+                            Align(
+                                alignment: Alignment.centerLeft,
+                                child:
+                                Padding(
+                                  padding: EdgeInsetsDirectional.only(start: width * 0.07),
+                                  child:
+                                  const Text("Obecny tydzień",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 19
+                                      )),
+                                )),
+                            const SizedBox(height: 25),
+                        Padding(padding: EdgeInsetsDirectional.only(start: width * 0.05, end: width * 0.05), child:Calendar()),
+                            const SizedBox(height: 25),
+                         Align(
+                          alignment: Alignment.centerLeft,
+                          child:
+                          Padding(
+                            padding: EdgeInsetsDirectional.only(start: width * 0.07),
+                            child:
+                          const Text("Wydarzenia",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19
+                              )),
+                        )),
+                            const SizedBox(height: 25),
+                            Padding(padding: EdgeInsetsDirectional.only(start: width * 0.05, end: width * 0.05), child:
                             EventsListController()),
                             const SizedBox(height: 10),
                           ],
