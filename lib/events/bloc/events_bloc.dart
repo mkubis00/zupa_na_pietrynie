@@ -202,29 +202,6 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     add(_IsEventReadyToSubmit());
   }
 
-  // void _addNewEventElement(
-  //     AddNewEventElement event, Emitter<EventsState> emit) {
-  //   for (EventDay eventDay in state.newEventDays) {
-  //     if (eventDay == event.eventDay) {
-  //       List<EventElement> eventElements = [];
-  //       EventDay newEventDay;
-  //       eventElements.addAll(eventDay.eventElements);
-  //       eventElements.add(EventElement(
-  //           title: event.title, hour: event.hour, participants: []));
-  //       eventElements.sort((a, b) => a.hour!.compareTo(b.hour!));
-  //       newEventDay = eventDay.copyWith(eventElements: eventElements);
-  //       List<EventDay> newEventDays = [];
-  //       newEventDays.addAll(state.newEventDays);
-  //       newEventDays.remove(eventDay);
-  //       newEventDays.add(newEventDay);
-  //       newEventDays.sort((a, b) => a.dayOfEvent!.compareTo(b.dayOfEvent!));
-  //       emit(state.copyWith(newEventDays: newEventDays));
-  //       emit(state.copyWith(isNewPostReadyToSubmit: isNewPostReadyToSubmit()));
-  //       break;
-  //     }
-  //   }
-  // }
-
   void _deleteNewEventElement(
       DeleteNewEventElement event, Emitter<EventsState> emit) {
     List<EventElement> eventElements = [];
