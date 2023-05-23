@@ -13,17 +13,7 @@ class EventDescriptionWindow extends StatelessWidget {
         buildWhen: (previous, current) =>
             previous.newEventDescription != current.newEventDescription,
         builder: (context, state) {
-          return Container(
-              width: width * 0.935,
-              decoration: BoxDecoration(
-                color: AppColors.WHITE,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                      color: AppColors.GREY, blurRadius: 5, spreadRadius: 1)
-                ],
-              ),
-              child: Column(
+          return Column(
                 children: [
                   const SizedBox(height: 20),
                   Align(
@@ -32,7 +22,7 @@ class EventDescriptionWindow extends StatelessWidget {
                       children: [
                         const SizedBox(width: 10),
                         Text(
-                          "Opis wydarzenia:",
+                          "Opis wydarzenia",
                           style: TextStyle(
                             fontSize: 20,
                           ),
@@ -71,9 +61,8 @@ class EventDescriptionWindow extends StatelessWidget {
                               borderRadius: BorderRadius.circular(10)),
                         ),
                       )),
-                  const SizedBox(height: 20),
                 ],
-              ));
+              );
         });
   }
 }

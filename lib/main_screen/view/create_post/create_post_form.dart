@@ -9,17 +9,18 @@ class CreatePostRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: AppColors.BACKGROUND_COLOR,
         bottomSheet: ChoosePhotosButton(),
         appBar: AppBar(
           title: const Text(
             MainScreenStrings.CREATE_POST,
             style: TextStyle(color: AppColors.BLACK),
           ),
-          backgroundColor: AppColors.WHITE,
-          shadowColor: AppColors.WHITE,
+          backgroundColor: AppColors.BACKGROUND_COLOR,
+          shadowColor: AppColors.BACKGROUND_COLOR,
           elevation: 0,
           leading: BackButton(
-            color: AppColors.BLACK,
+            color: AppColors.GREEN,
           ),
           actions: <Widget>[CreatePostButton()],
         ),

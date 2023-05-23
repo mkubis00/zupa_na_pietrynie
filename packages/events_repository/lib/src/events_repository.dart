@@ -54,12 +54,12 @@ class EventsRepository {
   }
 
   String getLastDayOfEvent(List<EventDay> eventDays) {
-    String year = DateTime.now().year.toString();
-    String lastDayOfEvent = '${eventDays[0].dayOfEvent.substring(0,5)}-$year';
+    // String year = DateTime.now().year.toString();
+    String lastDayOfEvent = eventDays[0].dayOfEvent.substring(0,8);
     for (EventDay eventDay in eventDays) {
-      String dayOfEvent = '${eventDay.dayOfEvent.substring(0,5)}-$year';
-      if (DateFormat('dd-MM-yyyy')
-          .parse(lastDayOfEvent).compareTo(DateFormat('dd-MM-yyyy').parse(dayOfEvent)) == -1) {
+      String dayOfEvent = eventDay.dayOfEvent.substring(0,8);
+      if (DateFormat('dd/MM/yy')
+          .parse(lastDayOfEvent).compareTo(DateFormat('dd/MM/yy').parse(dayOfEvent)) == -1) {
         lastDayOfEvent = dayOfEvent;
       }
     }
@@ -68,6 +68,7 @@ class EventsRepository {
 
   Future<Event> createNewEvent(Event event) async {
     try {
+      print(event);
       if (await _authenticationRepository.isAdmin()) {
         String eventUuid = const Uuid().v1();
         final newEventToDb = <String, dynamic>{
@@ -111,7 +112,7 @@ class EventsRepository {
                 id: eventElementUuid,
                 title: eventElement.title,
                 hour: eventElement.hour,
-                participants: []));
+                participants: const []));
           }
           eventDays.add(EventDay(
               id: eventDayUuid,
@@ -129,7 +130,9 @@ class EventsRepository {
       }
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);
-    } catch (_) {
+    }
+    catch (e) {
+      print(e);
       throw const FireStoreException();
     }
   }
@@ -165,17 +168,17 @@ class EventsRepository {
               eventDay.copyWith(eventElements: eventElements);
           eventsDayToReturn.add(eventDayWithElements);
         }
-        eventsDayToReturn.sort((a, b) => DateFormat('dd-MM')
-            .parse(a.dayOfEvent.substring(0, 5))!
+        eventsDayToReturn.sort((a, b) => DateFormat('dd/MM/yy')
+            .parse(a.dayOfEvent.substring(0, 8))!
             .compareTo(
-                DateFormat('dd-MM').parse(b.dayOfEvent.substring(0, 5)!)));
+                DateFormat('dd/MM/yy').parse(b.dayOfEvent.substring(0, 8)!)));
         Event eventWithDays = event.copyWith(eventDays: eventsDayToReturn);
         eventsToReturn.add(eventWithDays);
       }
-      eventsToReturn.sort((a, b) => DateFormat('dd-MM')
-          .parse(a.eventDays[0].dayOfEvent.substring(0, 5))!
-          .compareTo(DateFormat('dd-MM')
-              .parse(b.eventDays[0].dayOfEvent.substring(0, 5))!));
+      eventsToReturn.sort((a, b) => DateFormat('dd/MM/yy')
+          .parse(a.eventDays[0].dayOfEvent.substring(0, 8))!
+          .compareTo(DateFormat('dd/MM/yy')
+              .parse(b.eventDays[0].dayOfEvent.substring(0, 8))!));
       return eventsToReturn;
     } on FirebaseException catch (e) {
       throw FireStoreException.fromCode(e.code);

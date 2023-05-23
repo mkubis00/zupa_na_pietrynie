@@ -24,7 +24,7 @@ class CreatePostButton extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    backgroundColor: AppColors.BLACK),
+                    backgroundColor: AppColors.GREEN),
                 onPressed: state.newPostContent.length > 10
                     ? () {
                         context.read<MainScreenBloc>().add(PostCreate());

@@ -28,7 +28,7 @@ class _SingleEventState extends State<SingleEvent> {
 
   bool isAfterPublishDate() {
     DateTime publishDateTime =
-        DateFormat('dd-MM-yyyy').parse(event.publishDate);
+        DateFormat('dd/MM/yyyy').parse(event.publishDate);
     DateTime now = DateTime.now();
     now.compareTo(publishDateTime);
     if (now.compareTo(publishDateTime) < 0) {
@@ -48,10 +48,14 @@ class _SingleEventState extends State<SingleEvent> {
               color: AppColors.WHITE,
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
-                BoxShadow(color: AppColors.GREY, blurRadius: 10, offset: Offset(
-                  0,
-                  1,
-                ),)
+                BoxShadow(
+                  color: AppColors.GREY,
+                  blurRadius: 10,
+                  offset: Offset(
+                    0,
+                    1,
+                  ),
+                )
               ],
             ),
             child: Column(
@@ -66,39 +70,43 @@ class _SingleEventState extends State<SingleEvent> {
                         height: 35,
                         child: Padding(
                             padding:
-                                EdgeInsetsDirectional.only(top: 0, end: 0),
+                                EdgeInsetsDirectional.only(top: 15, end: 15),
                             child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all(Colors.red),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.RED,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(9.0),
+                                ),
                               ),
 
                               // the method which is called
                               // when button is pressed
-                              onPressed: ()
-                                  =>
-                                  showDialog<String>(
+                              onPressed: () => showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
                                   title: const Text("Chcesz usunąć wydarznie?"),
-                                  content: const Text("Pamiętaj, będzie to nieodwracalna zmiana!"),
+                                  content: const Text(
+                                      "Pamiętaj, będzie to nieodwracalna zmiana!"),
                                   actions: <Widget>[
                                     TextButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                       },
-                                      child: const Text(MainScreenStrings.CANCEL,
-                                          style: TextStyle(color: AppColors.BLACK)),
+                                      child: const Text(
+                                          MainScreenStrings.CANCEL,
+                                          style: TextStyle(
+                                              color: AppColors.BLACK)),
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        context.read<EventsBloc>().add(DeleteEvent(event));
+                                        context
+                                            .read<EventsBloc>()
+                                            .add(DeleteEvent(event));
                                         Navigator.pop(context);
                                       },
-                                      child: const Text(
-                                          "Usuń",
-                                          style: TextStyle(
-                                              color: AppColors.RED)),
+                                      child: const Text("Usuń",
+                                          style:
+                                              TextStyle(color: AppColors.RED)),
                                     )
                                   ],
                                 ),
@@ -158,57 +166,62 @@ class _SingleEventState extends State<SingleEvent> {
                                 itemCount:
                                     event.eventDays[index].eventElements.length,
                                 itemBuilder: (BuildContext context, int i) {
-                                  return
-                                    Padding(padding: EdgeInsetsDirectional.only(bottom: 5,top: 5),
-                                    child:
-                                    Row(
-                                    children: [
-                                      const SizedBox(width: 18),
-                                      // SwitchExample(event.eventDays[index].eventElements[i].participants),
-                                      SwitchParticipation(
-                                        userId: userId,
-                                        eventElement: event
-                                            .eventDays[index].eventElements[i],
-                                        key: UniqueKey(),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      SizedBox(
-                                          width: width * 0.6,
-                                          child: RichText(
-                                            text: TextSpan(
-                                              // Note: Styles for TextSpans must be explicitly defined.
-                                              // Child text spans will inherit styles from parent
-                                              style: const TextStyle(
-                                                fontSize: 14.0,
-                                                color: Colors.black,
-                                              ),
-                                              children: <TextSpan>[
-                                                TextSpan(
-                                                    text: event
+                                  return Padding(
+                                      padding: EdgeInsetsDirectional.only(
+                                          bottom: 5, top: 5),
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(width: 18),
+                                          // SwitchExample(event.eventDays[index].eventElements[i].participants),
+                                          SwitchParticipation(
+                                            userId: userId,
+                                            eventElement: event.eventDays[index]
+                                                .eventElements[i],
+                                            key: UniqueKey(),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          SizedBox(
+                                              width: width * 0.6,
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  // Note: Styles for TextSpans must be explicitly defined.
+                                                  // Child text spans will inherit styles from parent
+                                                  style: const TextStyle(
+                                                    fontSize: 14.0,
+                                                    color: Colors.black,
+                                                  ),
+                                                  children: <TextSpan>[
+                                                    TextSpan(
+                                                        text: event
+                                                                .eventDays[
+                                                                    index]
+                                                                .eventElements[
+                                                                    i]
+                                                                .hour +
+                                                            " - " +
+                                                            event
+                                                                .eventDays[
+                                                                    index]
+                                                                .eventElements[
+                                                                    i]
+                                                                .title +
+                                                            "\nLiczba zgłoszeń: "),
+                                                    TextSpan(
+                                                        text: event
                                                             .eventDays[index]
                                                             .eventElements[i]
-                                                            .hour +
-                                                        " - " +
-                                                        event
-                                                            .eventDays[index]
-                                                            .eventElements[i]
-                                                            .title +
-                                                        "\nLiczba zgłoszeń: "),
-                                                TextSpan(
-                                                    text: event
-                                                        .eventDays[index]
-                                                        .eventElements[i]
-                                                        .participants
-                                                        .length
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600)),
-                                              ],
-                                            ),
-                                          )),
-                                    ],
-                                  ));
+                                                            .participants
+                                                            .length
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w600)),
+                                                  ],
+                                                ),
+                                              )),
+                                        ],
+                                      ));
                                 }),
                             const SizedBox(height: 10),
                           ]));

@@ -12,7 +12,7 @@ class LogoutButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        backgroundColor: AppColors.BLACK,
+        backgroundColor: AppColors.GREEN,
       ),
       onPressed: () {
         context.read<AppBloc>().add(const AppLogoutRequested());

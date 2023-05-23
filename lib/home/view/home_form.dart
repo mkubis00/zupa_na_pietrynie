@@ -36,13 +36,14 @@ class _MainScreenFormState extends State<MainScreenForm> {
           toolbarHeight: 30,
           backgroundColor: AppColors.BACKGROUND_COLOR,
           actions: <Widget>[
+            Padding(padding: EdgeInsetsDirectional.only(bottom: 10), child:
             IconButton(
               key: const Key('homePage_logout_iconButton'),
               icon: const Icon(Icons.settings),
               color: AppColors.BLACK,
               onPressed: () =>
                   Navigator.of(context).push<void>(SettingOptionsPage.route()),
-            )
+            ))
           ],
         ),
         body:

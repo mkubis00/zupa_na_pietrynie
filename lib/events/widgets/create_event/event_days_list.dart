@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zupa_na_pietrynie/events/events.dart';
-import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
+
+import '../../bloc/events_bloc.dart';
 
 class EventDaysList extends StatelessWidget {
   const EventDaysList({Key? key}) : super(key: key);
@@ -10,39 +10,61 @@ class EventDaysList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<EventsBloc, EventsState>(
         buildWhen: (previous, current) =>
-        previous.newEventDays != current.newEventDays,
+            previous.newEventDays != current.newEventDays,
         builder: (context, state) {
-          return ListView.separated(
-              scrollDirection: Axis.vertical,
+          return Column(children: [
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                    padding: EdgeInsetsDirectional.only(start: 10, bottom: 25),
+                    child: Text(
+                      "Dodane dni wydarznia:",
+                      style: TextStyle(
+                        fontSize: 20,
+                      ),
+                    ))),
+             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              separatorBuilder: (BuildContext context,
-                  int index) => const Divider(color: AppColors.BLACK,),
               itemCount: state.newEventDays.length,
               itemBuilder: (BuildContext context, int index) {
-                return SingleEventDay(
-                  key: UniqueKey(),
-                    eventDay: state.newEventDays[index]);
-                  // ListTile(
-                  // key: UniqueKey(),
-                  // title: Text(state.newEventDays[index].dayOfEvent, style: TextStyle(fontWeight: FontWeight.w600,),),
-                  // trailing: IconButton(
-                  //   icon: const Icon(
-                  //     IconData(
-                  //       0xe1b9,
-                  //       fontFamily: 'MaterialIcons',
-                  //     ),
-                  //     color: AppColors.RED,
-                  //   ),
-                  //   // the method which is called
-                  //   // when button is pressed
-                  //   onPressed: () {
-                  //     context.read<EventsBloc>().add(DeleteNewEventDay(state.newEventDays[index]));
-                  //   },
-                  // ),
-                  // subtitle: EventDayElements(eventDay: state.newEventDays[index]),
-                // );
-              });
+                return Container(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      Padding(
+                          padding: EdgeInsetsDirectional.only(
+                              start: 15, end: 10, bottom: 7),
+                          child: Text(
+                            state.newEventDays[index].dayOfEvent + " :",
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          )),
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              state.newEventDays[index].eventElements.length,
+                          itemBuilder: (BuildContext context, int i) {
+                            return
+                              Padding(padding: EdgeInsetsDirectional.only(
+                            start: 15, bottom: 7),
+                                child:
+                              Text(state.newEventDays[index]
+                                  .eventElements[i].hour +
+                                  " - " +
+                                  state.newEventDays[index]
+                                      .eventElements[i].title,
+                                style: const TextStyle(
+                                  fontSize: 14.0,
+                                  color: Colors.black,
+                                )),
+                              );
+                          }),
+                      const SizedBox(height: 10),
+                    ]));
+              })]);
         });
   }
 }

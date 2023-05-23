@@ -11,28 +11,36 @@ class EventsState extends Equatable {
     this.newEventDay = '',
     this.newEventElementHour = '',
     this.newEventElementTitle = '',
-    this.isNewPostReadyToSubmit = false,
+    this.isNewEventReadyToSubmit = false,
     this.events = const <Event>[],
     this.eventsStatus = FormzStatus.pure,
     this.errorMessage = '',
     this.eventElementChangeStatus = FormzStatus.pure,
     this.eventDeleted = FormzStatus.pure,
+    this.eventDayToCreate = const EventDay(dayOfEvent: '', eventElements: []),
+    this.isEventDayReady = false,
   });
 
+  //Publish new event
   final Event newEvent;
   final FormzStatus newEventStatus;
+  final bool isNewEventReadyToSubmit;
 
+  //Creating new event
   final String newEventPublishDate;
   final String newEventTitle;
   final String newEventDescription;
-
-  final String newEventDay;
   final List<EventDay> newEventDays;
 
+  //Creating new event day with elements
+  final EventDay eventDayToCreate;
   final String newEventElementTitle;
   final String newEventElementHour;
-  final bool isNewPostReadyToSubmit;
+  final bool isEventDayReady;
 
+  final String newEventDay; // usuniecie
+
+  //Fetching events
   final List<Event> events;
   final FormzStatus eventsStatus;
 
@@ -52,12 +60,14 @@ class EventsState extends Equatable {
     List<EventDay>? newEventDays,
     String? newEventElementTitle,
     String? newEventElementHour,
-    bool? isNewPostReadyToSubmit,
+    bool? isNewEventReadyToSubmit,
     List<Event>? events,
     FormzStatus? eventsStatus,
     String? errorMessage,
     FormzStatus? eventElementChangeStatus,
     FormzStatus? eventDeleted,
+    EventDay? eventDayToCreate,
+    bool? isEventDayReady,
   }) {
     return EventsState(
       newEvent: newEvent ?? this.newEvent,
@@ -67,21 +77,23 @@ class EventsState extends Equatable {
       newEventPublishDate: newEventPublishDate ?? this.newEventPublishDate,
       newEventDay: newEventDay ?? this.newEventDay,
       newEventDays: newEventDays ?? this.newEventDays,
-      newEventElementHour: newEventElementHour ?? this.newEventElementTitle,
+      newEventElementHour: newEventElementHour ?? this.newEventElementHour,
       newEventElementTitle: newEventElementTitle ?? this.newEventElementTitle,
-      isNewPostReadyToSubmit: isNewPostReadyToSubmit ?? this.isNewPostReadyToSubmit,
+      isNewEventReadyToSubmit: isNewEventReadyToSubmit ?? this.isNewEventReadyToSubmit,
       events: events ?? this.events,
       eventsStatus: eventsStatus ?? this.eventsStatus,
       errorMessage: errorMessage ?? this.errorMessage,
       eventElementChangeStatus: eventElementChangeStatus ?? this.eventElementChangeStatus,
       eventDeleted: eventDeleted ?? this.eventDeleted,
+      eventDayToCreate: eventDayToCreate ?? this.eventDayToCreate,
+      isEventDayReady: isEventDayReady ?? this.isEventDayReady,
     );
   }
 
 
   @override
   String toString() {
-    return 'EventsState{events: $events}';
+    return 'EventsState{eventTitle: $newEventElementTitle, eventHour: $newEventElementHour}';
   }
 
   @override
@@ -97,9 +109,11 @@ class EventsState extends Equatable {
     newEventDays,
     newEventElementTitle,
     newEventElementHour,
-    isNewPostReadyToSubmit,
+    isNewEventReadyToSubmit,
     errorMessage,
     eventElementChangeStatus,
     eventDeleted,
+    eventDayToCreate,
+    isEventDayReady,
   ];
 }

@@ -13,26 +13,17 @@ class EventTitleWindow extends StatelessWidget {
         buildWhen: (previous, current) =>
             previous.newEventTitle != current.newEventTitle,
         builder: (context, state) {
-          return Container(
-              width: width * 0.935,
-              decoration: BoxDecoration(
-                color: AppColors.WHITE,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                      color: AppColors.GREY, blurRadius: 5, spreadRadius: 1)
-                ],
-              ),
-              child: Column(
+          return
+              Column(
                 children: [
                   const SizedBox(height: 20),
                   Align(
                     alignment: AlignmentDirectional.topStart,
                     child: Row(
                       children: [
-                        const SizedBox(width: 10),
+                        // const SizedBox(width: 10),
                         Text(
-                          "Tytul wydarzenia:",
+                          " Tytuł wydarzenia",
                           style: TextStyle(
                             fontSize: 20,
                           ),
@@ -41,9 +32,7 @@ class EventTitleWindow extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  SizedBox(
-                      width: width * 0.9,
-                      child: TextFormField(
+          TextFormField(
                         initialValue: state.newEventTitle,
                         cursorColor: AppColors.BLACK,
                         key: const Key('loginForm_emailInput_textField'),
@@ -69,12 +58,9 @@ class EventTitleWindow extends StatelessWidget {
                                 borderSide: BorderSide(width: 1, color: AppColors.RED),
                                 borderRadius: BorderRadius.circular(10)),
                         ),
-
-
-                      )),
-                  const SizedBox(height: 20),
+                      ),
                 ],
-              ));
+              );
         });
   }
 }

@@ -15,21 +15,23 @@ class SettingOptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.WHITE,
-        shadowColor: AppColors.WHITE,
-        elevation: 0,
-        leading: BackButton(
-          color: AppColors.BLACK,
+        appBar: AppBar(
+          backgroundColor: AppColors.BACKGROUND_COLOR,
+          shadowColor: AppColors.BACKGROUND_COLOR,
+          elevation: 0,
+          leading: BackButton(
+            color: AppColors.GREEN,
+          ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: BlocProvider(
-          create: (_) => SettingOptionsCubit(context.read<AuthenticationRepository>()),
-          child: SettingsOptionsForm()
-        ),
-      ),
-    );
+        body: Container(
+          color: AppColors.BACKGROUND_COLOR,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: BlocProvider(
+                create: (_) => SettingOptionsCubit(
+                    context.read<AuthenticationRepository>()),
+                child: SettingsOptionsForm()),
+          ),
+        ));
   }
 }

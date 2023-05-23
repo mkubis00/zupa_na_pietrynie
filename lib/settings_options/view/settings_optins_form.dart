@@ -36,7 +36,8 @@ class _SettingsOptionsFormState extends State<SettingsOptionsForm> {
               context, SettingsOptionsStrings.SNACK_BAR_NAME_UPDATED);
         }
       },
-      child: Align(
+      child:
+      Align(
         alignment: const Alignment(0, -1),
         child: SingleChildScrollView(
           child: Column(
