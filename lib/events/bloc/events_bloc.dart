@@ -37,6 +37,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
 
   final EventsRepository _eventsRepository;
 
+
   late final StreamSubscription<EventElement> _eventRepositorySubscription;
 
   Future<void> _updateEventFromDbStream(
