@@ -293,7 +293,6 @@ class PostsRepository {
               name: document.get('name'),
               photo: document.get('photo')));
         }).catchError((error) {
-          throw const FireStoreException();
         });
       }
       return usersToPosts;

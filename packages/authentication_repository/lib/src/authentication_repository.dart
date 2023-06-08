@@ -34,6 +34,7 @@ class AuthenticationRepository {
   final FacebookAuth _facebookAuth;
   final FirebaseFirestore _firebaseFirestore;
   final FirebaseStorage _firebaseStorage;
+  final String defaultPhoto = "https://firebasestorage.googleapis.com/v0/b/zupanapietrynie-75709.appspot.com/o/default%2Ficons8-name-96.png?alt=media&token=9da2c4a3-c699-4668-b6a3-4308231e7329&_gl=1*148780y*_ga*MTQ5NTkzMDk3Ny4xNjc1MTcxMTcz*_ga_CW55HF8NVT*MTY4NjI0NjIxNi4xMTEuMS4xNjg2MjQ2ODA5LjAuMC4w";
 
   @visibleForTesting
   bool isWeb = kIsWeb;
@@ -67,7 +68,6 @@ class AuthenticationRepository {
         password: password,
       );
       await _firebaseAuth.currentUser?.sendEmailVerification();
-      String defaultPhoto = "https://firebasestorage.googleapis.com/v0/b/zupanapietrynie-75709.appspot.com/o/usersProfilePhoto%2Fdefault_avatar.webp?alt=media&token=960c17cf-9f0d-46f5-ad3b-f5c3a45d135e";
       String? name = currentUser.email;
       await _firebaseAuth.currentUser?.updateDisplayName(name?.split('@')[0]);
       await _firebaseAuth.currentUser?.updatePhotoURL(defaultPhoto);
@@ -211,11 +211,6 @@ class AuthenticationRepository {
         throw firebase_auth.FirebaseAuthException(
             code: 'user-email-not-verified');
       }
-      // DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
-      //     await _firebaseFirestore
-      //         .collection('users')
-      //         .doc(currentUser.id)
-      //         .get();
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
     } catch (_) {
@@ -266,11 +261,13 @@ class AuthenticationRepository {
 
     try {
       await _firebaseFirestore.collection("users").doc(currentUser.id).delete();
-      // await _firebaseStorage.refFromURL(currentUser.photo!).delete();
+      if (getProvider() == 'email' && currentUser.photo != defaultPhoto) {
+        await _firebaseStorage.refFromURL(currentUser.photo!).delete();
+      }
       await _firebaseAuth.currentUser?.delete();
       logOut();
     } catch (_) {
-      //obsga wyjatku
+      print("BLAD USUWANIA KONTA");
     }
 
 

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:zupa_na_pietrynie/content_holder/content_holder.dart';
 import 'package:zupa_na_pietrynie/events/events.dart';
 
-import '../../widgets/create_event/event_days_list.dart';
-
 class CreateEventForm extends StatelessWidget {
   const CreateEventForm({Key? key}) : super(key: key);
 
@@ -14,7 +12,7 @@ class CreateEventForm extends StatelessWidget {
         backgroundColor: AppColors.BACKGROUND_COLOR,
         appBar: AppBar(
           title: const Text(
-            "Stwórz wydarzenie",
+            EventsStrings.CREATE_EVENT,
             style: TextStyle(color: AppColors.BLACK),
           ),
           backgroundColor: AppColors.BACKGROUND_COLOR,
@@ -40,13 +38,12 @@ class CreateEventForm extends StatelessWidget {
                   const SizedBox(height: 25),
                   PublishDateWindow(),
                   const SizedBox(height: 15),
-                  Divider(color: Colors.black,thickness: 2),
+                  Divider(color: AppColors.BLACK, thickness: 2),
                   const SizedBox(height: 15),
                   CreateEventDay(),
-                  Divider(color: Colors.black,thickness: 2),
+                  Divider(color: AppColors.BLACK, thickness: 2),
                   const SizedBox(height: 30),
-
-                  EventDaysList(),
+                  EventDaysListCreate(),
                   // EventDaysWindow(),
                   const SizedBox(height: 50),
                 ],

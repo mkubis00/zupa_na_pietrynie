@@ -7,6 +7,8 @@ abstract class EventsEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// Create event events
+
 class NewEventTitleChangeEvent extends EventsEvent {
   final String newTitle;
 
@@ -25,102 +27,75 @@ class NewEventPublishDateChangeEvent extends EventsEvent {
   NewEventPublishDateChangeEvent(this.newPublishDate);
 }
 
-// class NewEventDayValueChange extends EventsEvent {
-//   final String newEventDay;
-//
-//   NewEventDayValueChange(this.newEventDay);
-// }
-
-class AddNewEventDay extends EventsEvent { ////
-
-  AddNewEventDay();
+class NewEventDayAddEvent extends EventsEvent {
+  NewEventDayAddEvent();
 }
 
-class DeleteNewEventDay extends EventsEvent { ////
-
+class NewEventDayDeleteEvent extends EventsEvent {
   final EventDay eventDayToDelete;
 
-  DeleteNewEventDay(this.eventDayToDelete);
+  NewEventDayDeleteEvent(this.eventDayToDelete);
 }
 
-// class AddNewEventElement extends EventsEvent {
-//
-//   final EventDay eventDay;
-//   final String hour;
-//   final String title;
-//
-//   AddNewEventElement(this.eventDay, this.hour, this.title);
-// }
-
-class DeleteNewEventElement extends EventsEvent {
+class NewEventElementDeleteEvent extends EventsEvent {
   final EventElement eventElement;
 
-  DeleteNewEventElement(this.eventElement);
+  NewEventElementDeleteEvent(this.eventElement);
 }
 
-class NewEventCreate extends EventsEvent {
-
-  NewEventCreate();
+class EventElementToNewEventDayAddEvent extends EventsEvent {
+  EventElementToNewEventDayAddEvent();
 }
 
-class EventsFetch extends EventsEvent {
+class NewEventElementTitleChangeEvent extends EventsEvent {
+  final String newEventElementTitle;
+
+  NewEventElementTitleChangeEvent(this.newEventElementTitle);
 }
 
-class EventElementParticipationChange extends EventsEvent {
+class NewEventElementHourChangeEvent extends EventsEvent {
+  final String dateTime;
 
+  NewEventElementHourChangeEvent(this.dateTime);
+}
+
+class NewEventDayChangeEvent extends EventsEvent {
+  final String dayOfEvent;
+
+  NewEventDayChangeEvent(this.dayOfEvent);
+}
+
+class _IsEventDayReadyEvent extends EventsEvent {
+  _IsEventDayReadyEvent();
+}
+
+class _IsEventReadyToSubmitEvent extends EventsEvent {
+  _IsEventReadyToSubmitEvent();
+}
+
+class NewEventCreateEvent extends EventsEvent {
+  NewEventCreateEvent();
+}
+
+// Events
+
+class EventsFetchEvent extends EventsEvent {}
+
+class EventElementParticipationChangeEvent extends EventsEvent {
   final bool addParticipation;
   final EventElement eventElement;
 
-  EventElementParticipationChange(this.addParticipation, this.eventElement);
+  EventElementParticipationChangeEvent(this.addParticipation, this.eventElement);
 }
 
-class _EventElementUpdateStream extends EventsEvent {
+class _EventElementUpdateStreamEvent extends EventsEvent {
   final EventElement eventElement;
 
-  _EventElementUpdateStream(this.eventElement);
+  _EventElementUpdateStreamEvent(this.eventElement);
 }
 
-class AddEventElementToNewEventDay extends EventsEvent {
-
-  AddEventElementToNewEventDay();
-}
-
-class DeleteEvent extends EventsEvent {
+class EventDeleteEvent extends EventsEvent {
   final Event eventToDelete;
 
-  DeleteEvent(this.eventToDelete);
-}
-
-class EventDateDayOfEventToCreateChange extends EventsEvent {
-  final String dayOfEvent;
-
-  EventDateDayOfEventToCreateChange(this.dayOfEvent);
-}
-//
-// class EventDateEventsElementsToCreateChange extends EventsEvent {
-//   final EventElement eventElement;
-//
-//   EventDateEventsElementsToCreateChange(this.eventElement);
-// }
-
-class NewEventElementTitleChange extends EventsEvent {
-  final String newEventElementTitle;
-
-  NewEventElementTitleChange(this.newEventElementTitle);
-}
-
-class NewEventElementHourChange extends EventsEvent {
-  final DateTime dateTime;
-
-  NewEventElementHourChange(this.dateTime);
-}
-
-class _IsEventDayReady extends EventsEvent {
-
-  _IsEventDayReady();
-}
-
-class _IsEventReadyToSubmit extends EventsEvent {
-
-  _IsEventReadyToSubmit();
+  EventDeleteEvent(this.eventToDelete);
 }

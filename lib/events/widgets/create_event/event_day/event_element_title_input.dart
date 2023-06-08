@@ -19,7 +19,7 @@ class EventElementTitleInput extends StatelessWidget {
               cursorColor: AppColors.BLACK,
               maxLength: 120,
               onChanged: (String value) {
-                context.read<EventsBloc>().add(NewEventElementTitleChange(value));
+                context.read<EventsBloc>().add(NewEventElementTitleChangeEvent(value));
               },
               decoration: InputDecoration(
                 labelText: 'Tytul elementu wydarzenia',

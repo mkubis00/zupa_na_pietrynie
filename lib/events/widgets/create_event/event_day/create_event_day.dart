@@ -10,6 +10,17 @@ class CreateEventDay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+                padding: EdgeInsetsDirectional.only(start: 10),
+                child: Text(
+                  "Dodaj nowy dzień wydarzenia",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ))),
+        const SizedBox(height: 20),
         EventDayPicker(),
         const SizedBox(height: 20),
         Align(
@@ -17,7 +28,7 @@ class CreateEventDay extends StatelessWidget {
             child: Padding(
                 padding: EdgeInsetsDirectional.only(start: 10),
                 child: Text(
-                  "Stwórz elementy wydarzenia w dniu",
+                  "Stwórz elementy dnia",
                   style: TextStyle(
                     fontSize: 17,
                   ),

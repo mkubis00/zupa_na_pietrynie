@@ -14,7 +14,7 @@ class LoginButton extends StatelessWidget {
             ? SizedBox(
                 width: 30,
                 height: 30,
-                child: CircularProgressIndicator(color: AppColors.BLACK))
+                child: CircularProgressIndicator(color: AppColors.GREEN))
             : SizedBox(
                 width: width * 0.85,
                 child: ElevatedButton(
@@ -23,7 +23,7 @@ class LoginButton extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    backgroundColor: AppColors.BLACK,
+                    backgroundColor: AppColors.GREEN,
                   ),
                   onPressed: state.status.isValidated
                       ? () => context.read<LoginCubit>().logInWithCredentials()

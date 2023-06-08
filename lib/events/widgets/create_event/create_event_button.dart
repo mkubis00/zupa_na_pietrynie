@@ -26,7 +26,7 @@ class CreateEventButton extends StatelessWidget {
                     ),
                     backgroundColor: AppColors.GREEN),
                 onPressed: state.isNewEventReadyToSubmit ? () {
-                  context.read<EventsBloc>().add(NewEventCreate());
+                  context.read<EventsBloc>().add(NewEventCreateEvent());
                   Navigator.pop(context);
                 }: null,
               ));

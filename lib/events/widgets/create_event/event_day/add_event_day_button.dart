@@ -26,7 +26,7 @@ class AddEventDayButton extends StatelessWidget {
                       ),
                       backgroundColor: AppColors.GREEN),
                   onPressed: state.isEventDayReady ? () {
-                    context.read<EventsBloc>().add(AddNewEventDay());
+                    context.read<EventsBloc>().add(NewEventDayAddEvent());
                   } : null));
         });
   }

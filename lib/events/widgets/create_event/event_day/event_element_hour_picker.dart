@@ -23,7 +23,7 @@ class EventElementHourPicker extends StatelessWidget {
                   String formattedHour = DateFormat('HH:mm').format(value!);
                   context
                       .read<EventsBloc>()
-                      .add(NewEventElementHourChange(value));
+                      .add(NewEventElementHourChangeEvent(formattedHour));
                 }),
           );
         });

@@ -1,10 +1,9 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:events_repository/events_repository.dart';
 import 'package:formz/formz.dart';
 import 'package:intl/intl.dart';
+import 'package:events_repository/events_repository.dart';
 
 part 'events_event.dart';
 
@@ -12,36 +11,35 @@ part 'events_state.dart';
 
 class EventsBloc extends Bloc<EventsEvent, EventsState> {
   EventsBloc(this._eventsRepository) : super(const EventsState()) {
-    on<NewEventTitleChangeEvent>(_onEventTitleChange);
-    on<NewEventDescriptionChangeEvent>(_onEventDescriptionChange);
-    on<NewEventPublishDateChangeEvent>(_onEventPublishDateChange);
-    on<AddNewEventDay>(_addNewEventDayToEvent);
-    on<DeleteNewEventDay>(_deleteNewEventDay);
-    on<DeleteNewEventElement>(_deleteNewEventElement);
-    on<NewEventCreate>(_eventCreate);
-    on<EventsFetch>(_eventsFetch);
-    on<EventElementParticipationChange>(_eventElementParticipationChange);
-    on<_EventElementUpdateStream>(_updateEventFromDbStream);
-    on<DeleteEvent>(_eventDelete);
-    on<EventDateDayOfEventToCreateChange>(_eventDateDayOfEventToCreateChange);
-    on<NewEventElementTitleChange>(_newEventElementTitleChange);
-    on<NewEventElementHourChange>(_newEventElementHourChange);
-    on<AddEventElementToNewEventDay>(_addEventElementToNewEventDay);
-    on<_IsEventDayReady>(_isEventDayReady);
-    on<_IsEventReadyToSubmit>(_isEventReadyToSubmit);
+    on<NewEventTitleChangeEvent>(_onNewEventTitleChangeEvent);
+    on<NewEventDescriptionChangeEvent>(_onNewEventDescriptionChangeEvent);
+    on<NewEventPublishDateChangeEvent>(_onNewEventPublishDateChangeEvent);
+    on<NewEventDayAddEvent>(_onNewEventDayAddEvent);
+    on<NewEventDayDeleteEvent>(_onNewEventDayDeleteEvent);
+    on<NewEventElementDeleteEvent>(_onNewEventElementDeleteEvent);
+    on<NewEventCreateEvent>(_onNewEventCreateEvent);
+    on<NewEventDayChangeEvent>(_onNewEventDayChangeEvent);
+    on<NewEventElementTitleChangeEvent>(_onNewEventElementTitleChangeEvent);
+    on<NewEventElementHourChangeEvent>(_onNewEventElementHourChangeEvent);
+    on<EventsFetchEvent>(_onEventsFetchEvent);
+    on<EventElementParticipationChangeEvent>(
+        _onEventElementParticipationChangeEvent);
+    on<EventDeleteEvent>(_onDeleteEventEvent);
+    on<EventElementToNewEventDayAddEvent>(_onEventElementToNewEventDayAddEvent);
+    on<_EventElementUpdateStreamEvent>(_onEventElementUpdateStreamEvent);
+    on<_IsEventDayReadyEvent>(_onIsEventDayReadyEvent);
+    on<_IsEventReadyToSubmitEvent>(_onIsEventReadyToSubmitEvent);
     _eventRepositorySubscription =
         _eventsRepository.eventElement.listen(cancelOnError: false, (event) {
-      add(_EventElementUpdateStream(event));
+      add(_EventElementUpdateStreamEvent(event));
     });
   }
 
   final EventsRepository _eventsRepository;
-
-
   late final StreamSubscription<EventElement> _eventRepositorySubscription;
 
-  Future<void> _updateEventFromDbStream(
-      _EventElementUpdateStream event, Emitter<EventsState> emit) async {
+  Future<void> _onEventElementUpdateStreamEvent(
+      _EventElementUpdateStreamEvent event, Emitter<EventsState> emit) async {
     try {
       List<Event> events = [];
       events.addAll(state.events);
@@ -55,9 +53,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
               newEventElements.addAll(eventDay.eventElements);
               newEventElements.add(event.eventElement);
               newEventElements.remove(eventElement);
-              newEventElements.sort((a, b) => DateFormat('HH:mm')
-                  .parse(a.hour)!
-                  .compareTo(DateFormat('HH:mm').parse(b.hour)));
+              _sortHours(newEventElements);
               isEventElementChanged = true;
               break;
             }
@@ -67,40 +63,31 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
             newEventDays
                 .add(eventDay.copyWith(eventElements: newEventElements));
             newEventDays.remove(eventDay);
-            newEventDays.sort((a, b) => DateFormat('dd/MM/yy')
-                .parse(a.dayOfEvent.substring(0, 8))!
-                .compareTo(DateFormat('dd/MM/yy')
-                    .parse(b.dayOfEvent.substring(0, 8)!)));
+            _sortDays(newEventDays);
             break;
           }
         }
         if (isEventElementChanged) {
           events.insert(0, eventInEvents.copyWith(eventDays: newEventDays));
           events.remove(eventInEvents);
-          events.sort((a, b) => DateFormat('dd/MM/yy')
-              .parse(a.eventDays[0].dayOfEvent.substring(0, 8))!
-              .compareTo(DateFormat('dd/MM/yy')
-                  .parse(b.eventDays[0].dayOfEvent.substring(0, 8))!));
+          _sortEvents(events);
           break;
         }
       }
       emit(state.copyWith(events: events));
-    } catch (_) {
-      print("duap");
-    }
+    } catch (_) {}
   }
 
-  void _isEventDayReady(_IsEventDayReady event, Emitter<EventsState> emit) {
+  void _onIsEventDayReadyEvent(
+      _IsEventDayReadyEvent event, Emitter<EventsState> emit) {
     bool isReady = true;
-    print(state.eventDayToCreate.dayOfEvent);
-    print(state.eventDayToCreate.eventElements.length);
     if (state.eventDayToCreate.dayOfEvent == '') isReady = false;
     if (state.eventDayToCreate.eventElements.length == 0) isReady = false;
-    print(isReady);
     emit(state.copyWith(isEventDayReady: isReady));
   }
 
-  void _isEventReadyToSubmit(_IsEventReadyToSubmit event, Emitter<EventsState> emit) {
+  void _onIsEventReadyToSubmitEvent(
+      _IsEventReadyToSubmitEvent event, Emitter<EventsState> emit) {
     bool isReady = true;
     if (state.newEventTitle.length < 10) {
       isReady = false;
@@ -114,63 +101,61 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     emit(state.copyWith(isNewEventReadyToSubmit: isReady));
   }
 
-  void _addEventElementToNewEventDay(
-      AddEventElementToNewEventDay event, Emitter<EventsState> emit) {
+  void _onEventElementToNewEventDayAddEvent(
+      EventElementToNewEventDayAddEvent event, Emitter<EventsState> emit) {
     List<EventElement> updatedEventElements = [];
     updatedEventElements.addAll(state.eventDayToCreate.eventElements);
     updatedEventElements.add(EventElement(
         title: state.newEventElementTitle,
         hour: state.newEventElementHour,
         participants: const []));
-    updatedEventElements.sort((a, b) => DateFormat('HH:mm')
-        .parse(a.hour)
-        .compareTo(DateFormat('HH:mm').parse(b.hour)));
+    _sortHours(updatedEventElements);
     emit(state.copyWith(
         eventDayToCreate: state.eventDayToCreate
             .copyWith(eventElements: updatedEventElements),
         newEventElementHour: '',
         newEventElementTitle: ''));
-    add(_IsEventDayReady());
+    add(_IsEventDayReadyEvent());
   }
 
-  void _eventDateDayOfEventToCreateChange(
-      EventDateDayOfEventToCreateChange event, Emitter<EventsState> emit) {
+  void _onNewEventDayChangeEvent(
+      NewEventDayChangeEvent event, Emitter<EventsState> emit) {
     emit(state.copyWith(
         eventDayToCreate:
             state.eventDayToCreate.copyWith(dayOfEvent: event.dayOfEvent)));
-    add(_IsEventDayReady());
+    add(_IsEventDayReadyEvent());
   }
 
-  void _newEventElementTitleChange(
-      NewEventElementTitleChange event, Emitter<EventsState> emit) {
+  void _onNewEventElementTitleChangeEvent(
+      NewEventElementTitleChangeEvent event, Emitter<EventsState> emit) {
     emit(state.copyWith(newEventElementTitle: event.newEventElementTitle));
   }
 
-  void _newEventElementHourChange(
-      NewEventElementHourChange event, Emitter<EventsState> emit) {
-    String formattedHour = DateFormat('HH:mm').format(event.dateTime);
-    emit(state.copyWith(newEventElementHour: formattedHour));
+  void _onNewEventElementHourChangeEvent(
+      NewEventElementHourChangeEvent event, Emitter<EventsState> emit) {
+    emit(state.copyWith(newEventElementHour: event.dateTime));
   }
 
-  void _onEventTitleChange(
+  void _onNewEventTitleChangeEvent(
       NewEventTitleChangeEvent event, Emitter<EventsState> emit) {
     emit(state.copyWith(newEventTitle: event.newTitle));
-    add(_IsEventReadyToSubmit());
+    add(_IsEventReadyToSubmitEvent());
   }
 
-  void _onEventDescriptionChange(
+  void _onNewEventDescriptionChangeEvent(
       NewEventDescriptionChangeEvent event, Emitter<EventsState> emit) {
     emit(state.copyWith(newEventDescription: event.newDescription));
-    add(_IsEventReadyToSubmit());
+    add(_IsEventReadyToSubmitEvent());
   }
 
-  void _onEventPublishDateChange(
+  void _onNewEventPublishDateChangeEvent(
       NewEventPublishDateChangeEvent event, Emitter<EventsState> emit) {
     emit(state.copyWith(newEventPublishDate: event.newPublishDate));
-    add(_IsEventReadyToSubmit());
+    add(_IsEventReadyToSubmitEvent());
   }
-
-  void _addNewEventDayToEvent(AddNewEventDay event, Emitter<EventsState> emit) {
+//tutaj skonczone
+  void _onNewEventDayAddEvent(
+      NewEventDayAddEvent event, Emitter<EventsState> emit) {
     bool isDayDateExists = false;
     List<EventDay> eventDays = [];
     eventDays.addAll(state.newEventDays);
@@ -182,37 +167,34 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     }
     if (!isDayDateExists) {
       eventDays.add(state.eventDayToCreate);
-      eventDays.sort((a, b) => DateFormat('dd/MM/yy')
-          .parse(a.dayOfEvent.substring(0, 8))!
-          .compareTo(
-              DateFormat('dd/MM/yy').parse(b.dayOfEvent.substring(0, 8))!));
+      _sortDays(eventDays);
       emit(state.copyWith(
           newEventDays: eventDays,
           eventDayToCreate: EventDay(dayOfEvent: '', eventElements: [])));
-      emit(state.copyWith(
-          isEventDayReady: false));
-      add(_IsEventReadyToSubmit());
+      emit(state.copyWith(isEventDayReady: false));
+      add(_IsEventReadyToSubmitEvent());
     }
   }
 
-  void _deleteNewEventDay(DeleteNewEventDay event, Emitter<EventsState> emit) {
+  void _onNewEventDayDeleteEvent(
+      NewEventDayDeleteEvent event, Emitter<EventsState> emit) {
     List<EventDay> eventDays = [];
     eventDays.addAll(state.newEventDays);
     eventDays.remove(event.eventDayToDelete);
     emit(state.copyWith(newEventDays: eventDays));
-    add(_IsEventReadyToSubmit());
+    add(_IsEventReadyToSubmitEvent());
   }
 
-  void _deleteNewEventElement(
-      DeleteNewEventElement event, Emitter<EventsState> emit) {
+  void _onNewEventElementDeleteEvent(
+      NewEventElementDeleteEvent event, Emitter<EventsState> emit) {
     List<EventElement> eventElements = [];
     eventElements.addAll(state.eventDayToCreate.eventElements);
     eventElements.remove(event.eventElement);
     emit(state.copyWith(
         eventDayToCreate:
             state.eventDayToCreate.copyWith(eventElements: eventElements)));
-    add(_IsEventDayReady());
-    add(_IsEventReadyToSubmit());
+    add(_IsEventDayReadyEvent());
+    add(_IsEventReadyToSubmitEvent());
   }
 
   bool isNewPostReadyToSubmit() {
@@ -228,8 +210,8 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     return true;
   }
 
-  Future<void> _eventCreate(
-      NewEventCreate event, Emitter<EventsState> emit) async {
+  Future<void> _onNewEventCreateEvent(
+      NewEventCreateEvent event, Emitter<EventsState> emit) async {
     try {
       Event newEvent = Event(
           title: state.newEventTitle,
@@ -240,10 +222,7 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
       List<Event> events = [];
       events.add(createdEvent);
       events.addAll(state.events);
-      events.sort((a, b) => DateFormat('dd/MM/yy')
-          .parse(a.eventDays[0].dayOfEvent.substring(0, 8))!
-          .compareTo(DateFormat('dd/MM/yy')
-              .parse(b.eventDays[0].dayOfEvent.substring(0, 8))!));
+      _sortEvents(events);
       emit(state.copyWith(
         newEventStatus: FormzStatus.submissionSuccess,
         newEventTitle: '',
@@ -259,8 +238,8 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     }
   }
 
-  Future<void> _eventsFetch(
-      EventsFetch event, Emitter<EventsState> emit) async {
+  Future<void> _onEventsFetchEvent(
+      EventsFetchEvent event, Emitter<EventsState> emit) async {
     try {
       List<Event> events = await _eventsRepository.fetchEvents();
       emit(state.copyWith(eventsStatus: FormzStatus.pure));
@@ -277,8 +256,9 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     }
   }
 
-  Future<void> _eventElementParticipationChange(
-      EventElementParticipationChange event, Emitter<EventsState> emit) async {
+  Future<void> _onEventElementParticipationChangeEvent(
+      EventElementParticipationChangeEvent event,
+      Emitter<EventsState> emit) async {
     try {
       List<String> participants = [];
       participants.addAll(event.eventElement.participants);
@@ -297,22 +277,42 @@ class EventsBloc extends Bloc<EventsEvent, EventsState> {
     }
   }
 
-  Future<void> _eventDelete(
-      DeleteEvent event, Emitter<EventsState> emit) async {
+  Future<void> _onDeleteEventEvent(
+      EventDeleteEvent event, Emitter<EventsState> emit) async {
     try {
       await _eventsRepository.deleteEvent(event.eventToDelete);
       List<Event> events = [];
       events.addAll(state.events);
       events.remove(event.eventToDelete);
       emit(state.copyWith(
-          events: events, eventDeleted: FormzStatus.submissionSuccess));
+          events: events, eventDeletedStatus: FormzStatus.submissionSuccess));
     } on FireStoreException catch (e) {
-      emit(state.copyWith(eventDeleted: FormzStatus.submissionFailure));
+      emit(state.copyWith(eventDeletedStatus: FormzStatus.submissionFailure));
     } catch (_) {
-      emit(state.copyWith(eventDeleted: FormzStatus.submissionFailure));
+      emit(state.copyWith(eventDeletedStatus: FormzStatus.submissionFailure));
     } finally {
-      emit(state.copyWith(eventDeleted: FormzStatus.pure));
+      emit(state.copyWith(eventDeletedStatus: FormzStatus.pure));
     }
+  }
+
+  void _sortHours(List<EventElement> listToSort) {
+    listToSort.sort((a, b) => DateFormat('HH:mm')
+        .parse(a.hour)
+        .compareTo(DateFormat('HH:mm').parse(b.hour)));
+  }
+
+  void _sortDays(List<EventDay> listToSort) {
+    listToSort.sort((a, b) => DateFormat('dd/MM/yy')
+        .parse(a.dayOfEvent.substring(0, 8))!
+        .compareTo(DateFormat('dd/MM/yy')
+        .parse(b.dayOfEvent.substring(0, 8)!)));
+  }
+
+  void _sortEvents(List<Event> listToSort) {
+    listToSort.sort((a, b) => DateFormat('dd/MM/yy')
+        .parse(a.eventDays[0].dayOfEvent.substring(0, 8))!
+        .compareTo(DateFormat('dd/MM/yy')
+        .parse(b.eventDays[0].dayOfEvent.substring(0, 8))!));
   }
 
   @override

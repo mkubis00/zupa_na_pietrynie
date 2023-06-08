@@ -43,7 +43,7 @@ class EventDayPicker extends StatelessWidget {
                     ? DateFormat('dd/MM/yy hh:mm').parse(
                         state.eventDayToCreate.dayOfEvent.substring(0, 8) +
                             " 23:59")
-                    : now,
+                    : DateTime.now(),
                 minimumDate: now,
                 onDateTimeChanged: (DateTime newDateTime) {
                   String formattedDate =
@@ -52,7 +52,7 @@ class EventDayPicker extends StatelessWidget {
                           getDayWeekName(newDateTime.weekday);
                   context
                       .read<EventsBloc>()
-                      .add(EventDateDayOfEventToCreateChange(formattedDate));
+                      .add(NewEventDayChangeEvent(formattedDate));
                 },
               ));
         });

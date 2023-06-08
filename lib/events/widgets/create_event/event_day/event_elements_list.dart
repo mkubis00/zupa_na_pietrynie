@@ -46,7 +46,7 @@ class EventElementsList extends StatelessWidget {
                       // when button is pressed
                       onPressed: () {
                         context.read<EventsBloc>().add(
-                            DeleteNewEventElement(state
+                            NewEventElementDeleteEvent(state
                                 .eventDayToCreate
                                 .eventElements[index]));
                       },

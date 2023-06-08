@@ -8,7 +8,6 @@ class EventsState extends Equatable {
     this.newEventDescription = '',
     this.newEventDays = const [],
     this.newEventPublishDate = '',
-    this.newEventDay = '',
     this.newEventElementHour = '',
     this.newEventElementTitle = '',
     this.isNewEventReadyToSubmit = false,
@@ -16,7 +15,7 @@ class EventsState extends Equatable {
     this.eventsStatus = FormzStatus.pure,
     this.errorMessage = '',
     this.eventElementChangeStatus = FormzStatus.pure,
-    this.eventDeleted = FormzStatus.pure,
+    this.eventDeletedStatus = FormzStatus.pure,
     this.eventDayToCreate = const EventDay(dayOfEvent: '', eventElements: []),
     this.isEventDayReady = false,
   });
@@ -38,17 +37,13 @@ class EventsState extends Equatable {
   final String newEventElementHour;
   final bool isEventDayReady;
 
-  final String newEventDay; // usuniecie
-
   //Fetching events
   final List<Event> events;
   final FormzStatus eventsStatus;
+  final FormzStatus eventElementChangeStatus;
+  final FormzStatus eventDeletedStatus;
 
   final String errorMessage;
-
-  final FormzStatus eventElementChangeStatus;
-
-  final FormzStatus eventDeleted;
 
   EventsState copyWith({
     Event? newEvent,
@@ -56,7 +51,6 @@ class EventsState extends Equatable {
     String? newEventTitle,
     String? newEventDescription,
     String? newEventPublishDate,
-    String? newEventDay,
     List<EventDay>? newEventDays,
     String? newEventElementTitle,
     String? newEventElementHour,
@@ -65,7 +59,7 @@ class EventsState extends Equatable {
     FormzStatus? eventsStatus,
     String? errorMessage,
     FormzStatus? eventElementChangeStatus,
-    FormzStatus? eventDeleted,
+    FormzStatus? eventDeletedStatus,
     EventDay? eventDayToCreate,
     bool? isEventDayReady,
   }) {
@@ -75,45 +69,39 @@ class EventsState extends Equatable {
       newEventTitle: newEventTitle ?? this.newEventTitle,
       newEventDescription: newEventDescription ?? this.newEventDescription,
       newEventPublishDate: newEventPublishDate ?? this.newEventPublishDate,
-      newEventDay: newEventDay ?? this.newEventDay,
       newEventDays: newEventDays ?? this.newEventDays,
       newEventElementHour: newEventElementHour ?? this.newEventElementHour,
       newEventElementTitle: newEventElementTitle ?? this.newEventElementTitle,
-      isNewEventReadyToSubmit: isNewEventReadyToSubmit ?? this.isNewEventReadyToSubmit,
+      isNewEventReadyToSubmit:
+          isNewEventReadyToSubmit ?? this.isNewEventReadyToSubmit,
       events: events ?? this.events,
       eventsStatus: eventsStatus ?? this.eventsStatus,
       errorMessage: errorMessage ?? this.errorMessage,
-      eventElementChangeStatus: eventElementChangeStatus ?? this.eventElementChangeStatus,
-      eventDeleted: eventDeleted ?? this.eventDeleted,
+      eventElementChangeStatus:
+          eventElementChangeStatus ?? this.eventElementChangeStatus,
+      eventDeletedStatus: eventDeletedStatus ?? this.eventDeletedStatus,
       eventDayToCreate: eventDayToCreate ?? this.eventDayToCreate,
       isEventDayReady: isEventDayReady ?? this.isEventDayReady,
     );
   }
 
-
-  @override
-  String toString() {
-    return 'EventsState{eventTitle: $newEventElementTitle, eventHour: $newEventElementHour}';
-  }
-
   @override
   List<Object?> get props => [
-    events,
-    eventsStatus,
-    newEvent,
-    newEventStatus,
-    newEventTitle,
-    newEventDescription,
-    newEventPublishDate,
-    newEventDay,
-    newEventDays,
-    newEventElementTitle,
-    newEventElementHour,
-    isNewEventReadyToSubmit,
-    errorMessage,
-    eventElementChangeStatus,
-    eventDeleted,
-    eventDayToCreate,
-    isEventDayReady,
-  ];
+        events,
+        eventsStatus,
+        newEvent,
+        newEventStatus,
+        newEventTitle,
+        newEventDescription,
+        newEventPublishDate,
+        newEventDays,
+        newEventElementTitle,
+        newEventElementHour,
+        isNewEventReadyToSubmit,
+        errorMessage,
+        eventElementChangeStatus,
+        eventDeletedStatus,
+        eventDayToCreate,
+        isEventDayReady,
+      ];
 }

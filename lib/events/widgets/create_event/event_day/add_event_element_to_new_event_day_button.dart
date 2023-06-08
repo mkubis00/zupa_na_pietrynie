@@ -32,7 +32,7 @@ class AddEventElementToNewEventDayButton extends StatelessWidget {
                       ? () {
                           context
                               .read<EventsBloc>()
-                              .add(AddEventElementToNewEventDay());
+                              .add(EventElementToNewEventDayAddEvent());
                         }
                       : null));
         });
