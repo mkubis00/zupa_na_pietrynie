@@ -1,6 +1,6 @@
 # zupa_na_pietrynie
 
-A new Flutter project.
+A new Flutter project. :)
 
 ## Getting Started
 
